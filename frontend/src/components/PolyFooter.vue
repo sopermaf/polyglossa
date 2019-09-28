@@ -1,0 +1,12 @@
+<template>
+    <v-footer height="auto" elevation="10" secondary>
+      <v-layout text-center row wrap>
+        <v-flex  py-3 text-xs-center md12>
+          <span class="font-weight-light">
+            &copy;2019 — 
+            <strong>PolyGlossa</strong>
+          </span>
+        </v-flex>
+      </v-layout>
+    </v-footer>
+</template>
