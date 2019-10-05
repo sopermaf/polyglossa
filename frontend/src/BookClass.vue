@@ -6,7 +6,7 @@
     <!-- Page Content -->
     <v-content>
       <div>
-        Class Booking Page
+        <BookClassMain />
       </div>
     </v-content>
 
@@ -17,12 +17,14 @@
 </template>
 
 <script>
+import BookClassMain from './components/BookClassMain.vue';
 import PolyToolbar from './components/PolyToolbar.vue';
 import PolyFooter from './components/PolyFooter.vue';
 
 export default {
   name: 'BookClass',
   components: {
+    BookClassMain,
     PolyToolbar,
     PolyFooter,
   },
