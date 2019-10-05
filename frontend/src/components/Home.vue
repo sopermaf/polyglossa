@@ -4,31 +4,35 @@
       text-center
       wrap
     >
-      <v-flex xs12>
+      <!--<v-flex xs12>
         <v-img
           :src="require('../assets/polyglossa_logo.png')"
           class="my-3"
           contain
           height="200"
         ></v-img>
+      </v-flex>-->
+
+      <v-flex mt-5 mb-5 xs12>
+        Flexible Online Language Classes and Resources
       </v-flex>
 
-      <v-flex mb-4>
-        <h1 class="display-2 font-weight-bold mb-3">
-          Welcome to PolyGlossa
-        </h1>
-        
+      <v-flex mb-5 xs12>
+        <h3 class="display-1 font-weight-light mb-3">
+          <span>Learn English</span>
+          <span class="font-weight-bold">
+            Your
+          </span>
+          <span>Way</span>
+        </h3>
       </v-flex>
 
-      <v-flex
-        mb-5
-        xs12
-      >
-        <h2 class="headline font-weight-bold mb-3">What's next?</h2>
+      <v-flex mb-5 xs12>
+        <h2 class="headline font-weight-bold mb-3">Our Classes</h2>
 
         <v-layout justify-center>
           <a
-            v-for="(next, i) in whatsNext"
+            v-for="(next, i) in classTypes"
             :key="i"
             :href="next.href"
             class="subheading mx-3"
@@ -45,57 +49,21 @@
 <script>
 export default {
   data: () => ({
-    ecosystem: [
+    classTypes: [
       {
-        text: 'vuetify-loader',
-        href: 'https://github.com/vuetifyjs/vuetify-loader',
-      },
-      {
-        text: 'github',
-        href: 'https://github.com/vuetifyjs/vuetify',
-      },
-      {
-        text: 'awesome-vuetify',
-        href: 'https://github.com/vuetifyjs/awesome-vuetify',
-      },
-    ],
-    importantLinks: [
-      {
-        text: 'Documentation',
-        href: 'https://vuetifyjs.com',
-      },
-      {
-        text: 'Chat',
-        href: 'https://community.vuetifyjs.com',
-      },
-      {
-        text: 'Made with Vuetify',
-        href: 'https://madewithvuejs.com/vuetify',
-      },
-      {
-        text: 'Twitter',
-        href: 'https://twitter.com/vuetifyjs',
-      },
-      {
-        text: 'Articles',
-        href: 'https://medium.com/vuetify',
-      },
-    ],
-    whatsNext: [
-      {
-        text: 'Page Setup',
+        text: 'Personalised Class',
         href: 'https://vuetifyjs.com/components/api-explorer',
       },
       {
-        text: 'Basic page layout',
+        text: '$2 Live Classes',
         href: 'https://vuetifyjs.com/layout/pre-defined',
       },
       {
-        text: 'Book a lesson page',
+        text: 'PolyProgram',
         href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
       },
       {
-        text: 'Paypal Integration',
+        text: 'Try an Experimental Class',
         href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
       },
     ],
