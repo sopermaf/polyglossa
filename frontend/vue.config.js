@@ -1,7 +1,7 @@
 const BundleTracker = require("webpack-bundle-tracker");
 
 module.exports = {
-    baseUrl: "http://0.0.0.0:8080/",
+    publicPath: "http://127.0.0.1:8080/",
     outputDir: './dist/',
 
     chainWebpack: config => {
@@ -24,5 +24,10 @@ module.exports = {
             .watchOptions({poll: 1000})
             .https(false)
             .headers({"Access-Control-Allow-Origin": ["\*"]})
-            }
-        };
+    },
+
+    pages: {
+        index: './src/index.js',
+        bookClass: './src/bookClass.js',
+    }
+};

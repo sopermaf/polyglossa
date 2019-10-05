@@ -20,7 +20,7 @@ import PolyToolbar from './components/PolyToolbar.vue';
 import PolyFooter from './components/PolyFooter.vue';
 
 export default {
-  name: 'App',
+  name: 'Index',
   components: {
     Home,
     PolyToolbar,
