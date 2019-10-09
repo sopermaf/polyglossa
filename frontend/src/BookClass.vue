@@ -1,13 +1,22 @@
 <template>
-  <v-app>
+  <v-app centered>
     <!-- Header -->
     <PolyToolbar />
 
     <!-- Page Content -->
     <v-content>
-      <div>
-        <BookClassMain />
-      </div>
+      <v-container fluid>
+        <v-layout row wrap align-center>
+          
+          <v-flex md4 xs4></v-flex>
+          
+          <v-flex md4 xs4 >
+            <BookClassForm/>
+          </v-flex>
+          
+          <v-flex md4 xs4></v-flex>
+        </v-layout>
+      </v-container >
     </v-content>
 
     <!-- Footer -->
@@ -17,14 +26,14 @@
 </template>
 
 <script>
-import BookClassMain from './components/BookClassMain.vue';
+import BookClassForm from './components/BookClassForm.vue';
 import PolyToolbar from './components/PolyToolbar.vue';
 import PolyFooter from './components/PolyFooter.vue';
 
 export default {
   name: 'BookClass',
   components: {
-    BookClassMain,
+    BookClassForm,
     PolyToolbar,
     PolyFooter,
   },
