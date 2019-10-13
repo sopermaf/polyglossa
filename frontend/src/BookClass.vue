@@ -9,12 +9,20 @@
         <v-layout row wrap align-center>
           
           <v-flex md4 xs4></v-flex>
+          <v-flex md4 xs4>
+            <h2> Class Booking Form </h2>
+          </v-flex>
+          <v-flex md4 xs4></v-flex>
+
+          <!-- Personal Details Input -->
+          <v-flex md4 xs4></v-flex>
           
           <v-flex md4 xs4 >
             <BookClassForm/>
           </v-flex>
-          
+
           <v-flex md4 xs4></v-flex>
+
         </v-layout>
       </v-container >
     </v-content>
