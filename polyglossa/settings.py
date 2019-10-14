@@ -41,7 +41,9 @@ PREREQUSITE_APPS = [
     'webpack_loader',
 ]
 
-PROJECT_APPS = []
+PROJECT_APPS = [
+    'class_bookings',
+]
 
 INSTALLED_APPS = PREREQUSITE_APPS + PROJECT_APPS
 
