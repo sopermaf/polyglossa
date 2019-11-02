@@ -10,6 +10,7 @@ pylint = "*"
 django = "*"
 pytz = "*"
 django-webpack-loader = "*"
+pep8 = "*"
 
 [requires]
 python_version = "3.7"

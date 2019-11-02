@@ -9,7 +9,7 @@ class Student(models.Model):
     email = models.CharField(max_length=40)
 
     def __str__(self):
-        return "{}, {}".format(self.name, self.email)
+        return f"{self.name}, {self.email}"
 
 
 class Lesson(models.Model):
@@ -22,9 +22,4 @@ class Lesson(models.Model):
     price = models.FloatField(default=20)
 
     def __str__(self):
-        return "{} - {} - {} - Done?: {}".format(
-            self.student,
-            self.class_time,
-            self.price,
-            self.completed,
-            )
+        return f"{self.student} - {self.class_time} - {self.price} - Done: {self.completed}"

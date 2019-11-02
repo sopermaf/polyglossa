@@ -23,5 +23,5 @@ urlpatterns = [
         TemplateView.as_view(template_name="index.html"),
         name="app",
     ),
-    path('book/', include('class_bookings.urls')),
+    path('book_class/', include('class_bookings.urls')),
 ]
