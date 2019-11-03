@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
+from class_bookings.models import Lesson, Student
+from datetime import datetime as dt
+import class_bookings.util as cb
 import json
 
 # Create your views here.
@@ -9,19 +12,39 @@ def make_booking(request):
     store this booking as a Lesson
     '''
     post_keys = [
-        'student_name',
-        'student_email',
-        'lesson_time'
+        cb.REQ_NAME,
+        cb.REQ_EMAIL,
+        cb.REQ_TIME,
     ]
-    student_data = {}
+    lesson_request = {}
     for key in post_keys:
         try:
-            student_data[key] = request.POST[key]
+            lesson_request[key] = request.POST[key]
         except KeyError:
             error_response = HttpResponse()
             error_response.status_code = 400 # bad request
-            error_response.content = f"Missing {key} to reserve class"
+            error_response.content = f"Missing {key} to reserve lesson"
             return error_response
-    
+    # validation?
+    # email should be unique
+    # class datetime should be unique
 
-    return JsonResponse(student_data)
+    # store Student and Lesson in DataBase
+    student = Student(
+                name=lesson_request[cb.REQ_NAME],
+                email=lesson_request[cb.REQ_EMAIL],
+            )
+    student.save()
+    lesson = Lesson(
+                student=student,
+                class_time=dt.strptime(
+                    lesson_request[cb.REQ_TIME],
+                    cb.FORMAT_TIME
+                ),
+            )
+    lesson.save()
+    
+    # should create a log file
+    print(f"Lesson Created: {lesson}")
+
+    return JsonResponse(lesson_request)
