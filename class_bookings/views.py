@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from class_bookings.models import Lesson, Student
 from datetime import datetime as dt
 import class_bookings.util as cb
+from class_bookings.validation import validate_lesson_request
 import json
 
 # Create your views here.
@@ -25,9 +26,10 @@ def make_booking(request):
             error_response.status_code = 400 # bad request
             error_response.content = f"Missing {key} to reserve lesson"
             return error_response
-    # validation?
-    # email should be unique
-    # class datetime should be unique
+    
+    # validate
+    validate_lesson_request(lesson_request)
+    #raise ValueError('problem with values')
 
     # store Student and Lesson in DataBase
     student = Student(
