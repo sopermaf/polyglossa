@@ -2,51 +2,49 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from class_bookings.models import Lesson, Student
 from datetime import datetime as dt
-import class_bookings.util as cb
+import class_bookings.util as class_booking_utils
 from class_bookings.validation import validate_lesson_request
 import json
 
 # Create your views here.
-def make_booking(request):
+def postLesson(request):
     '''
-    Receive a POST request and
-    store this booking as a Lesson
+    Receive a lesson post request,
+    perform validation, and store
+    the request if valid.
+
+    Error returned if invalid request.
     '''
-    post_keys = [
-        cb.REQ_NAME,
-        cb.REQ_EMAIL,
-        cb.REQ_TIME,
-    ]
     lesson_request = {}
-    for key in post_keys:
+    for lessonInfoSection in class_booking_utils.LESSON_POST_KEYS:
         try:
-            lesson_request[key] = request.POST[key]
+            lesson_request[lessonInfoSection] = request.POST[lessonInfoSection]
         except KeyError:
             error_response = HttpResponse()
             error_response.status_code = 400 # bad request
-            error_response.content = f"Missing {key} to reserve lesson"
+            error_response.content = f"Missing {lessonInfoSection} to reserve lesson"
             return error_response
     
     # validate
     validate_lesson_request(lesson_request)
-    #raise ValueError('problem with values')
 
     # store Student and Lesson in DataBase
     student = Student(
-                name=lesson_request[cb.REQ_NAME],
-                email=lesson_request[cb.REQ_EMAIL],
+                name=lesson_request[class_booking_utils.REQUEST_KEY_NAME],
+                email=lesson_request[class_booking_utils.REQUEST_KEY_EMAIL],
             )
     student.save()
+    
     lesson = Lesson(
                 student=student,
                 class_time=dt.strptime(
-                    lesson_request[cb.REQ_TIME],
-                    cb.FORMAT_TIME
+                    lesson_request[class_booking_utils.REQUEST_KEY_TIME],
+                    class_booking_utils.FORMAT_LESSON_DATETIME
                 ),
             )
     lesson.save()
     
-    # should create a log file
+    # TODO: add logging
     print(f"Lesson Created: {lesson}")
 
     return JsonResponse(lesson_request)

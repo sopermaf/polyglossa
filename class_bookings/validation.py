@@ -13,7 +13,7 @@ def lesson_unique_time(lesson_time):
     Args:
     lesson_time -- requested lesson time
     '''
-    req_dt = datetime.datetime.strptime(lesson_time, cb.FORMAT_TIME)
+    req_dt = datetime.datetime.strptime(lesson_time, cb.FORMAT_LESSON_DATETIME)
     lessons = Lesson.objects.filter(class_time=req_dt)
     if lessons:
         raise ValueError(f"{lesson_time} already taken")
@@ -36,8 +36,8 @@ def validate_lesson_request(request_info):
     request_info -- dict of lesson and student data
     '''
     # student validation
-    student_unique_email(request_info[cb.REQ_EMAIL])
+    student_unique_email(request_info[cb.REQUEST_KEY_EMAIL])
 
     # lesson validation
-    lesson_unique_time(request_info[cb.REQ_TIME])
-    lesson_within_params(request_info[cb.REQ_TIME])
+    lesson_unique_time(request_info[cb.REQUEST_KEY_TIME])
+    lesson_within_params(request_info[cb.REQUEST_KEY_TIME])
