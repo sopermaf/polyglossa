@@ -26,3 +26,4 @@ db*
 # Generated Files
 webpack-stats.json
 __pycache__/
+migrations/

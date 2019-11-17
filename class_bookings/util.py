@@ -19,7 +19,6 @@ BAD_REQUEST_CODE = 400
 RESOURCE_CREATED_CODE = 201
 
 # formats
-FORMAT_DB_DATETIME = '%Y-%m-%d %H:%M:%S'
 FORMAT_LESSON_DATETIME = '%Y-%m-%d %H:%M'
 
 # url names

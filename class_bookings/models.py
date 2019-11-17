@@ -31,9 +31,9 @@ class Lesson(models.Model):
     '''
     id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    class_time = models.DateTimeField('The lesson time')
+    lesson_datetime = models.DateTimeField('The lesson date and time')
     completed = models.BooleanField(default=False)
     price = models.FloatField(default=20)
 
     def __str__(self):
-        return f"{self.student} - {self.class_time} - {self.price} - Done: {self.completed}"
+        return f"{self.student} - {self.lesson_datetime} - {self.price} - Done: {self.completed}"

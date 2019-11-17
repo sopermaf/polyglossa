@@ -49,7 +49,7 @@ def postLesson(request):
     
     lesson = Lesson(
                 student=student,
-                class_time=dt.strptime(
+                lesson_datetime=dt.strptime(
                     lesson_request[cb_utils.REQUEST_KEY_TIME],
                     cb_utils.FORMAT_LESSON_DATETIME
                 ),

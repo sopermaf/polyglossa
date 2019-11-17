@@ -9,8 +9,9 @@ class TestViews(TestCase):
         self.datetime_str = datetime.now().strftime(cb_utils.FORMAT_LESSON_DATETIME)
         self.name = 'ferdia'
         self.email = 'ferdia@example.com'
-        self.student = Student(name=self.name, email=self.email)
 
+        self.student = Student(name=self.name, email=self.email)
+        #self.lesson = Lesson(student=self.student, lesson_datetime=self.)
 
     def test_less(self):
         """ test lesson request creation """

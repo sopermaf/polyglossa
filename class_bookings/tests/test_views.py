@@ -61,7 +61,7 @@ class TestViews(TestCase):
         self.assertEqual(1, len(Student.objects.all()), "Expect 1 Student in DB")
 
         # assert data added correctly
-        lesson = Lesson.objects.get(class_time=self.lesson_datetime_obj)
+        lesson = Lesson.objects.get(lesson_datetime=self.lesson_datetime_obj)
         self.assertEqual(self.name, lesson.student.name, "Student name should match sent name")
         self.assertEqual(self.email, lesson.student.email, "Student email should match sent email")
 
