@@ -68,7 +68,7 @@ class TestViews(TestCase):
 
     def test_post_lesson_error_missing_data(self):
         # send request
-        response = self.post_preset_lesson(lessonTime=datetime)
+        response = self.post_preset_lesson(lessonTime=self.lesson_datetime_string)
         
         # ensure nothing added and correct code returned
         self.assertEqual(cb_utils.BAD_REQUEST_CODE, response.status_code, "Bad request response expected")
