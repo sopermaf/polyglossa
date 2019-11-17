@@ -35,11 +35,14 @@ class TestViews(TestCase):
             email = self.email
             lessonTime = self.lesson_datetime_string
 
-        lesson_post_data = {
-            cb_utils.REQUEST_KEY_NAME: name,
-            cb_utils.REQUEST_KEY_EMAIL: email,
-            cb_utils.REQUEST_KEY_TIME: lessonTime,
-        }
+        # only add data if exists
+        lesson_post_data = {}
+        if name:
+            lesson_post_data[cb_utils.REQUEST_KEY_NAME] = name
+        if email:
+            lesson_post_data[cb_utils.REQUEST_KEY_EMAIL] = email
+        if lessonTime:
+            lesson_post_data[cb_utils.REQUEST_KEY_TIME] = lessonTime
 
         response = self.client.post(
             self.lesson_post_url,
@@ -63,58 +66,48 @@ class TestViews(TestCase):
         self.assertEqual(self.email, lesson.student.email, "Student email should match sent email")
 
 
-    @unittest.skip("wip")
     def test_post_lesson_error_missing_data(self):
-        '''Post a lesson request resulting
-        in an error and ensure no data posted to DB
-        and correct response returned
-        '''
-        # setup
-        self.lesson_post_data.pop(cb_utils.REQUEST_KEY_EMAIL)
-        response = self.post_preset_lesson()
+        # send request
+        response = self.post_preset_lesson(lessonTime=datetime)
         
-        # check result
+        # ensure nothing added and correct code returned
         self.assertEqual(cb_utils.BAD_REQUEST_CODE, response.status_code, "Bad request response expected")
-        # ensure nothing was added to the database
         self.assertEqual(0, len(Lesson.objects.all()), "Expected 0 Lessons in DB")
         self.assertEqual(0, len(Student.objects.all()), "Expected 0 Students in DB")
 
-    @unittest.skip("wip")
+
     def test_post_lesson_error_validation(self):
         '''Ensure that the validation is being
         run inside of the POST lesson
         '''
         # make a successful request
-        response = self.post_preset_lesson()
+        response = self.post_preset_lesson(default=True)
         self.assertEqual(response.status_code, cb_utils.RESOURCE_CREATED_CODE, "Good Request Response")
         self.assertEqual(1, len(Lesson.objects.all()), "Expected 1 Lessons in DB")
         self.assertEqual(1, len(Student.objects.all()), "Expected 1 Students in DB")
 
-        # make a bad request
-        response = self.post_preset_lesson()
-        self.assertEqual(response.status_code, cb_utils.BAD_REQUEST_CODE,"Bad Request Response",
-            )
+        # try to add a second lesson at the same time
+        response = self.post_preset_lesson(default=True)
+        self.assertEqual(response.status_code, cb_utils.BAD_REQUEST_CODE, "Bad Request Response")
         self.assertEqual(1, len(Lesson.objects.all()), "Expected 1 Lessons in DB")
         self.assertEqual(1, len(Student.objects.all()), "Expected 1 Students in DB")
 
 
-    @unittest.skip("wip")
+    @unittest.skip("Student duplication checking not added")
     def test_make_booking_student_exists(self):
-        '''Ensure the student isn't duplicated
-        on their second request.
-        '''
-        response = self.post_preset_lesson()
+        # make a successful request
+        response = self.post_preset_lesson(default=True)
         self.assertEqual(response.status_code, cb_utils.RESOURCE_CREATED_CODE, "Good Request Response")
         self.assertEqual(1, len(Lesson.objects.all()), "Expected 1 Lessons in DB")
         self.assertEqual(1, len(Student.objects.all()), "Expected 1 Students in DB")
 
-        # new time, same student            
-        tomorrowDateTimeObj = datetime.now() + timedelta(days=1)            
+        # make a second request with the same student         
+        tomorrowDateTimeObj = datetime.now() + timedelta(days=1)
+        tomorrowDateTimeStr = tomorrowDateTimeObj.strftime(cb_utils.FORMAT_LESSON_DATETIME)
+        response = self.post_preset_lesson(name=self.name, email=self.email, lessonTime=tomorrowDateTimeStr)
 
-        self.lesson_datetime_string = tomorrowDateTimeObj.strftime(cb_utils.FORMAT_LESSON_DATETIME)
-        
-        response = self.post_preset_lesson()
-        #self.assertEqual(response.status_code, cb_utils.RESOURCE_CREATED_CODE, "Good Request Response")
+        # check student not duplicated and second lesson added
+        self.assertEqual(response.status_code, cb_utils.RESOURCE_CREATED_CODE, "Good Request Response")
         self.assertEqual(2, len(Lesson.objects.all()), "Expected 2 Lessons in DB")
         self.assertEqual(1, len(Student.objects.all()), "Expected 1 Students in DB")
 
