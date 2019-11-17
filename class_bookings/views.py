@@ -21,12 +21,18 @@ def postLesson(request):
             lesson_request[lessonInfoSection] = request.POST[lessonInfoSection]
         except KeyError:
             error_response = HttpResponse()
-            error_response.status_code = 400 # bad request
+            error_response.status_code = class_booking_utils.BAD_REQUEST_CODE
             error_response.content = f"Missing {lessonInfoSection} to reserve lesson"
             return error_response
     
     # validate
-    validate_lesson_request(lesson_request)
+    try:
+        validate_lesson_request(lesson_request)
+    except ValueError:
+        print(f"Lesson Not Created: {lesson_request}")
+        error_response = HttpResponse('Bad request')
+        error_response.status_code = class_booking_utils.BAD_REQUEST_CODE
+        return error_response
 
     # store Student and Lesson in DataBase
     student = Student(
@@ -47,4 +53,6 @@ def postLesson(request):
     # TODO: add logging
     print(f"Lesson Created: {lesson}")
 
-    return JsonResponse(lesson_request)
+    success_response = HttpResponse('Student and Lesson created')
+    success_response.status_code = class_booking_utils.RESOURCE_CREATED_CODE
+    return success_response
