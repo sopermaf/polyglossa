@@ -12,6 +12,18 @@ class Student(models.Model):
     def __str__(self):
         return f"{self.name}, {self.email}"
 
+    @staticmethod
+    def getStudentSafe(email):
+        '''Find a student by their email address.\n\n
+        Returns `None` if Student doesn't exist
+        '''
+        try:
+            student = Student.objects.get(email=email)
+        except Student.DoesNotExist:
+            student = None
+
+        return student
+
 
 class Lesson(models.Model):
     '''
