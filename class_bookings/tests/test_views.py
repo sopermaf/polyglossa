@@ -93,7 +93,6 @@ class TestViews(TestCase):
         self.assertEqual(1, len(Student.objects.all()), "Expected 1 Students in DB")
 
 
-    @unittest.skip("Student duplication checking not added")
     def test_make_booking_student_exists(self):
         # make a successful request
         response = self.post_preset_lesson(default=True)
