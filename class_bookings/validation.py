@@ -7,30 +7,45 @@ from class_bookings.models import Lesson, Student
 import datetime
 
 
-def validate_request(lesson_request):
-    '''Validates that the
-    `lesson_request` contains all the information
-    required.
-    '''
-    pass
-
-
-def lesson_unique_time(lesson_time):
+def lesson_time_unique(lesson_time):
     '''Check if lesson time already present
 
     Args:
-    lesson_time -- requested lesson time
+    `lesson_time` -- str of lesson_time
     '''
-    req_dt = datetime.datetime.strptime(lesson_time, cb_utils.FORMAT_LESSON_DATETIME)
-    lessons = Lesson.objects.filter(lesson_datetime=req_dt)
+    requestedDateTime = datetime.datetime.strptime(
+                            lesson_time,
+                            cb_utils.FORMAT_LESSON_DATETIME
+                        )
+    lessons = Lesson.objects.filter(lesson_datetime=requestedDateTime)
     if lessons:
         raise ValueError(f"{lesson_time} already taken")
 
 
-def lesson_within_params(lesson_time):
+def lesson_time_within_range(lesson_dt_str):
+    '''Check if lesson within allowable
+    range of datetimes. Uses max
+    and min ranges set in util file.
+
+    Args:
+    `lesson_time` -- str of lesson_time
     '''
-    '''
-    pass
+    currDateTime = datetime.datetime.now()
+    lesson_dt_obj = cb_utils.convertStrToDateTime(lesson_dt_str)
+    delta_dt_before_lesson = lesson_dt_obj - currDateTime
+
+    if delta_dt_before_lesson > cb_utils.MAX_DATETIME_DELTA:
+        raise ValueError(
+            "Selected datetime too far away. Max delta {}. Curr delta {}".format(
+                cb_utils.MAX_DATETIME_DELTA, delta_dt_before_lesson
+            )
+        )
+    elif delta_dt_before_lesson < cb_utils.MIN_DATETIME_DELTA:
+        raise ValueError(
+            "Selected datetime too soon. Min delta {}. Curr delta {}".format(
+                cb_utils.MIN_DATETIME_DELTA, delta_dt_before_lesson
+            )
+        )
 
 
 def validate_lesson_request(request_info):
@@ -42,5 +57,5 @@ def validate_lesson_request(request_info):
     # TODO: cleaning? (whitespace, etc)
 
     # validation
-    lesson_unique_time(request_info[cb_utils.REQUEST_KEY_TIME])
-    lesson_within_params(request_info[cb_utils.REQUEST_KEY_TIME])
+    lesson_time_unique(request_info[cb_utils.REQUEST_KEY_TIME])
+    lesson_time_within_range(request_info[cb_utils.REQUEST_KEY_TIME])

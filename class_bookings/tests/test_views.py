@@ -20,11 +20,9 @@ class TestViews(TestCase):
         self.email = "ferdia@example.com"
 
         # lesson_datetime only uses HH:MM
-        self.lesson_datetime_string = datetime.now().strftime(cb_utils.FORMAT_LESSON_DATETIME)
-        self.lesson_datetime_obj = datetime.strptime(
-                                    self.lesson_datetime_string,
-                                    cb_utils.FORMAT_LESSON_DATETIME
-                                )
+        acceptableLessonTimeObj = datetime.now() + cb_utils.MIN_DATETIME_DELTA + timedelta(hours=1)
+        self.lesson_datetime_string = cb_utils.convertDateTimeToStr(acceptableLessonTimeObj)
+        self.lesson_datetime_obj = cb_utils.convertStrToDateTime(self.lesson_datetime_string)
 
     def post_preset_lesson(self, name=None, email=None, lessonTime=None, default=False):
         '''Posts a lesson to the server.
@@ -93,7 +91,7 @@ class TestViews(TestCase):
         self.assertEqual(1, len(Student.objects.all()), "Expected 1 Students in DB")
 
 
-    def test_make_booking_student_exists(self):
+    def test_post_lesson_existing_student(self):
         # make a successful request
         response = self.post_preset_lesson(default=True)
         self.assertEqual(response.status_code, cb_utils.RESOURCE_CREATED_CODE, "Good Request Response")
@@ -101,9 +99,10 @@ class TestViews(TestCase):
         self.assertEqual(1, len(Student.objects.all()), "Expected 1 Students in DB")
 
         # make a second request with the same student         
-        tomorrowDateTimeObj = datetime.now() + timedelta(days=1)
-        tomorrowDateTimeStr = tomorrowDateTimeObj.strftime(cb_utils.FORMAT_LESSON_DATETIME)
-        response = self.post_preset_lesson(name=self.name, email=self.email, lessonTime=tomorrowDateTimeStr)
+        differentLessonTime = cb_utils.convertDateTimeToStr(
+                                self.lesson_datetime_obj + timedelta(days=1)
+                              )
+        response = self.post_preset_lesson(name=self.name, email=self.email, lessonTime=differentLessonTime)
 
         # check student not duplicated and second lesson added
         self.assertEqual(response.status_code, cb_utils.RESOURCE_CREATED_CODE, "Good Request Response")
