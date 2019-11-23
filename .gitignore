@@ -27,3 +27,7 @@ db*
 webpack-stats.json
 __pycache__/
 migrations/
+.venv/
+
+# Sensitive Information
+env.py
