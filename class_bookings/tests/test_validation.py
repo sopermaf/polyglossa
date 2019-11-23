@@ -1,7 +1,7 @@
 from django.test import TestCase
 from datetime import datetime, timedelta
 import class_bookings.util as cb_utils
-from class_bookings.models import Lesson, Student
+from class_bookings.models import Booking, LessonType, Student
 import class_bookings.validation as validation
 
 class TestValidation(TestCase):
@@ -12,12 +12,18 @@ class TestValidation(TestCase):
         self.lesson_datetime_obj = cb_utils.convertStrToDateTime(self.lesson_datetime_str)
         self.name = 'ferdia'
         self.email = 'ferdia@example.com'
+        self.nameOfLessonType = 'basic bookable lesson'
 
-        # setup DB
+        # DB setup for exisiting LessonType and Student
+        self.availableLessonType = LessonType(title=self.nameOfLessonType, price=20, isBookable=True)
+        self.availableLessonType.save()
+
         self.student = Student(name=self.name, email=self.email)
         self.student.save()
-        self.lesson = Lesson(student=self.student, lesson_datetime=self.lesson_datetime_obj)
-        self.lesson.save()
+
+        # create a booking
+        self.booking = Booking(student=self.student,lessonType=self.availableLessonType, lesson_datetime=self.lesson_datetime_obj)
+        self.booking.save()
 
     def test_lesson_time_unique_fail(self):
         with self.assertRaises(ValueError):
