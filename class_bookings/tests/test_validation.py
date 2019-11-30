@@ -73,6 +73,6 @@ class TestValidation(TestCase): # pylint: disable=missing-class-docstring
         validation.lesson_time_within_range(booking_max_datetime)
 
         booking_min_datetime = cb_utils.convert_datetime_to_str(
-            datetime.now() + cb_utils.MIN_DATETIME_DELTA + timedelta(days=0)
+            datetime.now() + cb_utils.MIN_DATETIME_DELTA + timedelta(days=1)
         )
         validation.lesson_time_within_range(booking_min_datetime)
