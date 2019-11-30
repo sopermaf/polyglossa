@@ -4,10 +4,10 @@ to make sure that requests follow the correct format
 '''
 import datetime
 import class_bookings.util as cb_utils
-from class_bookings.models import Booking
+from class_bookings.models import Booking, LessonType
 
 
-def lesson_time_unique(lesson_time):
+def booking_datetime_unique(lesson_time):
     '''Check if lesson time already present
 
     Args:
@@ -22,7 +22,7 @@ def lesson_time_unique(lesson_time):
         raise ValueError(f"{lesson_time} already taken")
 
 
-def lesson_time_within_range(lesson_dt_str):
+def booking_datetime_within_range(lesson_dt_str):
     '''Check if lesson within allowable
     range of datetimes. Uses max
     and min ranges set in util file.
@@ -52,14 +52,23 @@ def lesson_type_exists(lesson_type_chosen):
     '''Validate that a given lesson
     type exists in the database
     '''
-    print(lesson_type_chosen)
+    try:
+        LessonType.objects.get(title=lesson_type_chosen)    # pylint: disable=no-member
+    except LessonType.DoesNotExist: # pylint: disable=no-member
+        raise ValueError(
+            f"Lesson type {lesson_type_chosen} doesn't exist"
+        )
 
 
 def lesson_type_bookable(lesson_type_chosen):
     '''Validate that a lesson type is
     available for booking and not restricted
     '''
-    print(lesson_type_chosen)
+    lesson = LessonType.objects.get(title=lesson_type_chosen)   # pylint: disable=no-member
+    if not lesson.isBookable:
+        raise ValueError(
+            f'Lesson [{lesson_type_chosen}] not available for booking'
+        )
 
 
 def validate_booking_request(request_info):
@@ -72,7 +81,7 @@ def validate_booking_request(request_info):
     lesson_type = request_info[cb_utils.REQUEST_KEY_LESSON_CHOICE]
 
     # validation
-    lesson_time_unique(booking_datetime)
-    lesson_time_within_range(booking_datetime)
+    booking_datetime_unique(booking_datetime)
+    booking_datetime_within_range(booking_datetime)
     lesson_type_exists(lesson_type)
     lesson_type_bookable(lesson_type)

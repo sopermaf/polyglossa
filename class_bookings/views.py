@@ -9,12 +9,10 @@ from class_bookings.validation import validate_booking_request
 
 # Create your views here.
 def post_booking(request):
-    '''Receive a lesson post request,
-    perform validation, and store
+    '''Receive a lesson post request, perform validation, and store
     the request if valid.
 
-    Returns a HTTP code to indicate
-    success or failure of request
+    Returns a HTTP code to indicate success or failure of request
     '''
     lesson_request = {}
     for booking_key in cb_utils.BOOKING_POST_KEYS:
@@ -30,23 +28,15 @@ def post_booking(request):
     try:
         validate_booking_request(lesson_request)
     except ValueError:
-        print(f"Lesson Not Created: {lesson_request}")
+        #print(f"Lesson Not Created: {lesson_request}")
         error_response = HttpResponse('Bad request')
         error_response.status_code = cb_utils.BAD_REQUEST_CODE
         return error_response
 
-    #TODO: remove this logic from main
-    student = Student.get_student_safe(
-        lesson_request[cb_utils.REQUEST_KEY_EMAIL]
+    student = Student.get_existing_or_create(
+        lesson_request[cb_utils.REQUEST_KEY_NAME],
+        lesson_request[cb_utils.REQUEST_KEY_EMAIL],
     )
-    if student is None:
-        student = Student(
-            name=lesson_request[cb_utils.REQUEST_KEY_NAME],
-            email=lesson_request[cb_utils.REQUEST_KEY_EMAIL],
-        )
-        student.save()
-
-    # TODO: add tests and exception handling for this section
     lesson = LessonType.objects.get(    # pylint: disable=no-member
         title=lesson_request[cb_utils.REQUEST_KEY_LESSON_CHOICE]
     )
@@ -60,10 +50,8 @@ def post_booking(request):
         ),
     )
     requested_booking.save()
+    #print(f"Lesson Created: {requested_booking}")
 
-    # TODO: add logging
-    print(f"Lesson Created: {requested_booking}")
-
-    success_response = HttpResponse('Student and Lesson created')
+    success_response = HttpResponse('Booking created')
     success_response.status_code = cb_utils.RESOURCE_CREATED_CODE
     return success_response

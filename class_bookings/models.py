@@ -28,6 +28,20 @@ class Student(models.Model):
 
         return student
 
+    @staticmethod
+    def get_existing_or_create(name, email):
+        '''Adds to DB and returns new student
+        if no student using `email` exists.
+        '''
+        student = Student.get_student_safe(email)
+        if student is None:
+            student = Student(
+                name=name,
+                email=email
+            )
+            student.save()
+        return student
+
 
 class LessonType(models.Model):
     '''A polyglossa lesson that
