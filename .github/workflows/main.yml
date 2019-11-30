@@ -20,4 +20,5 @@ jobs:
         pipenv install --dev
     - name: Django tests
       run: |
+        pipenv shell
         python manage.py test
