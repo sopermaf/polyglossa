@@ -1,5 +1,5 @@
 '''
-This file is the central resource for defining 
+This file is the central resource for defining
 constants and common util functions in class_bookings
 '''
 import datetime
@@ -31,25 +31,25 @@ FORMAT_BOOKING_DATETIME = '%Y-%m-%d %H:%M'
 POST_LESSON_URL_NAME = 'create-booking'
 
 
-def convertDateTimeToStr(datetimeObj):
+def convert_datetime_to_str(datetime_obj):
     '''Converts a `datetime.datetime` to a string
     matching the `FORMAT_LESSON_DATETIME`
     '''
-    return datetimeObj.strftime(FORMAT_BOOKING_DATETIME)
+    return datetime_obj.strftime(FORMAT_BOOKING_DATETIME)
 
 
-def convertStrToDateTime(datetimeStr):
+def convert_str_to_datetime(datetime_str):
     '''Converts a `str` to a datetim
     obj using the `FORMAT_LESSON_DATETIME`
     '''
     return datetime.datetime.strptime(
-                            datetimeStr,
-                            FORMAT_BOOKING_DATETIME
-                        )
+        datetime_str,
+        FORMAT_BOOKING_DATETIME
+    )
 
 
-def currDateTimeStr():
+def curr_datetime_str():
     '''Returns a datetime str standard
     format of `datetime.datetime.now()`
     '''
-    return convertDateTimeToStr(datetime.datetime.now())
+    return convert_datetime_to_str(datetime.datetime.now())

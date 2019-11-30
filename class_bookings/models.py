@@ -1,3 +1,7 @@
+'''This is design of the tables that are used
+in the database to manage the class_bookings
+module
+'''
 from django.db import models
 
 # Create your models here.
@@ -13,13 +17,13 @@ class Student(models.Model):
         return f"{self.name}, {self.email}"
 
     @staticmethod
-    def getStudentSafe(email):
+    def get_student_safe(email):
         '''Find a student by their email address.\n\n
         Returns `None` if Student doesn't exist
         '''
         try:
-            student = Student.objects.get(email=email)
-        except Student.DoesNotExist:
+            student = Student.objects.get(email=email)  # pylint: disable=no-member
+        except Student.DoesNotExist:    # pylint: disable=no-member
             student = None
 
         return student
@@ -40,6 +44,10 @@ class LessonType(models.Model):
 
 
 class Booking(models.Model):
+    '''This is meant to represent 1-to-1
+    bookings made by an individual student
+    for a private class on polyglossa.
+    '''
     AWAITING_PAYMENT = 'AWAITING PAYMENT'
     HAS_PROBLEM = 'PROBLEM'
     CANCELLED_NOT_PAID = 'NOT PAID'
@@ -55,21 +63,21 @@ class Booking(models.Model):
         (CANCELLED_REFUNDED, 'Lesson cancelled and refunded'),
         (COMPLETED_NORMAL, 'Lesson successfully completed'),
         (COMPLETED_DEFAULT_PAID,
-        'Considered completed. Teacher paid for lesson by default'),
+         'Considered completed. Teacher paid for lesson by default'),
     ]
     # model fields
     id = models.AutoField(primary_key=True)
     lesson_datetime = models.DateTimeField('The lesson date and time')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=AWAITING_PAYMENT)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)        # TODO: review this behaviour
-    lessonType = models.ForeignKey(LessonType, on_delete=models.CASCADE)  # TODO: review this behaviour
+    student = models.ForeignKey(Student, on_delete=models.PROTECT)
+    lessonType = models.ForeignKey(LessonType, on_delete=models.PROTECT)
 
     def __str__(self):
         return "Time:{}\nDetails: {} - ${}\nStudent: {} - {}\nStatus: {}".format(
-            self.lesson_datetime,
-            self.lessonType.title,
-            self.lessonType.price,
-            self.student.name,
-            self.student.email,
+            self.lesson_datetime,   # pylint: disable=no-member
+            self.lessonType.title,  # pylint: disable=no-member
+            self.lessonType.price,  # pylint: disable=no-member
+            self.student.name,      # pylint: disable=no-member
+            self.student.email,     # pylint: disable=no-member
             self.status,
         )
