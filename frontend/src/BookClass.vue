@@ -1,13 +1,30 @@
 <template>
-  <v-app>
+  <v-app centered>
     <!-- Header -->
     <PolyToolbar />
 
     <!-- Page Content -->
     <v-content>
-      <div>
-        Class Booking Page
-      </div>
+      <v-container fluid>
+        <v-layout row wrap align-center>
+          
+          <v-flex md4 xs4></v-flex>
+          <v-flex md4 xs4>
+            <h2> Class Booking Form </h2>
+          </v-flex>
+          <v-flex md4 xs4></v-flex>
+
+          <!-- Personal Details Input -->
+          <v-flex md4 xs4></v-flex>
+          
+          <v-flex md4 xs4 >
+            <BookClassForm/>
+          </v-flex>
+
+          <v-flex md4 xs4></v-flex>
+
+        </v-layout>
+      </v-container >
     </v-content>
 
     <!-- Footer -->
@@ -17,12 +34,14 @@
 </template>
 
 <script>
+import BookClassForm from './components/BookClassForm.vue';
 import PolyToolbar from './components/PolyToolbar.vue';
 import PolyFooter from './components/PolyFooter.vue';
 
 export default {
   name: 'BookClass',
   components: {
+    BookClassForm,
     PolyToolbar,
     PolyFooter,
   },

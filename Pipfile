@@ -4,11 +4,14 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pylint = "*"
 
 [packages]
 django = "*"
 pytz = "*"
 django-webpack-loader = "*"
+pep8 = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.7"
