@@ -3,6 +3,7 @@ This file is the central resource for defining
 constants and common util functions in class_bookings
 '''
 import datetime
+from django.http import HttpResponse
 
 # LIMITS
 MAX_DATETIME_DELTA = datetime.timedelta(days=30)
@@ -31,6 +32,8 @@ FORMAT_BOOKING_DATETIME = '%Y-%m-%d %H:%M'
 POST_LESSON_URL_NAME = 'create-booking'
 
 
+# DATETIME FUNCTIONS
+
 def convert_datetime_to_str(datetime_obj):
     '''Converts a `datetime.datetime` to a string
     matching the `FORMAT_LESSON_DATETIME`
@@ -53,3 +56,26 @@ def curr_datetime_str():
     format of `datetime.datetime.now()`
     '''
     return convert_datetime_to_str(datetime.datetime.now())
+
+
+# RESPONSES
+
+def http_bad_request(msg="Bad Request"):
+    '''Creates a HTTP response
+    code `BAD_REQUEST_CODE`
+    '''
+    error_response = HttpResponse(
+        msg,
+        status=BAD_REQUEST_CODE,
+    )
+    return error_response
+
+
+def http_resource_created(msg="Resource created successfully"):
+    '''Returns a HTTP response with code
+    `RESOURCE_CREATED_CODE`
+    '''
+    return HttpResponse(
+        msg,
+        status=RESOURCE_CREATED_CODE,
+    )

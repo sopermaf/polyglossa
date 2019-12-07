@@ -2,7 +2,6 @@
 section of the polyglossa website.
 '''
 from datetime import datetime as dt
-from django.http import HttpResponse
 import class_bookings.util as cb_utils
 from class_bookings.models import LessonType, Student, Booking
 from class_bookings.validation import validate_booking_request
@@ -19,19 +18,14 @@ def post_booking(request):
         try:
             lesson_request[booking_key] = request.POST[booking_key]
         except KeyError:
-            error_response = HttpResponse()
-            error_response.status_code = cb_utils.BAD_REQUEST_CODE
-            error_response.content = f"Missing {booking_key} to reserve lesson"
-            return error_response
+            return cb_utils.http_bad_request(f"Missing {booking_key} to reserve lesson")
 
     # validation stage
     try:
         validate_booking_request(lesson_request)
     except ValueError:
-        #print(f"Lesson Not Created: {lesson_request}")
-        error_response = HttpResponse('Bad request')
-        error_response.status_code = cb_utils.BAD_REQUEST_CODE
-        return error_response
+        return cb_utils.http_bad_request()
+
 
     student = Student.get_existing_or_create(
         lesson_request[cb_utils.REQUEST_KEY_NAME],
@@ -50,8 +44,5 @@ def post_booking(request):
         ),
     )
     requested_booking.save()
-    #print(f"Lesson Created: {requested_booking}")
 
-    success_response = HttpResponse('Booking created')
-    success_response.status_code = cb_utils.RESOURCE_CREATED_CODE
-    return success_response
+    return cb_utils.http_resource_created()
