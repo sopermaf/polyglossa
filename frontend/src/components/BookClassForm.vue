@@ -7,7 +7,7 @@
 
     <!-- Name -->
     <v-text-field
-      v-model="name"
+      v-model="bookingName"
       :rules="nameRules"
       label="Name"
       required
@@ -15,7 +15,7 @@
 
     <!-- Email -->
     <v-text-field
-      v-model="email"
+      v-model="bookingEmail"
       :rules="emailRules"
       label="E-mail"
       required
@@ -23,8 +23,8 @@
 
     <!-- Time Slot -->
     <v-select
-      v-model="select_classTime"
-      :items="classTime_options"
+      v-model="bookingTime"
+      :items="bookingTimeOptions"
       :rules="[v => !!v || 'Class Time is required']"
       label="Class Time"
       required
@@ -50,7 +50,7 @@
         ></v-text-field>
       </template>
       <v-date-picker 
-        v-model="date"
+        v-model="bookingDate"
         no-title 
         scrollable
         :min="minDate"
@@ -58,7 +58,7 @@
         
         <v-spacer></v-spacer>
         <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-        <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+        <v-btn text color="primary" @click="$refs.menu.save(bookingDate)">OK</v-btn>
       </v-date-picker>
     </v-menu>
 
@@ -68,6 +68,7 @@
       color="success"
       class="mr-4"
       @click="validate"
+
     >
       Validate
     </v-btn>
@@ -85,44 +86,65 @@
 </template>
 
 <script>
-  export default {
-    data: () => ({
-      valid: true,
-      menu: false,
-      name: '',
-      nameRules: [
-        v => !!v || 'Name is required',
-      ],
-      email: '',
-      emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-      ],
-      select_classTime: null,
-      classTime_options: [
-        '13:00',
-        '14:00',
-        '15:00',
-      ],
-      date: null,
-      minDate: null,
-    }),
-    mounted() {
-      this.setMinDate();
+import axios from "axios";
+import qs from "qs";
+
+export default {
+  data: () => ({
+    valid: true,
+    menu: false,
+    bookingName: '',
+    nameRules: [
+      v => !!v || 'Name is required',
+    ],
+    bookingEmail: '',
+    emailRules: [
+      v => !!v || 'E-mail is required',
+      v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+    ],
+    bookingTime: '',
+    bookingTimeOptions: [
+      '13:00',
+      '14:00',
+      '15:00',
+    ],
+    bookingDate: '',
+    minDate: null,
+  }),
+  mounted() {
+    this.setMinDate();
+  },
+  methods: {
+    formatBookingDateTime() {
+      return this.bookingDate + ' ' + this.bookingTime;
     },
-    methods: {
-      validate () {
+    postData() {
+      axios.post('/book_class/create/', qs.stringify({
+        lesson_time: this.formatBookingDateTime(),
+        student_name: this.bookingName,
+        student_email: this.bookingEmail,
+        lesson_type: 'Individual',
+      }))
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    },
+    validate () {
         if (this.$refs.form.validate()) {
-          this.snackbar = true
+            this.snackbar = true;
+            this.postData();
         }
-      },
-      reset () {
-        this.$refs.form.reset()
-      },
-      setMinDate() {
-        var today = new Date(Date.now());
-        this.minDate = today.toISOString().slice(0,10);
-      }
     },
-  }
+    reset () {
+      this.$refs.form.reset()
+    },
+    setMinDate() {
+      var today = new Date(Date.now());
+      this.minDate = today.toISOString().slice(0,10);
+    }
+  },
+}
 </script>
