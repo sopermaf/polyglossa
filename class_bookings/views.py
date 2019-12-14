@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 
 import class_bookings.util as cb_utils
-from class_bookings.models import LessonType, Student, Booking
+import class_bookings.models as models
 from class_bookings.validation import validate_booking_request
 
 @csrf_exempt
@@ -36,15 +36,15 @@ def post_booking(request):
         return cb_utils.http_bad_request(str(validation_excp))
 
 
-    student = Student.get_existing_or_create(
+    student = models.Student.get_existing_or_create(
         lesson_request[cb_utils.REQUEST_KEY_NAME],
         lesson_request[cb_utils.REQUEST_KEY_EMAIL],
     )
-    lesson = LessonType.objects.get(    # pylint: disable=no-member
+    lesson = models.LessonType.objects.get(    # pylint: disable=no-member
         title=lesson_request[cb_utils.REQUEST_KEY_LESSON_CHOICE]
     )
 
-    requested_booking = Booking(
+    requested_booking = models.Booking(
         student=student,
         lessonType=lesson,
         lesson_datetime=dt.strptime(
@@ -65,11 +65,11 @@ def get_form(request):
     '''
     # Load times
     # Load max/min and avail dates
-    # Load lesson types 
+    bookable_lessons = models.LessonType.get_bookable_titles()
     context = {
         "booking_data": json.dumps({
             'avail_dates': [],
-            'lesson_types': [],
+            'lesson_types': bookable_lessons,
             'time_slots': [],
         })
     }
