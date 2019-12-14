@@ -4,20 +4,9 @@ from django.test import TestCase
 import class_bookings.util as cb_utils
 from class_bookings.models import Booking, LessonType, Student
 import class_bookings.validation as validation
+import class_bookings.tests.utils_test as test_utils
 
 class TestValidation(TestCase): # pylint: disable=missing-class-docstring
-    @staticmethod
-    def add_lesson_type_db(title, is_bookable):
-        '''Add a lesson to test DB
-        '''
-        lesson_type = LessonType(
-            title=title,
-            price=20,
-            isBookable=is_bookable,
-        )
-        lesson_type.save()
-
-
     def setUp(self):    # pylint: disable=missing-function-docstring
         # lesson datetime does not use seconds
         future_datetime = datetime.now() + timedelta(days=2)
@@ -29,8 +18,8 @@ class TestValidation(TestCase): # pylint: disable=missing-class-docstring
         self.lesson_not_bookable = "not bookable"
 
         # DB setup for exisiting LessonType and Student
-        TestValidation.add_lesson_type_db(self.lesson_bookable, is_bookable=True)
-        TestValidation.add_lesson_type_db(self.lesson_not_bookable, is_bookable=False)
+        test_utils.add_lesson_type_db(self.lesson_bookable, is_bookable=True)
+        test_utils.add_lesson_type_db(self.lesson_not_bookable, is_bookable=False)
 
         student = Student(name=self.name, email=self.email)
         student.save()
