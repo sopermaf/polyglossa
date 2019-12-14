@@ -1,3 +1,4 @@
 [MASTER]
 ignore=migrations
-#disable=no-member
+
+disable=E1101
