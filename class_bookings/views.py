@@ -1,8 +1,12 @@
 '''These are the request handlers for the class_bookings
 section of the polyglossa website.
 '''
+import json
+
 from datetime import datetime as dt
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+
 import class_bookings.util as cb_utils
 from class_bookings.models import LessonType, Student, Booking
 from class_bookings.validation import validate_booking_request
@@ -51,3 +55,22 @@ def post_booking(request):
     requested_booking.save()
 
     return cb_utils.http_resource_created()
+
+
+def get_form(request):
+    '''Loads the booking request
+    page and sends the relevant limiting
+    information on times, dates, and lessonTypes
+    allowable
+    '''
+    # Load times
+    # Load max/min and avail dates
+    # Load lesson types 
+    context = {
+        "booking_data": json.dumps({
+            'avail_dates': [],
+            'lesson_types': [],
+            'time_slots': [],
+        })
+    }
+    return render(request, "bookClass.html", context)

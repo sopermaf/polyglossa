@@ -8,11 +8,12 @@ import class_bookings.util as class_bookings_utils
 urlpatterns = [     # pylint: disable=invalid-name
     path(
         "",
-        TemplateView.as_view(template_name="bookClass.html"),
+        views.get_form,
         name="index",
     ),
     path(
-        'create/', views.post_booking,
+        'create/',
+        views.post_booking,
         name=class_bookings_utils.POST_LESSON_URL_NAME
     ),
 ]
