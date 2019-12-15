@@ -21,6 +21,15 @@
       required
     ></v-text-field>
 
+    <!-- Lesson Type -->
+    <v-select
+      v-model="lessonChoice"
+      :items="lessonOptions"
+      :rules="[v => !!v || 'Lesson Type is required']"
+      label="Lesson Type"
+      required
+    ></v-select>
+
     <!-- Time Slot -->
     <v-select
       v-model="bookingTime"
@@ -110,9 +119,17 @@ export default {
     ],
     bookingDate: '',
     minDate: null,
+    lessonOptions: null,
+    lessonChoice: '',
   }),
   mounted() {
     this.setMinDate();
+
+    this.page_load_data = document.body.getAttribute('data');
+    console.log(this.page_load_data);
+    this.lessonOptions = JSON.parse(this.page_load_data)['lesson_types'];
+    console.log(this.lessonOptions);
+
   },
   methods: {
     formatBookingDateTime() {
@@ -144,7 +161,7 @@ export default {
     setMinDate() {
       var today = new Date(Date.now());
       this.minDate = today.toISOString().slice(0,10);
-    }
+    },
   },
 }
 </script>
