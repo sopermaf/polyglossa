@@ -21,26 +21,18 @@ def post_booking(request):
     '''
     try:
         lesson_request = cb_utils.parse_post_booking(request)
-    except KeyError as excp:
-        print(f"Missing Request Info\n:{excp}")
-        return cb_utils.http_bad_request(str(excp))
-
-    # validation stage
-    try:
         validate_booking_request(lesson_request)
-    except ValueError as excp:
-        print(f"Validation failed on request\n{excp}")
+    except (KeyError, ValueError) as excp:
+        print(f"Booking Request Failed Info\n\n:{excp}")
         return cb_utils.http_bad_request(str(excp))
-
 
     student = models.Student.get_existing_or_create(
         lesson_request[cb_utils.REQUEST_KEY_NAME],
         lesson_request[cb_utils.REQUEST_KEY_EMAIL],
     )
-    lesson = models.LessonType.objects.get(    # pylint: disable=no-member
+    lesson = models.LessonType.objects.get(
         title=lesson_request[cb_utils.REQUEST_KEY_LESSON_CHOICE]
     )
-
     requested_booking = models.Booking(
         student=student,
         lessonType=lesson,
