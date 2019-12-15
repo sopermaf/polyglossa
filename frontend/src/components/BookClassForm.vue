@@ -128,7 +128,6 @@ export default {
     this.page_load_data = document.body.getAttribute('data');
     console.log(this.page_load_data);
     this.lessonOptions = JSON.parse(this.page_load_data)['lesson_types'];
-    console.log(this.lessonOptions);
 
   },
   methods: {
@@ -140,7 +139,7 @@ export default {
         lesson_time: this.formatBookingDateTime(),
         student_name: this.bookingName,
         student_email: this.bookingEmail,
-        lesson_type: 'Individual',
+        lesson_type: this.lessonChoice,
       }))
       .then(function (response) {
         console.log(response);
