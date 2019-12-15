@@ -12,4 +12,11 @@ def get_bookable_lesson_details():
     `LessonType`
     '''
     bookable_lessons = models.LessonType.objects.filter(isBookable=True)
-    return ["%s (USD$%.2f)" % (lesson.title, lesson.price) for lesson in bookable_lessons]
+    return [format_lesson_detail(lesson.title, lesson.price) for lesson in bookable_lessons]
+
+
+def format_lesson_detail(title, price):
+    '''Formats the title and price
+    into a common expected format
+    '''
+    return "%s (USD$%.2f)" % (title, price)

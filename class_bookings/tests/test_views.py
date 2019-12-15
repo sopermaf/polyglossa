@@ -2,18 +2,21 @@
 from datetime import datetime, timedelta
 from django.test import TestCase, Client
 from django.urls import reverse
+
 import class_bookings.util as cb_utils
+import class_bookings.data_transform as transform
 from class_bookings.models import LessonType, Student, Booking
 
 
 class TestViews(TestCase): # pylint: disable=missing-class-docstring
-    def setUp(self):    # pylint: disable=no-member
+    def setUp(self):    # pylint: disable=no-member, missing-function-docstring
         self.client = Client()
         self.lesson_post_url = reverse(cb_utils.POST_LESSON_URL_NAME)
 
         self.email = "ferdia@example.com"
         self.name = "bookable lessonType title"
         self.lesson_type_title = "available lesson"
+
 
         # lesson_datetime only uses HH:MM
         self.lesson_datetime_string = cb_utils.convert_datetime_to_str(
@@ -28,6 +31,7 @@ class TestViews(TestCase): # pylint: disable=missing-class-docstring
             price=20
         )
         lesson_type.save()
+        self.lesson_type_title = transform.format_lesson_detail(self.lesson_type_title, 20)
 
     @staticmethod
     def create_booking_parms(lesson_slot=None, name=None, email=None, lesson_type=None):

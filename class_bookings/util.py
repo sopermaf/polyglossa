@@ -60,6 +60,7 @@ def curr_datetime_str():
 
 # RESPONSES
 
+
 def http_bad_request(msg="Bad Request"):
     '''Creates a HTTP response
     code `BAD_REQUEST_CODE`
@@ -80,6 +81,7 @@ def http_resource_created(msg="Resource created successfully"):
         status=RESOURCE_CREATED_CODE,
     )
 
+
 # PARSING REQUESTS
 
 def parse_post_booking(request):
@@ -96,6 +98,7 @@ def parse_post_booking(request):
     )
 
     return lesson_request
+
 
 def parse_lesson_choice(lesson_choice):
     '''Extracts lesson title from `lesson_choice`

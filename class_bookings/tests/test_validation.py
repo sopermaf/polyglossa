@@ -4,7 +4,7 @@ from django.test import TestCase
 import class_bookings.util as cb_utils
 from class_bookings.models import Booking, LessonType, Student
 import class_bookings.validation as validation
-import class_bookings.tests.utils_test as test_utils
+import class_bookings.tests.utils_for_tests as test_utils
 
 class TestValidation(TestCase): # pylint: disable=missing-class-docstring
     def setUp(self):    # pylint: disable=missing-function-docstring
