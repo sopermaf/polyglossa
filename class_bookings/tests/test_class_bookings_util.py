@@ -3,7 +3,6 @@ class used by 'class_bookings'
 '''
 from django.test import TestCase
 
-import class_bookings.tests.utils_for_tests as test_utils
 import class_bookings.util as cb_utils
 import class_bookings.data_transform as transform
 
@@ -22,4 +21,4 @@ class TestDataTransform(TestCase): # pylint: disable=missing-class-docstring
 
         for data in test_input:
             ret = cb_utils.parse_lesson_choice(data['in'])
-            self.assertEquals(data['exp'], ret)
+            self.assertEqual(data['exp'], ret)
