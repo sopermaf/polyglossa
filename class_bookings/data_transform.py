@@ -4,6 +4,7 @@ separate from the models and views
 '''
 import class_bookings.models as models
 
+# Get data
 
 def get_bookable_lesson_details():
     '''Returns a list of strings with

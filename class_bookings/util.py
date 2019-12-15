@@ -79,3 +79,28 @@ def http_resource_created(msg="Resource created successfully"):
         msg,
         status=RESOURCE_CREATED_CODE,
     )
+
+# PARSING REQUESTS
+
+def parse_post_booking(request):
+    '''Parse the `Booking` request for the
+    expected keys
+    '''
+    lesson_request = {}
+    for booking_key in BOOKING_POST_KEYS:
+        lesson_request[booking_key] = request.POST[booking_key]
+
+    # parse the lesson name
+    lesson_request[REQUEST_KEY_LESSON_CHOICE] = parse_lesson_choice(
+        lesson_request[REQUEST_KEY_LESSON_CHOICE]
+    )
+
+    return lesson_request
+
+def parse_lesson_choice(lesson_choice):
+    '''Extracts lesson title from `lesson_choice`
+    string from frontend request
+    '''
+    lesson_title = lesson_choice.split('(')[0] # format title - ($price)
+    cleaned_title = lesson_title.strip()
+    return cleaned_title

@@ -19,22 +19,18 @@ def post_booking(request):
 
     Returns a HTTP code to indicate success or failure of request
     '''
-    lesson_request = {}
-    for booking_key in cb_utils.BOOKING_POST_KEYS:
-        try:
-            lesson_request[booking_key] = request.POST[booking_key]
-        except KeyError as excp:
-            print(excp)
-            return cb_utils.http_bad_request(str(excp))
+    try:
+        lesson_request = cb_utils.parse_post_booking(request)
+    except KeyError as excp:
+        print(f"Missing Request Info\n:{excp}")
+        return cb_utils.http_bad_request(str(excp))
 
-    print(f"Data received: {lesson_request}")
     # validation stage
     try:
         validate_booking_request(lesson_request)
-    except ValueError as validation_excp:
-        print("Validation failed on request")
-        print(validation_excp)
-        return cb_utils.http_bad_request(str(validation_excp))
+    except ValueError as excp:
+        print(f"Validation failed on request\n{excp}")
+        return cb_utils.http_bad_request(str(excp))
 
 
     student = models.Student.get_existing_or_create(
