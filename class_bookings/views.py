@@ -9,6 +9,7 @@ from django.shortcuts import render
 
 import class_bookings.util as cb_utils
 import class_bookings.models as models
+import class_bookings.data_transform as transform
 from class_bookings.validation import validate_booking_request
 
 @csrf_exempt
@@ -65,11 +66,13 @@ def get_form(request):
     '''
     # Load times
     # Load max/min and avail dates
-    bookable_lessons = models.LessonType.get_bookable_titles()
+
+    bookable_lessons_details = transform.get_bookable_lesson_details()
+
     context = {
         "booking_data": json.dumps({
             'avail_dates': [],
-            'lesson_types': bookable_lessons,
+            'lesson_types': bookable_lessons_details,
             'time_slots': [],
         })
     }

@@ -56,13 +56,6 @@ class LessonType(models.Model):
     def __str__(self):
         return f"{self.title} - ${self.price}\nIs Bookable:{self.isBookable}"
 
-    @staticmethod
-    def get_bookable_titles():
-        '''Get a list of all the bookable LessonType titles
-        '''
-        bookable_lessons = LessonType.objects.filter(isBookable=True)
-        return [lesson.title for lesson in bookable_lessons]
-
 
 class Booking(models.Model):
     '''This is meant to represent 1-to-1
@@ -86,7 +79,7 @@ class Booking(models.Model):
         (COMPLETED_DEFAULT_PAID,
          'Considered completed. Teacher paid for lesson by default'),
     ]
-    # model fields
+
     id = models.AutoField(primary_key=True)
     lesson_datetime = models.DateTimeField('The lesson date and time')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=AWAITING_PAYMENT)
