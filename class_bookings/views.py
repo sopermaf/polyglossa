@@ -23,7 +23,7 @@ def post_booking(request):
         lesson_request = cb_utils.parse_post_booking(request)
         validate_booking_request(lesson_request)
     except (KeyError, ValueError) as excp:
-        print(f"Booking Request Failed Info\n\n:{excp}")
+        print(f"Booking Request Failed\n\n:{excp}")
         return cb_utils.http_bad_request(str(excp))
 
     student = models.Student.get_existing_or_create(

@@ -79,7 +79,7 @@
       @click="validate"
 
     >
-      Validate
+      Submit
     </v-btn>
 
     <!-- Reset Form -->
@@ -152,6 +152,7 @@ export default {
         if (this.$refs.form.validate()) {
             this.snackbar = true;
             this.postData();
+            this.$refs.form.reset();
         }
     },
     reset () {
