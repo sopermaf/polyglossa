@@ -1,0 +1,36 @@
+@startuml
+title Slot and Type Usage
+actor User
+actor Admin
+
+
+frame "Types" {
+    [Sem Type]
+    [Ind Type]
+
+    Admin --> [Sem Type]: creates
+    Admin --> [Ind Type]: creates
+}
+
+frame "Booking" {
+    [Ind Booking]
+
+    User --> [Ind Booking] : creates
+}
+
+frame "Slots" {
+    [Sem Slot]
+    [Ind Slot]
+
+    [Ind Slot] ..> [Ind Type]: refernces
+    [Sem Slot] ..> [Sem Type]: references
+
+    [Ind Booking] ..> [Ind Slot] : references
+    [Sem Booking] ..> [Sem Slot] : references
+
+    Admin --> [Ind Slot] : creates
+    Admin--> [Sem Slot] : creates
+    User--> [Sem Slot] : joins
+}
+
+@enduml
