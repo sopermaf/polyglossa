@@ -13,7 +13,7 @@ urlpatterns = [     # pylint: disable=invalid-name
     ),
     path(
         'create/',
-        views.post_booking,
+        views.post_individual_booking,
         name=class_bookings_utils.POST_LESSON_URL_NAME
     ),
 ]

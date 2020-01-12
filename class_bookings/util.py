@@ -5,10 +5,6 @@ constants and common util functions in class_bookings
 import datetime
 from django.http import HttpResponse
 
-# LIMITS
-MAX_DATETIME_DELTA = datetime.timedelta(days=30)
-MIN_DATETIME_DELTA = datetime.timedelta(hours=12)
-
 # request params
 REQUEST_KEY_TIME = 'lesson_time'
 REQUEST_KEY_NAME = 'student_name'
@@ -34,14 +30,14 @@ POST_LESSON_URL_NAME = 'create-booking'
 
 # DATETIME FUNCTIONS
 
-def convert_datetime_to_str(datetime_obj):
+def dt_to_str(datetime_obj):
     '''Converts a `datetime.datetime` to a string
     matching the `FORMAT_LESSON_DATETIME`
     '''
     return datetime_obj.strftime(FORMAT_BOOKING_DATETIME)
 
 
-def convert_str_to_datetime(datetime_str):
+def str_to_dt(datetime_str):
     '''Converts a `str` to a datetim
     obj using the `FORMAT_LESSON_DATETIME`
     '''
@@ -55,7 +51,7 @@ def curr_datetime_str():
     '''Returns a datetime str standard
     format of `datetime.datetime.now()`
     '''
-    return convert_datetime_to_str(datetime.datetime.now())
+    return dt_to_str(datetime.datetime.now())
 
 
 # RESPONSES
@@ -83,7 +79,7 @@ def http_resource_created(msg="Resource created successfully"):
 
 
 # PARSING REQUESTS
-
+# TODO: split into a separate parse file
 def parse_post_booking(request):
     '''Parse the `Booking` request for the
     expected keys
@@ -104,6 +100,6 @@ def parse_lesson_choice(lesson_choice):
     '''Extracts lesson title from `lesson_choice`
     string from frontend request
     '''
-    lesson_title = lesson_choice.split('(')[0] # format title - ($price)
+    lesson_title = lesson_choice.split('(')[0]  # format title - ($price)
     cleaned_title = lesson_title.strip()
     return cleaned_title

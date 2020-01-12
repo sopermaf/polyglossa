@@ -10,10 +10,11 @@ from django.shortcuts import render
 import class_bookings.util as cb_utils
 import class_bookings.models as models
 import class_bookings.data_transform as transform
-from class_bookings.validation import validate_booking_request
 
+
+# TODO: update with new Activity model
 @csrf_exempt
-def post_booking(request):
+def post_individual_booking(request):
     '''Receive a lesson post request, perform validation, and store
     the request if valid.
 
@@ -21,7 +22,6 @@ def post_booking(request):
     '''
     try:
         lesson_request = cb_utils.parse_post_booking(request)
-        validate_booking_request(lesson_request)
     except (KeyError, ValueError) as excp:
         print(f"Booking Request Failed\n\n:{excp}")
         return cb_utils.http_bad_request(str(excp))
@@ -52,8 +52,7 @@ def get_form(request):
     information on times, dates, and lessonTypes
     allowable
     '''
-    # Load times
-    # Load max/min and avail dates
+    # TODO: load available slots based on form
 
     bookable_lessons_details = transform.get_bookable_lesson_details()
 
