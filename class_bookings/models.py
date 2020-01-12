@@ -2,9 +2,14 @@
 in the database to manage the class_bookings
 module
 '''
+from datetime import timedelta
+
 from django.db import models
+from .util import dt_to_str
 
 # Create your models here.
+
+
 class Student(models.Model):
     '''
     Represents a student taking lessons on the site.
@@ -22,7 +27,8 @@ class Student(models.Model):
         Returns `None` if Student doesn't exist
         '''
         try:
-            student = Student.objects.get(email=email)  # pylint: disable=no-member
+            student = Student.objects.get(
+                email=email)  # pylint: disable=no-member
         except Student.DoesNotExist:    # pylint: disable=no-member
             student = None
 
@@ -43,55 +49,86 @@ class Student(models.Model):
         return student
 
 
-class LessonType(models.Model):
-    '''A polyglossa lesson that
-    that is offered for booking.
+class Activity(models.Model):
     '''
-    id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=50, unique=True)
-    price = models.FloatField()                 # form for adding to make always positive?
-    isBookable = models.BooleanField(default=False)
-    description = models.CharField(max_length=1000, blank=True, default="")
-
-    def __str__(self):
-        return f"{self.title} - ${self.price}\nIs Bookable:{self.isBookable}"
-
-
-class Booking(models.Model):
-    '''This is meant to represent 1-to-1
-    bookings made by an individual student
-    for a private class on polyglossa.
+    Activity represents the types of bookable
+    activities for students to reserve, and
+    contains all information including pricing and
+    descriptions, but not time information.
     '''
-    AWAITING_PAYMENT = 'AWAITING PAYMENT'
-    HAS_PROBLEM = 'PROBLEM'
-    CANCELLED_NOT_PAID = 'NOT PAID'
-    CANCELLED_REFUNDED = 'REFUNDED'
-    CONFIRMED_UPCOMING = 'UPCOMING'
-    COMPLETED_NORMAL = 'COMPLETED'
-    COMPLETED_DEFAULT_PAID = 'COMP_TEACHER_PAID'
-    STATUS_CHOICES = [
-        (AWAITING_PAYMENT, 'Awaiting Payment for booking'),
-        (CONFIRMED_UPCOMING, 'Upcoming lesson with confirmed payment'),
-        (HAS_PROBLEM, 'Booking in problem state and requires attention'),
-        (CANCELLED_NOT_PAID, 'Lesson cancelled before payment'),
-        (CANCELLED_REFUNDED, 'Lesson cancelled and refunded'),
-        (COMPLETED_NORMAL, 'Lesson successfully completed'),
-        (COMPLETED_DEFAULT_PAID,
-         'Considered completed. Teacher paid for lesson by default'),
+    INDIVIDUAL = "IND"
+    SEMINAR = "SEM"
+    ACTIVITY_TYPES = [
+        (INDIVIDUAL, "one-on-one lesson"),
+        (SEMINAR, "group seminar"),
     ]
 
     id = models.AutoField(primary_key=True)
-    lesson_datetime = models.DateTimeField('The lesson date and time')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=AWAITING_PAYMENT)
-    student = models.ForeignKey(Student, on_delete=models.PROTECT)
-    lessonType = models.ForeignKey(LessonType, on_delete=models.PROTECT)
+    activity_type = models.CharField(
+        max_length=3,
+        choices=ACTIVITY_TYPES,
+        default=INDIVIDUAL,
+    )
+    title = models.CharField(max_length=50, unique=True)
+    description = models.CharField(max_length=1000, blank=True, default="")
+    price = models.FloatField()
+    is_bookable = models.BooleanField(default=False)
 
     def __str__(self):
-        return "Time:{}\nDetails: {} - ${}\nStudent: {} - {}\nStatus: {}".format(
-            self.lesson_datetime,   # pylint: disable=no-member
-            self.lessonType.title,  # pylint: disable=no-member
-            self.lessonType.price,  # pylint: disable=no-member
-            self.student.name,      # pylint: disable=no-member
-            self.student.email,     # pylint: disable=no-member
-            self.status,
-        )
+        booking_status = "Bookable" if self.is_bookable else "Not Bookable"
+        return f"({booking_status}) {self.title} - ${self.price:.2f}"
+
+
+class BaseSlot(models.Model):
+    '''
+    Defines a bookable slot for students to
+    join
+    '''
+    start_datetime = models.DateTimeField('The lesson date and time')
+    duration_in_mins = models.PositiveSmallIntegerField(default=60)
+
+    @property
+    def end_datetime(self):
+        ''' Returns the end datetime of a lesson '''
+        return self.start_datetime + timedelta(minutes=self.duration_in_mins)
+
+    def __str__(self):
+        return f"{dt_to_str(self.start_datetime)} ({self.duration_in_mins} mins)"
+
+
+class SeminarSlot(BaseSlot):
+    '''
+    A seminar datetime slot bookable by a student
+
+    Activity chosen upon slot creation by admin.
+    '''
+    seminar = models.ForeignKey(
+        Activity,
+        limit_choices_to={
+            "activity_type": Activity.SEMINAR,
+            "is_bookable": True,
+        },
+        on_delete=models.PROTECT,
+    )
+    students = models.ManyToManyField(Student, blank=True)
+
+
+class IndividualSlot(BaseSlot):
+    '''
+    An individual slot bookable by a student
+
+    Activity chosen upon booking by student
+    '''
+    lesson = models.ForeignKey(
+        Activity,
+        limit_choices_to={
+            "activity_type": Activity.INDIVIDUAL,
+            "is_bookable": True,
+        },
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
+    student = models.ForeignKey(
+        Student, on_delete=models.PROTECT, null=True, blank=True
+    )
