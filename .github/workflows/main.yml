@@ -27,5 +27,5 @@ jobs:
         pipenv run python manage.py test
     - name: Linting
       run: |
-        pipenv run pylint class_bookings
-        pipenv run pylint polyglossa
+        pipenv run pylint -d fixme class_bookings
+        pipenv run pylint -d fixme polyglossa
