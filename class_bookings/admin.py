@@ -1,7 +1,10 @@
-'''These are the tables which
-can be modified by admins on polyglossa
-contained in the class_booking app
 '''
+Admin interface for the class booking
+app. Includes display changes for
+models to sort them and give a better overview
+'''
+# pylint: disable=missing-class-docstring
+
 from django.contrib import admin
 from . import models
 
@@ -22,10 +25,12 @@ class ActivityAdmin(admin.ModelAdmin):
 
 class SeminarSlotAdmin(admin.ModelAdmin):
     list_display = ('start_datetime', 'duration_in_mins', 'seminar')
+    ordering = ['start_datetime']
 
 
 class IndividualSlotAdmin(admin.ModelAdmin):
     list_display = ('start_datetime', 'duration_in_mins', 'lesson', 'student')
+    ordering = ['start_datetime']
 
 
 admin.site.register(models.Activity, ActivityAdmin)
