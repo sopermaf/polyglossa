@@ -1,36 +1,46 @@
 @startuml
 title Slot and Type Usage
-actor User
+actor Student
 actor Admin
 
 
-frame "Types" {
-    [Sem Type]
-    [Ind Type]
+frame "Student Interface" {
+    [Sem Form]
+    [Ind Form]
 
-    Admin --> [Sem Type]: creates
-    Admin --> [Ind Type]: creates
+    Student --> [Ind Form]: posts
+    Student --> [Sem Form]: posts
+    
 }
 
-frame "Booking" {
-    [Ind Booking]
+frame "Admin Interface" {
+    [Admin Forms]
 
-    User --> [Ind Booking] : creates
+    Admin --> [Admin Forms]: posts
 }
+
 
 frame "Slots" {
     [Sem Slot]
     [Ind Slot]
 
-    [Ind Slot] ..> [Ind Type]: refernces
-    [Sem Slot] ..> [Sem Type]: references
-
-    [Ind Booking] ..> [Ind Slot] : references
-    [Sem Booking] ..> [Sem Slot] : references
-
-    Admin --> [Ind Slot] : creates
-    Admin--> [Sem Slot] : creates
-    User--> [Sem Slot] : joins
+    [Ind Form] --> [Ind Slot]: fill student and type
+    [Sem Form] --> [Sem Slot]: append student
+    [Admin Forms] --> [Ind Slot]: creates slot without type
+    [Admin Forms] --> [Sem Slot]: creates slot with type
 }
+
+frame "Activity" {
+    [Sem Activity]
+    [Ind Activity]
+
+    [Admin Forms] --> [Sem Activity] : creates
+    [Admin Forms] --> [Ind Activity] : creates
+
+    [Ind Slot] ..> [Ind Activity]:  selects
+    [Sem Slot] --> [Sem Activity]:  contains
+}
+
+
 
 @enduml
