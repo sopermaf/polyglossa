@@ -3,7 +3,6 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 import class_bookings.util as cb_utils
-from class_bookings import models
 
 
 class TestViews(TestCase):
