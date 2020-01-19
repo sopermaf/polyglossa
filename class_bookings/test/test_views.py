@@ -4,6 +4,14 @@ from django.urls import reverse
 
 import class_bookings.util as cb_utils
 
+# TODO seminar booking test cases
+# case 1: normal booking
+# case 2: slot clashing
+# case 3: missing data
+# case 4: same student error
+# case 5: trying to book not available seminar
+# case 6: trying to book past seminar
+# case 7: trying to book non-existent seminar
 
 class TestViews(TestCase):
     def setUp(self):
@@ -36,33 +44,3 @@ class TestViews(TestCase):
             booking_params
         )
         return response
-
-    # TODO: fix with new Activity model
-    def post_preset_booking(self):
-        '''Post a booking to the server
-        using the default settings from `setup`
-        '''
-        booking_params = self.create_booking_parms(
-            self.lesson_datetime_string,
-            self.name,
-            self.email,
-            self.lesson_type_title,
-        )
-        response = self.post_booking(booking_params)
-        return response
-
-    # TODO: implement with new models
-    def test_post_lesson_success(self):
-        pass
-
-    # TODO: implement with new models
-    def test_post_lesson_error_missing_data(self):
-        pass
-
-    # TODO: implement with new models
-    def test_post_lesson_error_validation(self):
-        pass
-
-    # TODO: implement with new models
-    def test_post_booking_with_same_student(self):
-        pass
