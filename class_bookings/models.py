@@ -2,12 +2,14 @@
 in the database to manage the class_bookings
 module
 '''
-from datetime import timedelta
+from datetime import timedelta, datetime
 
+from django.core.exceptions import ValidationError
 from django.db import models
+
 from .util import dt_to_str
 
-# Create your models here.
+# NOTE: calling the save() method directly avoids clean() validation
 
 
 class Student(models.Model):
@@ -84,7 +86,7 @@ class BaseSlot(models.Model):
     Defines a bookable slot for students to
     join
     '''
-    start_datetime = models.DateTimeField('The lesson date and time')
+    start_datetime = models.DateTimeField('The lesson date and time', )
     duration_in_mins = models.PositiveSmallIntegerField(default=60)
 
     @property
@@ -94,6 +96,20 @@ class BaseSlot(models.Model):
 
     def __str__(self):
         return f"{dt_to_str(self.start_datetime)} ({self.duration_in_mins} mins)"
+
+    def clean(self, *args, **kwargs): # pylint: disable=arguments-differ
+        super().clean(*args, **kwargs)
+
+        if self.start_datetime < datetime.now():
+            raise ValidationError('Slot start must be in the future')
+
+        upcoming_slots = BaseSlot.objects.filter(start_datetime__gt=datetime.now())
+        for slot in upcoming_slots:
+            if (max(slot.start_datetime, self.start_datetime)
+                    < min(slot.end_datetime, self.end_datetime)):
+                raise ValidationError(
+                    f'Overlap with existing slot: {slot.start_datetime} - {slot.end_datetime}'
+                )
 
 
 class SeminarSlot(BaseSlot):
@@ -109,6 +125,8 @@ class SeminarSlot(BaseSlot):
             "is_bookable": True,
         },
         on_delete=models.PROTECT,
+        null=False,
+        blank=False,
     )
     students = models.ManyToManyField(Student, blank=True)
 
