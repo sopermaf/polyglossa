@@ -78,7 +78,7 @@ class Activity(models.Model):
 
     def __str__(self):
         booking_status = "Bookable" if self.is_bookable else "Not Bookable"
-        return f"({booking_status}) {self.activity_type} - {self.title} - ${self.price:.2f}"
+        return f"{self.title} (${self.price:.2f})"
 
 
 class BaseSlot(models.Model):

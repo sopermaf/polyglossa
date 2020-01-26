@@ -1,43 +1,72 @@
 # pylint: disable=missing-module-docstring, missing-class-docstring, missing-function-docstring
+from datetime import datetime, timedelta
+from random import random
+
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from class_bookings import const 
+from class_bookings.const import * 
+from class_bookings.models import * 
 
 # TODO seminar booking test cases
 # case 1: normal booking
 # case 3: missing data
 # case 4: same student
-# case 5: seminar not available
-# case 5: seminar not real
+# case 5: slot in past
+# case 5: slot not real
 
 class TestViews(TestCase):
-    POST_URL = reverse(const.SEMINAR_POST_NAME)
+    POST_SEMINAR = reverse(SEMINAR_POST_NAME)
 
     def setUp(self):
         self.client = Client()
+        self.seminars = {
+            'avail': self.create_seminar(bookable=True),
+            'unavail': self.create_seminar(bookable=False),
+        }
+        self.sem_slot = SeminarSlot(
+            start_datetime=datetime.now() + timedelta(days=1),
+            seminar=self.seminars['avail'],
+        )
+        self.sem_slot.safe_save()
+        
+    def create_seminar(self, *, bookable):
+        activity = Activity(
+            activity_type=Activity.SEMINAR,
+            title='%s' % random(),
+            description='%s' % random(),
+            price=20,
+            is_bookable=bookable,
+        )
+        activity.save()
+        return activity
 
-    def post_seminar(self, data):
-        '''Posts a booking to server with params
-        `booking_params` and returns the response
-        '''
+
+    def post_seminar(self, **kwargs):
+        print(kwargs)
         response = self.client.post(
-            self.POST_URL,
-            data=data
+            self.POST_SEMINAR,
+            data=kwargs
         )
         return response
 
-    @staticmethod
-    def create_booking_parms(lesson_slot=None, name=None, email=None, lesson_type=None):
-        '''Generate the params for a POST booking request
-        '''
-        booking_params = {}
-        if lesson_slot:
-            booking_params[cb_utils.REQUEST_KEY_TIME] = lesson_slot
-        if name:
-            booking_params[cb_utils.REQUEST_KEY_NAME] = name
-        if email:
-            booking_params[cb_utils.REQUEST_KEY_EMAIL] = email
-        if lesson_type:
-            booking_params[cb_utils.REQUEST_KEY_LESSON_CHOICE] = lesson_type
-        return booking_params
+
+    def test_seminar_success(self):
+        response = self.post_seminar(
+            **{
+                KEY_CHOICE: self.sem_slot.id,
+                KEY_EMAIL: 'joe@test.com',
+                KEY_STUDENT_NAME: 'joe',
+            }
+        )
+
+        self.assertEqual(response.status_code, RESOURCE_CREATED_CODE, "Successful Code")
+
+        students = Student.objects.all()
+        self.assertEqual(len(students), 1, "Single Student Created")
+        self.assertEqual(students[0].name, "joe", "Student name correct")
+        self.assertEqual(students[0].email, "joe@test.com", "Student email correct")
+
+        sem_slot_students = self.sem_slot.students.values()
+        self.assertEqual(len(sem_slot_students), 1, "Student added")
+

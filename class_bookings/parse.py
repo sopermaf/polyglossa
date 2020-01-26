@@ -28,4 +28,4 @@ def parse_seminar_request(request):
     '''Parse the `Booking` request for the
     expected keys
     '''
-    return {sem_key: request[sem_key] for sem_key in const.BOOKING_POST_KEYS}
+    return {sem_key: request.POST[sem_key] for sem_key in const.BOOKING_PARAMS}
