@@ -110,6 +110,11 @@ class BaseSlot(models.Model):
                 raise ValidationError(
                     f'Overlap with existing slot: {slot.start_datetime} - {slot.end_datetime}'
                 )
+    
+    def safe_save(self):
+        '''Ensures that the clean function is called before save'''
+        self.clean()
+        self.save()
 
 
 class SeminarSlot(BaseSlot):

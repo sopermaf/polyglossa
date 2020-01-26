@@ -18,8 +18,7 @@ class TestSlots(TestCase):
 
     def test_start_at_end_of_slot(self):
         new_slot = BaseSlot(start_datetime=self.slot.end_datetime)
-        new_slot.clean()
-        new_slot.save()
+        new_slot.safe_save()
 
     def test_new_slot_inside_existing(self):
         start_dt = self.slot.start_datetime + timedelta(minutes=1)
@@ -34,7 +33,7 @@ class TestSlots(TestCase):
         )
 
         with self.assertRaises(ValidationError):
-            new_slot.clean()
+            new_slot.safe_save()
 
     def test_new_slot_contains_existing(self):
         start_dt = self.slot.start_datetime - timedelta(minutes=10)
@@ -49,7 +48,7 @@ class TestSlots(TestCase):
         )
 
         with self.assertRaises(ValidationError):
-            new_slot.clean()
+            new_slot.safe_save()
 
     def test_new_slot_start_overlaps(self):
         start_dt = self.slot.start_datetime + timedelta(minutes=10)
@@ -66,7 +65,7 @@ class TestSlots(TestCase):
         )
 
         with self.assertRaises(ValidationError):
-            new_slot.clean()
+            new_slot.safe_save()
 
     def test_new_slot_end_overlaps(self):
         start_dt = self.slot.start_datetime - timedelta(minutes=10)
@@ -96,8 +95,7 @@ class TestSlots(TestCase):
         common_dt = datetime.now() + timedelta(days=10)
 
         sem = IndividualSlot(start_datetime=common_dt)
-        sem.clean()
-        sem.save()
+        sem.safe_save()
 
         ind = IndividualSlot(start_datetime=common_dt)
 
