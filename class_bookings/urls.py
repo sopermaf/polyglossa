@@ -1,19 +1,14 @@
-# pylint: disable=missing-module-docstring
+# pylint: disable=missing-module-docstring, invalid-name
 from django.urls import path
 
-from class_bookings import views
-import class_bookings.util as class_bookings_utils
+from . import views
+from . import const
 
 # Create your views here.
-urlpatterns = [     # pylint: disable=invalid-name
+urlpatterns = [
     path(
-        "",
-        views.get_form,
-        name="index",
-    ),
-    path(
-        'create/',
-        views.post_individual_booking,
-        name=class_bookings_utils.POST_LESSON_URL_NAME
+        'signup/seminar',
+        views.seminar_booking,
+        name=const.SEMINAR_POST_NAME
     ),
 ]

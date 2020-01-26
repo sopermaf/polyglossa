@@ -2,23 +2,30 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 
-import class_bookings.util as cb_utils
+from class_bookings import const 
 
 # TODO seminar booking test cases
 # case 1: normal booking
-# case 2: slot clashing
 # case 3: missing data
-# case 4: same student error
-# case 5: trying to book not available seminar
-# case 6: trying to book past seminar
-# case 7: trying to book non-existent seminar
+# case 4: same student
+# case 5: seminar not available
+# case 5: seminar not real
 
 class TestViews(TestCase):
+    POST_URL = reverse(const.SEMINAR_POST_NAME)
+
     def setUp(self):
         self.client = Client()
-        self.lesson_post_url = reverse(cb_utils.POST_LESSON_URL_NAME)
 
-        # add activities to db for retrieval
+    def post_seminar(self, data):
+        '''Posts a booking to server with params
+        `booking_params` and returns the response
+        '''
+        response = self.client.post(
+            self.POST_URL,
+            data=data
+        )
+        return response
 
     @staticmethod
     def create_booking_parms(lesson_slot=None, name=None, email=None, lesson_type=None):
@@ -34,13 +41,3 @@ class TestViews(TestCase):
         if lesson_type:
             booking_params[cb_utils.REQUEST_KEY_LESSON_CHOICE] = lesson_type
         return booking_params
-
-    def post_booking(self, booking_params):
-        '''Posts a booking to server with params
-        `booking_params` and returns the response
-        '''
-        response = self.client.post(
-            self.lesson_post_url,
-            booking_params
-        )
-        return response

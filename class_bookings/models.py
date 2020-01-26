@@ -7,7 +7,7 @@ from datetime import timedelta, datetime
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from .util import dt_to_str
+from .parse import parse_dt_as_str
 
 # NOTE: calling the save() method directly avoids clean() validation
 
@@ -95,7 +95,7 @@ class BaseSlot(models.Model):
         return self.start_datetime + timedelta(minutes=self.duration_in_mins)
 
     def __str__(self):
-        return f"{dt_to_str(self.start_datetime)} ({self.duration_in_mins} mins)"
+        return f"{parse_dt_as_str(self.start_datetime)} ({self.duration_in_mins} mins)"
 
     def clean(self, *args, **kwargs): # pylint: disable=arguments-differ
         super().clean(*args, **kwargs)
@@ -110,7 +110,7 @@ class BaseSlot(models.Model):
                 raise ValidationError(
                     f'Overlap with existing slot: {slot.start_datetime} - {slot.end_datetime}'
                 )
-    
+
     def safe_save(self):
         '''Ensures that the clean function is called before save'''
         self.clean()
