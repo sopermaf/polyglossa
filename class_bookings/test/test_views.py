@@ -1,12 +1,12 @@
-# pylint: disable=missing-module-docstring, missing-class-docstring, missing-function-docstring
+# pylint: disable=missing-module-docstring, missing-class-docstring, missing-function-docstring, no-self-use, unused-wildcard-import, wildcard-import
 from datetime import datetime, timedelta
 from random import random
 
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from class_bookings.const import * 
-from class_bookings.models import * 
+from class_bookings.const import *
+from class_bookings.models import *
 
 # TODO seminar booking test cases
 # case 1: normal booking
@@ -29,7 +29,8 @@ class TestViews(TestCase):
             seminar=self.seminars['avail'],
         )
         self.sem_slot.safe_save()
-        
+
+
     def create_seminar(self, *, bookable):
         activity = Activity(
             activity_type=Activity.SEMINAR,
@@ -69,4 +70,3 @@ class TestViews(TestCase):
 
         sem_slot_students = self.sem_slot.students.values()
         self.assertEqual(len(sem_slot_students), 1, "Student added")
-

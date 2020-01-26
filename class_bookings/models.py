@@ -2,6 +2,8 @@
 in the database to manage the class_bookings
 module
 '''
+# pylint: disable=unused-variable
+
 from datetime import timedelta, datetime
 
 from django.core.exceptions import ValidationError
