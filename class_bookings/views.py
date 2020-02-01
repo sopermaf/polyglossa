@@ -22,7 +22,7 @@ def seminar_booking(request):
             msg="Missing booking param"
         )
 
-    # NOTE: review future seminar period
+    # TODO: review future seminar period
     slots = SeminarSlot.objects.filter(
         start_datetime__gt=datetime.now(), id=sem_req[const.KEY_CHOICE]
     )
