@@ -1,57 +1,27 @@
 # pylint: disable=missing-module-docstring, missing-class-docstring, missing-function-docstring, no-self-use, unused-wildcard-import, wildcard-import
-from datetime import datetime, timedelta
-from random import random
 
 from django.test import TestCase, Client
 from django.urls import reverse
 
 from class_bookings.const import *
 from class_bookings.models import *
+from . import util as t_util
 
-# TODO seminar booking test cases
-# case 1: normal booking
-# case 2: missing data
-# case 3: same student
-# case 4: slot in past
-# case 5: slot not real
 
 class TestViews(TestCase):
     POST_SEMINAR = reverse(SEMINAR_POST_NAME)
 
     def setUp(self):
         self.client = Client()
-
-        self.seminar = self.create_seminar(bookable=True)
-        self.sem_slots = {
-            'future': SeminarSlot(
-                start_datetime=datetime.now() + timedelta(days=1),
-                seminar=self.seminar,
-            ),
-            'past': SeminarSlot(
-                seminar=self.seminar,
-                start_datetime=datetime.now() - timedelta(days=1),
-            )
-        }
-        for sem in self.sem_slots.values():
-            sem.save()
+        self.seminar = t_util.create_seminar(bookable=True)
+        self.slots = t_util.create_seminar_slots(self.seminar)
 
     # helper functions
 
-    def create_seminar(self, *, bookable):
-        activity = Activity(
-            activity_type=Activity.SEMINAR,
-            title='%s' % random(),
-            description='%s' % random(),
-            price=20,
-            is_bookable=bookable,
-        )
-        activity.save()
-        return activity
-
     def create_sem_params(self, *, slot, name, email):
         return {
-            KEY_CHOICE: self.sem_slots[slot].id,
-            KEY_STUDENT_NAME: name,
+            KEY_CHOICE: self.slots[slot].id,
+            KEY_NAME: name,
             KEY_EMAIL: email,
         }
 
@@ -95,7 +65,7 @@ class TestViews(TestCase):
 
         # validate added to seminar
         self.verify_students(
-            slot=self.sem_slots['future'],
+            slot=self.slots['future'],
             student_data=test_students
         )
 
@@ -110,7 +80,7 @@ class TestViews(TestCase):
             response = self.post_seminar(**send_data)
             self.assertEqual(response.status_code, BAD_REQUEST_CODE, 'Failed on missing data')
 
-    def test_seminar_error_same_student(self):
+    def test_seminar_error_validation(self):
         data = self.create_sem_params(
             slot='future', name='joe', email='joe@test.com'
         )
@@ -121,24 +91,5 @@ class TestViews(TestCase):
         self.assertEqual(responses[1].status_code, BAD_REQUEST_CODE, 'Failure')
 
         # assert students added
-        sem_students = self.sem_slots['future'].students.values()
+        sem_students = self.slots['future'].students.values()
         self.assertEqual(len(sem_students), 1, 'Only one student added')
-
-    def test_seminar_error_seminar_id(self):
-        data = {
-            KEY_CHOICE: 100,
-            KEY_STUDENT_NAME: 'joe',
-            KEY_EMAIL: 'joe@test.ie',
-        }
-        response = self.post_seminar(**data)
-
-        self.assertEqual(len(SeminarSlot.objects.filter(id=data[KEY_CHOICE])), 0, 'Slot not real')
-        self.assertEqual(response.status_code, BAD_REQUEST_CODE, 'Request failed')
-        self.assert_num_db_students(exp_num_students=0)
-
-    def test_seminar_error_past_seminar(self):
-        data = self.create_sem_params(slot='past', name='joe', email='joe@test.ie')
-        response = self.post_seminar(**data)
-
-        self.assertEqual(response.status_code, BAD_REQUEST_CODE, "Request Failed")
-        self.assert_num_db_students(exp_num_students=0)

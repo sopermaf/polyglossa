@@ -2,11 +2,11 @@
 Keys and values that remain constant in class_bookings
 '''
 # request params
-KEY_STUDENT_NAME = 'student_name'
+KEY_NAME = 'student_name'
 KEY_EMAIL = 'student_email'
 KEY_CHOICE = 'booking_id'
 BOOKING_PARAMS = {
-    KEY_STUDENT_NAME,
+    KEY_NAME,
     KEY_EMAIL,
     KEY_CHOICE,
 }

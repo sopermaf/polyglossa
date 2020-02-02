@@ -1,12 +1,11 @@
 '''These are the request handlers for the class_bookings
 section of the polyglossa website.
 '''
-from datetime import datetime
-
 from django.views.decorators.csrf import csrf_exempt
 
-from . import parse, const, util
-from .models import Student, SeminarSlot
+from . import validate, parse, const, util
+from .models import Student
+
 
 @csrf_exempt
 def seminar_booking(request):
@@ -14,7 +13,7 @@ def seminar_booking(request):
     Process a request from the the form
     and add a student to the selected student
     '''
-    # Get Relevant Info from Request
+    # Parsing
     try:
         sem_req = parse.parse_seminar_request(request)
     except KeyError:
@@ -22,16 +21,17 @@ def seminar_booking(request):
             msg="Missing booking param"
         )
 
-    # TODO: review future seminar period
-    slots = SeminarSlot.objects.filter(
-        start_datetime__gt=datetime.now(), id=sem_req[const.KEY_CHOICE]
-    )
-    if not slots:
-        return util.http_bad_request('No Seminar Available with that ID')
+    # Validation
+    try:
+        sem_slot = validate.validate_seminar_request(sem_req)
+    except ValueError:
+        return util.http_bad_request(
+            msg='Bad Request'
+        )
 
-    sem_slot = slots[0]
+    # Add student to seminar
     student = Student.get_existing_or_create(
-        name=sem_req[const.KEY_STUDENT_NAME],
+        name=sem_req[const.KEY_NAME],
         email=sem_req[const.KEY_EMAIL],
     )
     sem_slot.students.add(student)
