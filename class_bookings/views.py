@@ -1,10 +1,14 @@
 '''These are the request handlers for the class_bookings
 section of the polyglossa website.
 '''
+import json
+from datetime import datetime
+
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
 
 from . import validate, parse, const, util
-from .models import Student
+from . import models
 
 
 @csrf_exempt
@@ -30,7 +34,7 @@ def post_seminar_student(request):
         )
 
     # Add student to seminar
-    student = Student.get_existing_or_create(
+    student = models.Student.get_existing_or_create(
         name=sem_req[const.KEY_NAME],
         email=sem_req[const.KEY_EMAIL],
     )
@@ -38,3 +42,28 @@ def post_seminar_student(request):
     sem_slot.save()
 
     return util.http_resource_created()
+
+
+def get_seminar_form(request):
+    '''Get the form and available slots'''
+    slots = []
+    for slot in models.SeminarSlot.objects.filter(start_datetime__gt=datetime.now()):
+        activity = models.Activity.objects.get(id=slot.seminar_id)
+        slot_info = {
+            'price': activity.price,
+            'title': activity.title,
+            'id': slot.id,
+            'start_datetime': parse.parse_dt_as_str(slot.start_datetime),
+            'duration': slot.duration_in_mins,
+        }
+        slots.append(slot_info)
+
+    print(slots)
+
+    context = {
+        "slot_info": json.dumps({
+            "seminar_slots": slots
+        })
+    }
+
+    return render(request, "bookClass.html", context)

@@ -127,7 +127,11 @@ export default {
 
     this.page_load_data = document.body.getAttribute('data');
     console.log(this.page_load_data);
-    this.lessonOptions = JSON.parse(this.page_load_data)['lesson_types'];
+    this.seminar_slots = JSON.parse(this.page_load_data)['seminar_slots'];
+
+    for(let i in this.seminar_slots){
+      console.log(this.seminar_slots[i]);
+    }
 
   },
   methods: {
