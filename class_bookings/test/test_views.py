@@ -62,41 +62,47 @@ class TestViews(TestCase):
         )
         return response
 
-    def verify_students(self, slot, *, exp_num_students, names, emails):
+    def verify_students(self, slot, *, student_data):
         students = slot.students.values()
-        self.assertEqual(len(students), exp_num_students, "Expected number of students")
+        self.assertEqual(len(students), len(student_data), "Expected number of students")
 
-        for student, name, email in zip(students, names, emails):
-            self.assertEqual(student['name'], name, "Student name correct")
-            self.assertEqual(student['email'], email, "Student email correct")
+        for student, test in zip(students, student_data):
+            self.assertEqual(student['name'], test[0], "Student name correct")
+            self.assertEqual(student['email'], test[1], "Student email correct")
+
+    def assert_num_db_students(self, *, exp_num_students):
+        students = Student.objects.all()
+        self.assertEqual(
+            len(students), exp_num_students, f"Expected {exp_num_students} students"
+        )
 
     # Tests
 
     def test_seminar_success(self):
-        data = self.create_sem_params(slot='future', name='joe', email='joe@test.com')
-        response = self.post_seminar(**data)
+        test_students = [('joe', 'joe@test.com'), ('fred', 'fred@test.com')]
+        data = [
+            self.create_sem_params(slot='future', name=s[0], email=s[1])
+            for s in test_students
+        ]
+        responses = [self.post_seminar(**d) for d in data]
 
-        # lesson code is as expected
-        self.assertEqual(response.status_code, RESOURCE_CREATED_CODE, "Successful Code")
+        # assert status code
+        for resp in responses:
+            self.assertEqual(resp.status_code, RESOURCE_CREATED_CODE, "Successful Code")
 
         # validate in student database
-        students = Student.objects.all()
-        self.assertEqual(len(students), 1, "One student Added")
+        self.assert_num_db_students(exp_num_students=len(test_students))
 
         # validate added to seminar
         self.verify_students(
             slot=self.sem_slots['future'],
-            exp_num_students=1,
-            names=['joe'],
-            emails=['joe@test.com']
+            student_data=test_students
         )
 
     def test_seminar_missing_data(self):
-        required_params = {
-            KEY_CHOICE: self.sem_slots['future'].id,
-            KEY_STUDENT_NAME: 'joe',
-            KEY_EMAIL: 'joe@email.com',
-        }
+        required_params = self.create_sem_params(
+            slot='future', name='joe', email='joe@test.com'
+        )
 
         for param in required_params:
             send_data = required_params.copy()
@@ -104,11 +110,35 @@ class TestViews(TestCase):
             response = self.post_seminar(**send_data)
             self.assertEqual(response.status_code, BAD_REQUEST_CODE, 'Failed on missing data')
 
-    def test_seminar_same_student(self):
-        pass
+    def test_seminar_error_same_student(self):
+        data = self.create_sem_params(
+            slot='future', name='joe', email='joe@test.com'
+        )
+        responses = [self.post_seminar(**data) for i in range(2)]
+
+        # assert status
+        self.assertEqual(responses[0].status_code, RESOURCE_CREATED_CODE, 'Success')
+        self.assertEqual(responses[1].status_code, BAD_REQUEST_CODE, 'Failure')
+
+        # assert students added
+        sem_students = self.sem_slots['future'].students.values()
+        self.assertEqual(len(sem_students), 1, 'Only one student added')
 
     def test_seminar_error_seminar_id(self):
-        pass
+        data = {
+            KEY_CHOICE: 100,
+            KEY_STUDENT_NAME: 'joe',
+            KEY_EMAIL: 'joe@test.ie',
+        }
+        response = self.post_seminar(**data)
+
+        self.assertEqual(len(SeminarSlot.objects.filter(id=data[KEY_CHOICE])), 0, 'Slot not real')
+        self.assertEqual(response.status_code, BAD_REQUEST_CODE, 'Request failed')
+        self.assert_num_db_students(exp_num_students=0)
 
     def test_seminar_error_past_seminar(self):
-        pass
+        data = self.create_sem_params(slot='past', name='joe', email='joe@test.ie')
+        response = self.post_seminar(**data)
+
+        self.assertEqual(response.status_code, BAD_REQUEST_CODE, "Request Failed")
+        self.assert_num_db_students(exp_num_students=0)
