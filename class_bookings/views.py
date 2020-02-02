@@ -8,7 +8,7 @@ from .models import Student
 
 
 @csrf_exempt
-def seminar_booking(request):
+def post_seminar_student(request):
     '''
     Process a request from the the form
     and add a student to the selected student
