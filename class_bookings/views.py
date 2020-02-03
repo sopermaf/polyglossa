@@ -53,7 +53,8 @@ def get_seminar_form(request):
             'price': activity.price,
             'title': activity.title,
             'id': slot.id,
-            'start_datetime': parse.parse_dt_as_str(slot.start_datetime),
+            'datetime_pretty': slot.start_datetime.strftime('%d-%b %a%l:%M%p'),
+            'datetime_iso': slot.start_datetime.strftime('%Y-%m-%dT%H:%M'),
             'duration': slot.duration_in_mins,
         }
         slots.append(slot_info)

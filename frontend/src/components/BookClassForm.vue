@@ -21,55 +21,15 @@
       required
     ></v-text-field>
 
-    <!-- Lesson Type -->
-    <v-select
-      v-model="lessonChoice"
-      :items="lessonOptions"
-      :rules="[v => !!v || 'Lesson Type is required']"
-      label="Lesson Type"
-      required
-    ></v-select>
-
-    <!-- Time Slot -->
-    <v-select
-      v-model="bookingTime"
-      :items="bookingTimeOptions"
-      :rules="[v => !!v || 'Class Time is required']"
-      label="Class Time"
-      required
-    ></v-select>
-
-    <!-- Date Selection -->
-    <v-menu
-      ref="menu"
-      v-model="menu"
-      :close-on-content-click="false"
-      :return-value.sync="date"
-      transition="scale-transition"
-      offset-y
-      min-width="290px"
-    >
-      <template v-slot:activator="{ on }">
-        <v-text-field
-          v-model="date"
-          label="Picker in menu"
-          prepend-icon="event"
-          readonly
-          v-on="on"
-        ></v-text-field>
+    <!-- Seminar Slot Selection -->
+    <v-select :items="seminar_slots" v-model="bookingChoice" label="Seminar Slot" required :rules="seminarRules">
+      <template slot="item" slot-scope="data">
+        [{{ data.item.datetime_pretty }}] [{{ data.item.title }}] [${{ data.item.price }}] [{{ data.item.duration }}]
       </template>
-      <v-date-picker 
-        v-model="bookingDate"
-        no-title 
-        scrollable
-        :min="minDate"
-        >
-        
-        <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-        <v-btn text color="primary" @click="$refs.menu.save(bookingDate)">OK</v-btn>
-      </v-date-picker>
-    </v-menu>
+      <template slot="selection" slot-scope="data">
+        ({{ data.item.title }} {{ data.item.datetime_pretty }})
+      </template>
+    </v-select>
 
     <!-- Validate Form -->
     <v-btn
@@ -101,35 +61,32 @@ import qs from "qs";
 export default {
   data: () => ({
     valid: true,
-    menu: false,
-    bookingName: '',
+    bookingName: null,
+    bookingEmail: null,
+    bookingChoice: null,
+    // validation rules
     nameRules: [
       v => !!v || 'Name is required',
     ],
-    bookingEmail: '',
     emailRules: [
       v => !!v || 'E-mail is required',
       v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
     ],
-    bookingTime: '',
-    bookingTimeOptions: [
-      '13:00',
-      '14:00',
-      '15:00',
+    seminarRules: [
+      v => !!v || 'Seminar choice required'
     ],
-    bookingDate: '',
-    minDate: null,
-    lessonOptions: null,
-    lessonChoice: '',
+    seminar_slots: []
   }),
   mounted() {
     this.setMinDate();
 
     this.page_load_data = document.body.getAttribute('data');
-    console.log(this.page_load_data);
+    //console.log(this.page_load_data);
     this.seminar_slots = JSON.parse(this.page_load_data)['seminar_slots'];
 
     for(let i in this.seminar_slots){
+      this.
+
       console.log(this.seminar_slots[i]);
     }
 
@@ -155,9 +112,11 @@ export default {
     validate () {
         if (this.$refs.form.validate()) {
             this.snackbar = true;
-            this.postData();
+            //this.postData();
             this.$refs.form.reset();
         }
+        this.snackbar = true;
+        console.log(this.bookingChoice)
     },
     reset () {
       this.$refs.form.reset()

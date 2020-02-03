@@ -1,7 +1,7 @@
 <template>
   <v-app-bar app class="banner">
 
-    <v-btn text href="" target="_blank">
+    <v-btn text href="/" target="">
       <span class="mr-2">Home</span>
     </v-btn>
 
@@ -9,8 +9,8 @@
       <span class="mr-2">Courses</span>
     </v-btn>
 
-    <v-btn text href="" target="_blank">
-      <span class="mr-2">About Us</span>
+    <v-btn text href="/book_class/form/seminar">
+      <span class="mr-2">Book a Class</span>
     </v-btn>
     
     <v-spacer></v-spacer>
