@@ -50,12 +50,11 @@ def get_seminar_form(request):
     Returns the seminar form page and a list
     of seminar activities passed as context
     '''
-    seminars = [
-        {'title': sem.title, 'id': sem.id, 'price': sem.price}
-        for sem in models.Activity.objects.filter(
-            is_bookable=True, activity_type=models.Activity.SEMINAR
-        )
-    ]
+    seminars = list(
+        models.Activity.objects.filter(
+            is_bookable=True, activity_type=models.Activity.SEMINAR,
+        ).values('title', 'id', 'price')
+    )
 
     context = {
         "slot_info": json.dumps({
