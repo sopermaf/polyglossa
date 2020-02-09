@@ -1,4 +1,5 @@
 # pylint: disable=missing-module-docstring, missing-class-docstring, missing-function-docstring, no-self-use, unused-wildcard-import, wildcard-import
+import json
 
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -13,8 +14,17 @@ class TestViews(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.seminar = t_util.create_seminar(bookable=True)
-        self.slots = t_util.create_seminar_slots(self.seminar)
+        self.activities = {
+            'SEM': {
+                'bookable': t_util.create_activity(activity_type="SEM", bookable=True),
+                'not_bookable': t_util.create_activity(activity_type="SEM", bookable=False),
+            },
+            'IND': {
+                'bookable': t_util.create_activity(activity_type="IND", bookable=True),
+            }
+        }
+
+        self.slots = t_util.create_seminar_slots(self.activities['SEM']['bookable'])
 
     # helper functions
 
@@ -93,3 +103,24 @@ class TestViews(TestCase):
         # assert students added
         sem_students = self.slots['future'].students.values()
         self.assertEqual(len(sem_students), 1, 'Only one student added')
+
+    def test_get_future_seminar_slots(self):
+        response = self.client.get(
+            reverse('sem-slots', kwargs={'seminar_id': self.activities['SEM']['bookable'].id})
+        )
+        self.assertEqual(200, response.status_code, "Successful Request")
+
+        slots = json.loads(response.content)['slots']
+        self.assertEqual(1, len(slots), "Single slot returned")
+        self.assertEqual(self.slots['future'].id, slots[0]['id'], "Future slot returned")
+
+    def test_get_seminar_form(self):
+        response = self.client.get(reverse('get_seminar_form'))
+        self.assertEqual(200, response.status_code, "Successful Request")
+
+        seminars = json.loads(response.context['slot_info'])['seminars']
+
+        self.assertEqual(1, len(seminars), 'Single activity')
+        self.assertEqual(
+            self.activities['SEM']['bookable'].id, seminars[0]['id'], 'Matches bookable seminar'
+        )

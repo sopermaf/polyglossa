@@ -48,8 +48,7 @@ def post_seminar_student(request):
 def get_seminar_form(request):
     '''
     Returns the seminar form page and a list
-    of seminar activities used to query the available
-    slots
+    of seminar activities passed as context
     '''
     seminars = [
         {'title': sem.title, 'id': sem.id, 'price': sem.price}
@@ -57,21 +56,17 @@ def get_seminar_form(request):
             is_bookable=True, activity_type=models.Activity.SEMINAR
         )
     ]
-    print(seminars)
 
     context = {
         "slot_info": json.dumps({
             'seminars': seminars,
         })
     }
-
     return render(request, "bookClass.html", context)
 
 
-def get_seminar_slots(request, seminar_id): #pylint: disable=unused-argument
-    '''
-    Return all the slots for a given seminar id
-    '''
+def get_future_seminar_slots(request, seminar_id): #pylint: disable=unused-argument
+    '''Return all upcoming SeminarSlots for a given `seminar_id`'''
     slots = list(
         models.SeminarSlot.objects.filter(
             start_datetime__gt=datetime.now(),

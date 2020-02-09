@@ -10,7 +10,7 @@ from . import util as t_util
 
 class TestValidate(TestCase):
     def setUp(self):
-        self.seminar = t_util.create_seminar(bookable=True)
+        self.seminar = t_util.create_activity(bookable=True, activity_type="SEM")
         self.slots = t_util.create_seminar_slots(self.seminar)
 
         self.student = Student(

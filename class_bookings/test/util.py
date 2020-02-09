@@ -6,10 +6,14 @@ from datetime import datetime, timedelta
 
 from class_bookings import models
 
-def create_seminar(*, bookable):
+
+def create_activity(*, activity_type, bookable):
     '''Create a seminar activity'''
+    if activity_type not in {models.Activity.INDIVIDUAL, models.Activity.SEMINAR}:
+        raise ValueError(f"Invalid activity_type: {activity_type}")
+
     activity = models.Activity(
-        activity_type=models.Activity.SEMINAR,
+        activity_type=activity_type,
         title='%s' % random(),
         description='%s' % random(),
         price=20,
@@ -17,6 +21,7 @@ def create_seminar(*, bookable):
     )
     activity.save()
     return activity
+
 
 def create_seminar_slots(activity):
     '''Returns a dict containing
