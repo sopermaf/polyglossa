@@ -4,6 +4,7 @@ section of the polyglossa website.
 import json
 from datetime import datetime
 
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 
@@ -45,26 +46,37 @@ def post_seminar_student(request):
 
 
 def get_seminar_form(request):
-    '''Get the form and available slots'''
-    slots = []
-    for slot in models.SeminarSlot.objects.filter(start_datetime__gt=datetime.now()):
-        activity = models.Activity.objects.get(id=slot.seminar_id)
-        slot_info = {
-            'price': activity.price,
-            'title': activity.title,
-            'id': slot.id,
-            'datetime_pretty': slot.start_datetime.strftime('%d-%b %a%l:%M%p'),
-            'datetime_iso': slot.start_datetime.strftime('%Y-%m-%dT%H:%M'),
-            'duration': slot.duration_in_mins,
-        }
-        slots.append(slot_info)
-
-    print(slots)
+    '''
+    Returns the seminar form page and a list
+    of seminar activities used to query the available
+    slots
+    '''
+    seminars = [
+        {'title': sem.title, 'id': sem.id, 'price': sem.price}
+        for sem in models.Activity.objects.filter(
+            is_bookable=True, activity_type=models.Activity.SEMINAR
+        )
+    ]
+    print(seminars)
 
     context = {
         "slot_info": json.dumps({
-            "seminar_slots": slots
+            'seminars': seminars,
         })
     }
 
     return render(request, "bookClass.html", context)
+
+
+def get_seminar_slots(request, seminar_id): #pylint: disable=unused-argument
+    '''
+    Return all the slots for a given seminar id
+    '''
+    slots = list(
+        models.SeminarSlot.objects.filter(
+            start_datetime__gt=datetime.now(),
+            seminar__id=seminar_id,
+        ).values()
+    )
+
+    return JsonResponse({'slots': slots})

@@ -6,10 +6,7 @@ from . import const
 
 # Create your views here.
 urlpatterns = [
-    path(
-        'signup/seminar', views.post_seminar_student, name=const.SEMINAR_POST_NAME
-    ),
-    path(
-        'form/seminar', views.get_seminar_form, name='get-seminar-form'
-    ),
+    path('signup/seminar', views.post_seminar_student, name=const.SEMINAR_POST_NAME),
+    path('form/seminar', views.get_seminar_form, name='get-seminar-form'),
+    path('get/seminar_slots/<int:seminar_id>', views.get_seminar_slots),
 ]

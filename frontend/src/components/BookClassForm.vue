@@ -21,13 +21,23 @@
       required
     ></v-text-field>
 
-    <!-- Seminar Slot Selection -->
-    <v-select :items="seminar_slots" v-model="bookingChoice" label="Seminar Slot" required :rules="seminarRules">
+    <!-- Seminar Type Selection -->
+    <v-select :items="seminars" v-model="seminarChoice" @change="getSlots(seminarChoice.id)" label="Seminar Type" required :rules="notNullRules">
       <template slot="item" slot-scope="data">
-        [{{ data.item.datetime_pretty }}] [{{ data.item.title }}] [${{ data.item.price }}] [{{ data.item.duration }}]
+        {{ data.item.title }} ${{ data.item.price }}
       </template>
       <template slot="selection" slot-scope="data">
-        ({{ data.item.title }} {{ data.item.datetime_pretty }})
+        {{ data.item.title }} ${{ data.item.price }}
+      </template>
+    </v-select>
+
+    <!-- Seminar Slot Selection -->
+    <v-select :items="slots" v-model="bookingChoice" label="Seminar Slot" required :rules="notNullRules">
+      <template slot="item" slot-scope="data">
+        {{ data.item.start_datetime }} {{ data.item.duration_in_mins }} mins
+      </template>
+      <template slot="selection" slot-scope="data">
+        {{ data.item.start_datetime }} {{ data.item.duration_in_mins }} mins
       </template>
     </v-select>
 
@@ -63,6 +73,7 @@ export default {
     valid: true,
     bookingName: null,
     bookingEmail: null,
+    seminarChoice: null,
     bookingChoice: null,
     // validation rules
     nameRules: [
@@ -72,29 +83,17 @@ export default {
       v => !!v || 'E-mail is required',
       v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
     ],
-    seminarRules: [
+    notNullRules: [
       v => !!v || 'Seminar choice required'
     ],
-    seminar_slots: []
+    seminars: [],
+    slots: [],
   }),
   mounted() {
-    this.setMinDate();
-
     this.page_load_data = document.body.getAttribute('data');
-    //console.log(this.page_load_data);
-    this.seminar_slots = JSON.parse(this.page_load_data)['seminar_slots'];
-
-    for(let i in this.seminar_slots){
-      this.
-
-      console.log(this.seminar_slots[i]);
-    }
-
+    this.seminars = JSON.parse(this.page_load_data)['seminars'];
   },
   methods: {
-    formatBookingDateTime() {
-      return this.bookingDate + ' ' + this.bookingTime;
-    },
     postData() {
       axios.post('/book_class/create/', qs.stringify({
         lesson_time: this.formatBookingDateTime(),
@@ -116,15 +115,15 @@ export default {
             this.$refs.form.reset();
         }
         this.snackbar = true;
-        console.log(this.bookingChoice)
     },
     reset () {
       this.$refs.form.reset()
     },
-    setMinDate() {
-      var today = new Date(Date.now());
-      this.minDate = today.toISOString().slice(0,10);
-    },
+    getSlots(id) {
+      axios.get('/book_class/get/seminar_slots/' + id).then(response => {
+        this.slots = response.data["slots"];
+      })
+    }
   },
 }
 </script>
