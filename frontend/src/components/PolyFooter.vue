@@ -3,7 +3,7 @@
       <v-layout text-center row wrap>
         <v-flex  py-3 text-xs-center md12>
           <span class="font-weight-light">
-            &copy;2019 — 
+            &copy; {{ new Date().getFullYear() }} — 
             <strong>PolyGlossa</strong>
           </span>
         </v-flex>
