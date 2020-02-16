@@ -22,6 +22,11 @@ jobs:
       run: |
         pipenv run python manage.py makemigrations
         pipenv run python manage.py migrate
+    - name: Build FrontEnd Files
+      run: |
+        cd frontend/
+        npm run build
+        cd ..
     - name: Django Integration Tests
       run: |
         pipenv run python manage.py test
