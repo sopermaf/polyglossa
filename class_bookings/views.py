@@ -21,7 +21,8 @@ def post_seminar_student(request):
     # Parsing
     try:
         sem_req = parse.parse_seminar_request(request)
-    except KeyError:
+    except KeyError as excp:
+        print(f"POST Seminar parsing failed\nMissing param: '{excp}'\nParams: {request.POST}")
         return util.http_bad_request(
             msg="Missing booking param"
         )
@@ -29,7 +30,8 @@ def post_seminar_student(request):
     # Validation
     try:
         sem_slot = validate.validate_seminar_request(sem_req)
-    except ValueError:
+    except ValueError as excp:
+        print(f"POST Seminar validation failed: {excp}\nParams: {request.POST}")
         return util.http_bad_request(
             msg='Bad Request'
         )

@@ -95,11 +95,10 @@ export default {
   },
   methods: {
     postData() {
-      axios.post('/book_class/create/', qs.stringify({
-        lesson_time: this.formatBookingDateTime(),
+      axios.post('/book_class/signup/seminar', qs.stringify({
         student_name: this.bookingName,
         student_email: this.bookingEmail,
-        lesson_type: this.lessonChoice,
+        slot_id: this.bookingChoice.id,
       }))
       .then(function (response) {
         console.log(response);
@@ -111,19 +110,20 @@ export default {
     validate () {
         if (this.$refs.form.validate()) {
             this.snackbar = true;
-            //this.postData();
+            this.postData();
             this.$refs.form.reset();
         }
         this.snackbar = true;
+        console.log(this.bookingChoice);
     },
     reset () {
       this.$refs.form.reset()
     },
     getSlots(id) {
       axios.get('/book_class/get/seminar_slots/' + id).then(response => {
-        this.slots = response.data["slots"];
+        this.slots = response.data["slots"] || [];
       })
-    }
+    },
   },
 }
 </script>

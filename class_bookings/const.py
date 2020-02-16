@@ -4,7 +4,7 @@ Keys and values that remain constant in class_bookings
 # request params
 KEY_NAME = 'student_name'
 KEY_EMAIL = 'student_email'
-KEY_CHOICE = 'booking_id'
+KEY_CHOICE = 'slot_id'
 BOOKING_PARAMS = {
     KEY_NAME,
     KEY_EMAIL,
