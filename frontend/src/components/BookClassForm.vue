@@ -34,10 +34,10 @@
     <!-- Seminar Slot Selection -->
     <v-select :items="slots" v-model="bookingChoice" label="Seminar Slot" required :rules="notNullRules">
       <template slot="item" slot-scope="data">
-        {{ data.item.start_datetime }} {{ data.item.duration_in_mins }} mins
+        {{ displaySlotDetails(data.item) }}
       </template>
       <template slot="selection" slot-scope="data">
-        {{ data.item.start_datetime }} {{ data.item.duration_in_mins }} mins
+        {{ displaySlotDetails(data.item) }}
       </template>
     </v-select>
 
@@ -66,6 +66,7 @@
 
 <script>
 import axios from "axios";
+import * as moment from "moment";
 import qs from "qs";
 
 export default {
@@ -124,6 +125,13 @@ export default {
         this.slots = response.data["slots"] || [];
       })
     },
+    displaySlotDetails(slot) {
+      var moment = require('moment');
+      
+      var datetimeStr = moment(slot.start_datetime).format("DD MMM hh:mm a");
+
+      return `${datetimeStr} (${slot.duration_in_mins} mins)`;
+    }
   },
 }
 </script>
