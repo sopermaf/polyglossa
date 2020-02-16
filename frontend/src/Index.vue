@@ -5,7 +5,12 @@
 
     <!-- Page Content -->
     <v-content>
-      <Home />
+      <template v-if="0">
+        <Home />
+      </template>
+      <template v-else>
+        <Courses />
+      </template>
     </v-content>
 
     <!-- Footer -->
@@ -16,6 +21,7 @@
 
 <script>
 import Home from './components/Home';
+import Courses from './components/Courses';
 import PolyToolbar from './components/PolyToolbar.vue';
 import PolyFooter from './components/PolyFooter.vue';
 
@@ -23,6 +29,7 @@ export default {
   name: 'Index',
   components: {
     Home,
+    Courses,
     PolyToolbar,
     PolyFooter,
   },

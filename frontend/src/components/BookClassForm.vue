@@ -66,7 +66,6 @@
 
 <script>
 import axios from "axios";
-import * as moment from "moment";
 import qs from "qs";
 
 export default {
