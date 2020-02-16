@@ -22,6 +22,11 @@ jobs:
       run: |
         pipenv run python manage.py makemigrations
         pipenv run python manage.py migrate
+    - name: Install Vue
+      run: |
+        cd frontend/
+        npm install
+        cd ..
     - name: Build FrontEnd Files
       run: |
         cd frontend/
