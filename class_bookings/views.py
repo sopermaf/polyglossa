@@ -66,6 +66,19 @@ def get_seminar_form(request):
     return render(request, "bookClass.html", context)
 
 
+def get_activities(request, activity_type): #pylint: disable=unused-argument
+    '''Return all the `bookable` activities
+    for a given `activity_type`.
+    '''
+    activities = models.Activity.objects.filter(
+        activity_type=activity_type,
+        is_bookable=True,
+    ).values('title', 'description', 'price')
+    print(f"GET Request for Type: {activity_type}\n{activities}")
+
+    return JsonResponse({'activities': list(activities)})
+
+
 def get_future_seminar_slots(request, seminar_id): #pylint: disable=unused-argument
     '''Return all upcoming SeminarSlots for a given `seminar_id`'''
     slots = list(

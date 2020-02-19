@@ -82,6 +82,9 @@ class Activity(models.Model):
         booking_status = "Bookable" if self.is_bookable else "Not Bookable"
         return f"{self.title} (${self.price:.2f})"
 
+    def __repr__(self):
+        return f"<{self.activity_type}: {self.title} {self.price} {self.is_bookable}"
+
 
 class BaseSlot(models.Model):
     '''

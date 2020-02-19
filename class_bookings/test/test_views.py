@@ -21,6 +21,7 @@ class TestViews(TestCase):
             },
             'IND': {
                 'bookable': t_util.create_activity(activity_type="IND", bookable=True),
+                'bookable': t_util.create_activity(activity_type="IND", bookable=False),
             }
         }
 
@@ -124,3 +125,18 @@ class TestViews(TestCase):
         self.assertEqual(
             self.activities['SEM']['bookable'].id, seminars[0]['id'], 'Matches bookable seminar'
         )
+
+    def test_get_activities(self):
+        test_cases = [
+            (Activity.SEMINAR, 1),
+            (Activity.INDIVIDUAL, 1),
+            ('NOT REAL', 0),
+        ]
+
+        for activity_type, exp_num, in test_cases:
+            response = self.client.get(reverse(
+                'get-activities', kwargs={'activity_type': activity_type}
+            ))
+            self.assertEqual(200, response.status_code, "SuccessfulRequest")
+            activities = json.loads(response.content)['activities']
+            self.assertEqual(exp_num, len(activities))
