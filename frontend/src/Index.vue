@@ -5,10 +5,10 @@
 
     <!-- Page Content -->
     <v-content>
-      <template v-if="0">
+      <template v-if="pageSelection == 'HOME'">
         <Home />
       </template>
-      <template v-else>
+      <template v-else-if="pageSelection == 'COURSES'">
         <Courses />
       </template>
     </v-content>
@@ -34,7 +34,7 @@ export default {
     PolyFooter,
   },
   data: () => ({
-    //
+    pageSelection: "HOME",
   }),
 };
 </script>
