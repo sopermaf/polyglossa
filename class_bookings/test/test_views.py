@@ -115,10 +115,6 @@ class TestViews(TestCase):
         self.assertEqual(1, len(slots), "Single slot returned")
         self.assertEqual(self.slots['future'].id, slots[0]['id'], "Future slot returned")
 
-    def test_get_seminar_form(self):
-        response = self.client.get(reverse('get_seminar_form'))
-        self.assertEqual(200, response.status_code, "Successful Request")
-
     def test_get_activities(self):
         test_cases = [
             (Activity.SEMINAR, 1),

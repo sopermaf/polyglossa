@@ -1,12 +1,10 @@
 '''These are the request handlers for the class_bookings
 section of the polyglossa website.
 '''
-import json
 from datetime import datetime
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
 
 from . import validate, parse, const, util
 from . import models
