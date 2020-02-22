@@ -21,7 +21,7 @@ class TestViews(TestCase):
             },
             'IND': {
                 'bookable': t_util.create_activity(activity_type="IND", bookable=True),
-                'bookable': t_util.create_activity(activity_type="IND", bookable=False),
+                'not_bookable': t_util.create_activity(activity_type="IND", bookable=False),
             }
         }
 
