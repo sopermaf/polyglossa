@@ -73,7 +73,7 @@ def get_activities(request, activity_type): #pylint: disable=unused-argument
     activities = models.Activity.objects.filter(
         activity_type=activity_type,
         is_bookable=True,
-    ).values('title', 'description', 'price')
+    ).values()
     print(f"GET Request for Type: {activity_type}\n{activities}")
 
     return JsonResponse({'activities': list(activities)})

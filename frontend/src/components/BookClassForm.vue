@@ -90,8 +90,9 @@ export default {
     slots: [],
   }),
   mounted() {
-    this.page_load_data = document.body.getAttribute('data');
-    this.seminars = JSON.parse(this.page_load_data)['seminars'];
+    axios.get('/book_class/get/activities/SEM').then(response => {
+      this.seminars = response.data['activities'];
+    })
   },
   methods: {
     postData() {
