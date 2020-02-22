@@ -20,7 +20,7 @@
           ></v-text-field>
 
           <!-- Seminar Type Selection -->
-          <v-select :items="seminars" v-model="seminarChoice" @change="getSlots(seminarChoice.id)" label="Seminar Type" required :rules="notNullRules">
+          <v-select :items="seminars" v-model="seminarChoice" label="Seminar Type" required :rules="notNullRules">
             <template slot="item" slot-scope="data">
               {{ data.item.title }} ${{ data.item.price }}
             </template>
@@ -69,6 +69,11 @@ import axios from "axios";
 import qs from "qs";
 
 export default {
+  props: {
+    prefilledChoice: {
+      type: Object
+    }
+  },
   data: () => ({
     valid: true,
     bookingName: null,
@@ -93,6 +98,14 @@ export default {
     axios.get('/book_class/get/activities/SEM').then(response => {
       this.seminars = response.data['activities'];
     })
+    this.seminarChoice = this.prefilledChoice;
+  },
+  watch: {
+    'seminarChoice': {
+      handler: function(after, before){
+        this.getSlots(after.id);
+      }
+    }
   },
   methods: {
     postData() {
