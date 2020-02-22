@@ -11,6 +11,9 @@
       <template v-else-if="pageSelection == 'COURSES'">
         <Courses />
       </template>
+      <template v-else-if="pageSelection == 'BOOKING'">
+        <BookClassForm />
+      </template>
     </v-content>
 
     <!-- Footer -->
@@ -22,6 +25,7 @@
 <script>
 import Home from './components/Home';
 import Courses from './components/Courses';
+import BookClassForm from './components/BookClassForm';
 import PolyToolbar from './components/PolyToolbar.vue';
 import PolyFooter from './components/PolyFooter.vue';
 
@@ -30,11 +34,12 @@ export default {
   components: {
     Home,
     Courses,
+    BookClassForm,
     PolyToolbar,
     PolyFooter,
   },
   data: () => ({
-    pageSelection: "HOME",
+    pageSelection: "BOOKING",
   }),
 };
 </script>

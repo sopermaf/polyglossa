@@ -1,67 +1,67 @@
 <template>
-  <v-form
-    ref="form"
-    v-model="valid"
-    lazy-validation
-  >
+  <v-container>
+    <v-layout justify-center wrap text-center class="mx-auto">
+      <v-flex md-5 lg6 s4 xs12>
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <!-- Name -->
+          <v-text-field
+            v-model="bookingName"
+            :rules="nameRules"
+            label="Name"
+            required
+          ></v-text-field>
 
-    <!-- Name -->
-    <v-text-field
-      v-model="bookingName"
-      :rules="nameRules"
-      label="Name"
-      required
-    ></v-text-field>
+          <!-- Email -->
+          <v-text-field
+            v-model="bookingEmail"
+            :rules="emailRules"
+            label="E-mail"
+            required
+          ></v-text-field>
 
-    <!-- Email -->
-    <v-text-field
-      v-model="bookingEmail"
-      :rules="emailRules"
-      label="E-mail"
-      required
-    ></v-text-field>
+          <!-- Seminar Type Selection -->
+          <v-select :items="seminars" v-model="seminarChoice" @change="getSlots(seminarChoice.id)" label="Seminar Type" required :rules="notNullRules">
+            <template slot="item" slot-scope="data">
+              {{ data.item.title }} ${{ data.item.price }}
+            </template>
+            <template slot="selection" slot-scope="data">
+              {{ data.item.title }} ${{ data.item.price }}
+            </template>
+          </v-select>
 
-    <!-- Seminar Type Selection -->
-    <v-select :items="seminars" v-model="seminarChoice" @change="getSlots(seminarChoice.id)" label="Seminar Type" required :rules="notNullRules">
-      <template slot="item" slot-scope="data">
-        {{ data.item.title }} ${{ data.item.price }}
-      </template>
-      <template slot="selection" slot-scope="data">
-        {{ data.item.title }} ${{ data.item.price }}
-      </template>
-    </v-select>
+          <!-- Seminar Slot Selection -->
+          <v-select :items="slots" v-model="bookingChoice" label="Seminar Slot" required :rules="notNullRules">
+            <template slot="item" slot-scope="data">
+              {{ displaySlotDetails(data.item) }}
+            </template>
+            <template slot="selection" slot-scope="data">
+              {{ displaySlotDetails(data.item) }}
+            </template>
+          </v-select>
 
-    <!-- Seminar Slot Selection -->
-    <v-select :items="slots" v-model="bookingChoice" label="Seminar Slot" required :rules="notNullRules">
-      <template slot="item" slot-scope="data">
-        {{ displaySlotDetails(data.item) }}
-      </template>
-      <template slot="selection" slot-scope="data">
-        {{ displaySlotDetails(data.item) }}
-      </template>
-    </v-select>
+          <!-- Validate Form -->
+          <v-btn
+            :disabled="!valid"
+            color="success"
+            class="mr-4"
+            @click="validate"
 
-    <!-- Validate Form -->
-    <v-btn
-      :disabled="!valid"
-      color="success"
-      class="mr-4"
-      @click="validate"
+          >
+            Submit
+          </v-btn>
 
-    >
-      Submit
-    </v-btn>
-
-    <!-- Reset Form -->
-    <v-btn
-      color="error"
-      class="mr-4"
-      @click="reset"
-    >
-      Reset Form
-    </v-btn>
-
-  </v-form>
+          <!-- Reset Form -->
+          <v-btn
+            color="error"
+            class="mr-4"
+            @click="reset"
+          >
+            Reset Form
+          </v-btn>
+        </v-form>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
