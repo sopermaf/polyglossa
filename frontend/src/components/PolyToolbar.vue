@@ -1,15 +1,15 @@
 <template>
   <v-app-bar app class="banner">
 
-    <v-btn text href="/" target="">
+    <v-btn text @click="viewChoice('HOME')">
       <span class="mr-2">Home</span>
     </v-btn>
 
-    <v-btn text href="" target="_blank">
+    <v-btn text @click="viewChoice('COURSES')" >
       <span class="mr-2">Courses</span>
     </v-btn>
 
-    <v-btn text href="/book_class/form/seminar">
+    <v-btn text @click="viewChoice('BOOKING')">
       <span class="mr-2">Book a Class</span>
     </v-btn>
     
@@ -22,23 +22,36 @@
 
     <v-spacer></v-spacer>
 
-    <v-btn text href="" target="_blank">
+    <v-btn text  >
       <span class="mr-2">Exercises</span>
     </v-btn>
 
-    <v-btn text href="" target="_blank">
+    <v-btn text  >
       <span class="mr-2">Texts</span>
     </v-btn>
 
-    <v-btn text href="" target="_blank">
+    <v-btn text  >
       <span class="mr-2">Contact Us</span>
     </v-btn>
 
   </v-app-bar>
 </template>
 
-<style scoped>
- 
+<script>
+export default {
+  name: "PolyToolbar",
+  data: () => ({
 
+  }),
+  methods: {
+    viewChoice(choice) {
+      this.$emit("pageSelection", choice);
+    }
+  }
+}
+</script>
+
+
+<style scoped>
 
 </style>

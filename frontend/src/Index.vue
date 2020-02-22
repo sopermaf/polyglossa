@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <!-- Header -->
-    <PolyToolbar />
+    <PolyToolbar @pageSelection="updateView"/>
 
     <!-- Page Content -->
     <v-content>
@@ -39,7 +39,12 @@ export default {
     PolyFooter,
   },
   data: () => ({
-    pageSelection: "BOOKING",
+    pageSelection: "HOME",
   }),
+  methods: {
+    updateView(view) {
+      this.pageSelection = view;
+    }
+  }
 };
 </script>
