@@ -7,11 +7,9 @@
       </v-flex>
 
       <v-flex ma-3 lg6 md4 xs12 v-for="sem in classTypes" :key="sem">
-        <v-card  outlined hover @click="openForm(sem)">
-          <v-card-title class="justify-center mx-auto"> {{sem.title}} - ${{sem.price}} </v-card-title>
-          <v-card-text> {{sem.description}} </v-card-text>
-        </v-card>
+        <CourseSlot :sem="sem" @courseChoice="openForm"/>
       </v-flex>
+
 
     </v-layout>
   </v-container>
@@ -19,10 +17,15 @@
 
 <script>
 import axios from "axios";
+import CourseSlot from "./CourseSlot";
 
 export default {
+  components: {
+    CourseSlot,
+  },
   data: () => ({
     classTypes: [],
+    courseChoice: null,
   }),
   mounted() {
     axios.get('/book_class/get/activities/SEM').then(response => {
