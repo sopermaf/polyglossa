@@ -119,13 +119,6 @@ class TestViews(TestCase):
         response = self.client.get(reverse('get_seminar_form'))
         self.assertEqual(200, response.status_code, "Successful Request")
 
-        seminars = json.loads(response.context['slot_info'])['seminars']
-
-        self.assertEqual(1, len(seminars), 'Single activity')
-        self.assertEqual(
-            self.activities['SEM']['bookable'].id, seminars[0]['id'], 'Matches bookable seminar'
-        )
-
     def test_get_activities(self):
         test_cases = [
             (Activity.SEMINAR, 1),

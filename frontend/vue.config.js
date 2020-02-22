@@ -28,6 +28,5 @@ module.exports = {
 
     pages: {
         index: './src/index.js',
-        bookClass: './src/bookClass.js',
     }
 };

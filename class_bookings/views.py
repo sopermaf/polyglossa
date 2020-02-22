@@ -47,25 +47,6 @@ def post_seminar_student(request):
     return util.http_resource_created()
 
 
-def get_seminar_form(request):
-    '''
-    Returns the seminar form page and a list
-    of seminar activities passed as context
-    '''
-    seminars = list(
-        models.Activity.objects.filter(
-            is_bookable=True, activity_type=models.Activity.SEMINAR,
-        ).values('title', 'id', 'price')
-    )
-
-    context = {
-        "slot_info": json.dumps({
-            'seminars': seminars,
-        })
-    }
-    return render(request, "bookClass.html", context)
-
-
 def get_activities(request, activity_type): #pylint: disable=unused-argument
     '''Return all the `bookable` activities
     for a given `activity_type`.
