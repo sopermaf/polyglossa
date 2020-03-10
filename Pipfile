@@ -10,8 +10,9 @@ pylint = "*"
 django = "*"
 pytz = "*"
 django-webpack-loader = "*"
-pep8 = "*"
 pytest = "*"
+django-paypal = "*"
+m2crypto = "*"
 
 [requires]
 python_version = "3.8"
