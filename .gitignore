@@ -27,7 +27,8 @@ db*
 __pycache__/
 migrations/
 .venv/
+frontend/webpack-stats.json
 
 # Sensitive Information
+config/secret/
 env.py
-frontend/webpack-stats.json
