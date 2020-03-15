@@ -39,6 +39,7 @@ PREREQUSITE_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'webpack_loader',
+    'paypal.standard.ipn',
 ]
 
 PROJECT_APPS = [
@@ -134,3 +135,7 @@ WEBPACK_LOADER = {
         'STATS_FILE': os.path.join(FRONTEND_DIR, 'webpack-stats.json'),
     }
 }
+
+# PAYPAL SETTINGS
+
+PAYPAL_TEST = True
