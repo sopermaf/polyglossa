@@ -25,5 +25,6 @@ urlpatterns = [     # pylint: disable=invalid-name
         name="app",
     ),
     path('book_class/', include('class_bookings.urls')),
-    path(r'^paypal/', include('paypal.standard.ipn.urls')),
+    path('paypal/', include('paypal.standard.ipn.urls')),
+    path('payments/', include('payments.urls')),
 ]
