@@ -140,3 +140,9 @@ WEBPACK_LOADER = {
 
 PAYPAL_TEST = True
 PAYPAL_EMAIL = os.environ.get('POLYGLOSSA_PAYPAL_EMAIL')
+
+CERT_PATH = 'config/secret/certs'
+PAYPAL_PRIVATE_CERT = '%s/paypal_private.pem' % CERT_PATH
+PAYPAL_PUBLIC_CERT = '%s/paypal_public.pem' % CERT_PATH
+PAYPAL_CERT = '%s/paypal_cert.pem' % CERT_PATH
+PAYPAL_CERT_ID = os.environ.get('POLYGLOSSA_PAYPAL_CERT')

@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.shortcuts import render, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from paypal.standard.forms import PayPalPaymentsForm
+from paypal.standard.forms import PayPalEncryptedPaymentsForm
 
 from polyglossa import settings 
 
@@ -14,13 +14,12 @@ def paypal_form(request):
     '''Load the paypal form with payment info'''
     host = request.get_host()
 
-     # What you want the button to do.
     paypal_dict = {
-        "business": settings.PAYPAL_EMAIL,
-        "amount": "1.00",
-        "item_name": "name of the item",
-        "invoice": "1010101",
-        "currency_code": "USD",
+        'business': settings.PAYPAL_EMAIL,
+        'amount': '1.00',
+        'item_name': 'Order 1',
+        'invoice': '101010101',
+        'currency_code': 'USD',
         'notify_url': 'http://{}{}'.format(host,
                                            reverse('paypal-ipn')),
         'return_url': 'http://{}{}'.format(host,
@@ -30,7 +29,7 @@ def paypal_form(request):
     }
 
     # Create the instance.
-    form = PayPalPaymentsForm(initial=paypal_dict)
+    form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
     context = {"form": form}
     return render(request, "payment.html", context)
 
