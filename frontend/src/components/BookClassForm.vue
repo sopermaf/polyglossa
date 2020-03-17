@@ -115,7 +115,7 @@ export default {
         slot_id: this.bookingChoice.id,
       }))
       .then(function (response) {
-        console.log(response);
+        window.location.assign(response.request.responseURL);
       })
       .catch(function (error) {
         console.log(error);
@@ -128,7 +128,7 @@ export default {
             this.$refs.form.reset();
         }
         this.snackbar = true;
-        console.log(this.bookingChoice);
+        //console.log(this.bookingChoice);
     },
     reset () {
       this.$refs.form.reset()

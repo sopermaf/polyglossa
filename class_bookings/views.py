@@ -3,6 +3,7 @@ section of the polyglossa website.
 '''
 from datetime import datetime
 
+from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -42,7 +43,7 @@ def post_seminar_student(request):
     sem_slot.students.add(student)
     sem_slot.save()
 
-    return util.http_resource_created()
+    return redirect('payment-form')
 
 
 def get_activities(request, activity_type): #pylint: disable=unused-argument
