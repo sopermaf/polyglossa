@@ -1,4 +1,4 @@
-name: Polyglossa Integration Testing
+name: Polyglossa CI
 
 on: [push]
 
@@ -15,7 +15,7 @@ jobs:
         python-version: 3.8
     - name: Install dependencies
       run: |
-        apt-get install -y swig
+        sudo apt-get install -y swig
         python -m pip install --upgrade pip
         pip install pipenv
         pipenv install --dev
