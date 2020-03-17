@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from paypal.standard.forms import PayPalEncryptedPaymentsForm
 
-from polyglossa import settings 
+from polyglossa import settings
 
 # Create your views here.
 def paypal_form(request):
