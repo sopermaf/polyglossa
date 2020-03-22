@@ -7,11 +7,10 @@ verify_ssl = true
 pylint = "*"
 
 [packages]
-django = "*"
+django = "~=3.0"
 pytz = "*"
 django-webpack-loader = "*"
-pytest = "*"
-django-paypal = "*"
+django-paypal = "~=1.0"
 m2crypto = "*"
 
 [requires]
