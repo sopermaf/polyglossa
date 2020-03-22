@@ -74,36 +74,49 @@ class TestViews(TestCase):
         # validate in student database
         self.assert_num_db_students(exp_num_students=len(test_students))
 
-        # validate added to seminar
-        self.verify_students(
-            slot=self.slots['future'],
-            student_data=test_students
-        )
+        # assert no stidemts added to slots
+        for time, slot in self.slots.items():
+            self.assertEqual(len(slot.students.values()), 0, f'No Students Added: Sem {time}')
+
+        # assert orders added
+        self.assertTrue(False, 'Assert 2 Orders Added')
 
     def test_seminar_missing_data(self):
         required_params = self.create_sem_params(
             slot='future', name='joe', email='joe@test.com'
         )
 
+        # assert requests fail
         for param in required_params:
             send_data = required_params.copy()
             send_data.pop(param)
             response = self.post_seminar(**send_data)
             self.assertEqual(response.status_code, BAD_REQUEST_CODE, 'Failed on missing data')
 
+        # assert no seminar students added
+        for time, slot in self.slots.items():
+            self.assertEqual(len(slot.students.values()), 0, f'No Students Added: Sem {time}')
+
+        # TODO: assert no orders added
+        self.assertTrue(False, 'Only 1 student order added')
+
     def test_seminar_error_validation(self):
         data = self.create_sem_params(
             slot='future', name='joe', email='joe@test.com'
         )
+        # send two identical requests
         responses = [self.post_seminar(**data) for i in range(2)]
 
         # assert status
         self.assertEqual(responses[0].status_code, 302, 'Success')
         self.assertEqual(responses[1].status_code, BAD_REQUEST_CODE, 'Failure')
 
-        # assert students added
+        # TODO: assert no students added to seminar
         sem_students = self.slots['future'].students.values()
         self.assertEqual(len(sem_students), 1, 'Only one student added')
+
+        # TODO: assert single student order added
+        self.assertTrue(False, 'Only 0 student order added')
 
     def test_get_future_seminar_slots(self):
         response = self.client.get(
