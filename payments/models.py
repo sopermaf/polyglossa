@@ -4,6 +4,7 @@ Polyglossa payments models
 from django.db import models
 from django.utils import timezone
 
+from . import processors
 from class_bookings import models as cb_models
 
 
@@ -25,7 +26,9 @@ class Order(models.Model):
         INDIVIDUAL = 'IndSlotProcessor'
 
     customer = models.ForeignKey(cb_models.Student, on_delete=models.PROTECT)
-    payment_status = models.CharField(choices=PaymentStatus.choices, max_length=20)
+    payment_status = models.CharField(
+        choices=PaymentStatus.choices, max_length=20, default=PaymentStatus.AWAITING,
+    )
     processor = models.CharField(choices=ProcessorEnums.choices, max_length=30)
     order_details = models.TextField(editable=False)
     created = models.DateTimeField(editable=False)
@@ -37,3 +40,27 @@ class Order(models.Model):
             self.created = timezone.now()
         self.modified = timezone.now()
         return super(Order, self).save(*args, **kwargs)
+
+    def success(self):
+        '''Perform payment success operations
+
+        Unserialise data and process.
+
+        Returns
+        ---
+        None
+        '''
+        order_processor = getattr(processors, self.processor)()
+        order_processor.complete(self.order_details)
+        self.payment_status = self.PaymentStatus.COMPLETE
+        self.save()
+
+    def failure(self):
+        '''Perform payment failure operations
+
+        Returns
+        ---
+        None
+        '''
+        self.payment_status = self.PaymentStatus.FAILED
+        self.save()
