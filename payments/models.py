@@ -2,6 +2,7 @@
 Polyglossa payments models
 '''
 from django.db import models
+from django.utils import timezone
 
 from class_bookings import models as cb_models
 
@@ -14,17 +15,25 @@ class Order(models.Model):
     '''
     class PaymentStatus(models.TextChoices):
         '''Payment Status Enum'''
-        AWAITING = 'awaiting payment'
-        COMPLETE = 'payment complete'
-        FAILED = 'payment failed'
+        AWAITING = 'Awaiting'
+        COMPLETE = 'Complete'
+        FAILED = 'Failed'
 
-    class Processors(models.TextChoices):
+    class ProcessorEnums(models.TextChoices):
         '''Enums for processor to perform further order actions'''
-        SEM = 'SemSlotProcessor'
-        IND = 'IndSlotProcessor'
+        SEMINAR = 'SemSlotProcessor'
+        INDIVIDUAL = 'IndSlotProcessor'
 
-    id = models.AutoField(primary_key=True)
     customer = models.ForeignKey(cb_models.Student, on_delete=models.PROTECT)
-    payment_status = models.CharField(choices=PaymentStatus.choices)
-    order_processor = models.TextField(choices=Processors.choices)
-    order_serialised = models.CharField()
+    payment_status = models.CharField(choices=PaymentStatus.choices, max_length=20)
+    processor = models.CharField(choices=ProcessorEnums.choices, max_length=30)
+    order_details = models.TextField(editable=False)
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField(editable=False)
+
+    def save(self, *args, **kwargs):    # pylint: disable=arguments-differ
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(Order, self).save(*args, **kwargs)
