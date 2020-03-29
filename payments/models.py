@@ -4,8 +4,8 @@ Polyglossa payments models
 from django.db import models
 from django.utils import timezone
 
-from . import processors
 from class_bookings import models as cb_models
+from . import processors
 
 
 class Order(models.Model):
@@ -42,21 +42,28 @@ class Order(models.Model):
         return super(Order, self).save(*args, **kwargs)
 
     def success(self):
-        '''Perform payment success operations
+        '''
+        Perform payment success operations
 
-        Unserialise data and process.
+        Unserialise order data and process based
+        on the `processor` specified to complete
+        the order.
 
         Returns
         ---
         None
         '''
-        order_processor = getattr(processors, self.processor)()
-        order_processor.complete(self.order_details)
+        ProcessorClass = getattr(processors, self.processor) #pylint: disable=invalid-name
+
+        order_processor = ProcessorClass(self.order_details)
+        order_processor.complete()
         self.payment_status = self.PaymentStatus.COMPLETE
+
         self.save()
 
     def failure(self):
-        '''Perform payment failure operations
+        '''
+        Perform payment failure operations
 
         Returns
         ---
