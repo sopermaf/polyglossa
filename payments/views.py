@@ -35,11 +35,11 @@ def paypal_form(request):
 
 
 @csrf_exempt
-def payment_complete(request):
+def payment_complete(request):  # pylint: disable=unused-argument
     '''Successful Return'''
     return HttpResponse('Payment Complete')
 
 @csrf_exempt
-def payment_cancelled(request):
+def payment_cancelled(request): # pylint: disable=unused-argument
     '''Successful Return'''
     return HttpResponse('Payment Cancelled')

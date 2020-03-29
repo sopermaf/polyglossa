@@ -10,9 +10,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from payments.models import Order
-from payments.processors import SemSlotProcessor
 
-from . import validate, parse, const, util
+from . import parse, const, util
 from . import models
 
 

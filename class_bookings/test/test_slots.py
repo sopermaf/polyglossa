@@ -4,10 +4,16 @@ from datetime import datetime, timedelta
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
+from payments.models import Order
+
 from class_bookings.models import *
+
+from . import util as t_util
+
 
 # TODO: test slot range creation tests
 # TODO: filter by state where available
+# TODO: validation test for awaiting
 
 class TestSlots(TestCase):
     def setUp(self):
@@ -15,6 +21,8 @@ class TestSlots(TestCase):
         self.slot = BaseSlot(start_datetime=slot_dt, duration_in_mins=60)
         self.slot.clean()
         self.slot.save()
+
+    # Tests
 
     def test_start_at_end_of_slot(self):
         new_slot = BaseSlot(start_datetime=self.slot.end_datetime)
@@ -101,3 +109,53 @@ class TestSlots(TestCase):
 
         with self.assertRaises(ValidationError):
             ind.clean()
+
+
+class TestSeminarSlots(TestCase):
+    '''Test Seminar Specific Functions'''
+    def setUp(self):
+        # add student
+        self.students = {
+            'signed_up': Student.objects.create(name='signed_up', email='bob@gmail.com'),
+            'awaiting': Student.objects.create(name='awaiting', email='fred@gmail.com'),
+            'new': Student.objects.create(name='new', email='new@gmail.com'),
+        }
+
+        # add seminar and seminar slot with student
+        self.seminar = t_util.create_activity(bookable=True, activity_type="SEM")
+        self.slots = t_util.create_seminar_slots(self.seminar)
+        self.slots['future'].students.add(self.students['signed_up'])
+
+        # Add awaiting order
+        Order.objects.create(
+            processor=Order.ProcessorEnums.SEMINAR,
+            customer=self.students['awaiting'],
+            order_details="example"
+        )
+
+    def test_validation_pass(self):
+        SeminarSlot.validate_booking(
+            slot_id=self.slots['future'].pk,
+            student=self.students['new']
+        )
+
+    def test_validation_fail_same_student(self):
+        with self.assertRaises(ValidationError):
+            SeminarSlot.validate_booking(
+                slot_id=self.slots['future'].pk,
+                student=self.students['signed_up']
+            )
+
+    def test_validation_fail_past_seminar(self):
+        with self.assertRaises(ValidationError):
+            SeminarSlot.validate_booking(
+                slot_id=self.slots['past'].pk,
+                student=self.students['new']
+            )
+
+    def test_validation_fail_not_real_seminar(self):
+        with self.assertRaises(ValidationError):
+            SeminarSlot.validate_booking(
+                slot_id=100210,
+                student=self.students['new']
+            )
