@@ -4,11 +4,13 @@ section of the polyglossa website.
 import json
 from datetime import datetime
 
+from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from payments.models import Order
+from payments.processors import SemSlotProcessor
 
 from . import validate, parse, const, util
 from . import models
@@ -32,20 +34,29 @@ def post_seminar_student(request):
             msg="Missing booking param"
         )
 
-    # Validation
-    try:
-        sem_slot = validate.validate_seminar_request(sem_req)
-    except ValueError as excp:
-        print(f"POST Seminar validation failed: {excp}\nParams: {request.POST}")
-        return util.http_bad_request(
-            msg='Bad Request'
-        )
-
-    # Add student to seminar
+    # create student
     student = models.Student.get_existing_or_create(
         name=sem_req[const.KEY_NAME],
         email=sem_req[const.KEY_EMAIL],
     )
+
+    # Validation Slot Selection
+    try:
+        slot = models.SeminarSlot.validate_booking(sem_req[const.KEY_CHOICE], student)
+
+        awaiting_orders = Order.objects.filter(
+            customer__pk=student.pk, payment_status=Order.PaymentStatus.AWAITING
+        )
+        for order in awaiting_orders:
+            order_details = json.loads(order.order_details)
+            print("Order_details", order_details)
+            if order_details[str(const.KEY_CHOICE)] == str(slot.pk):
+                raise ValidationError(f'Student {student} already has an upcoming order {order}')
+    except ValidationError as excp:
+        print(f"POST Seminar validation failed: {excp}\nParams: {request.POST}")
+        return util.http_bad_request(
+            msg='Bad Request'
+        )
     order = Order(
         customer=student,
         processor=Order.ProcessorEnums.SEMINAR,

@@ -4,11 +4,13 @@ module
 '''
 # pylint: disable=unused-variable
 
+import json
 from datetime import timedelta, datetime
 
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from . import const
 from .parse import parse_dt_as_str
 
 # NOTE: calling the save() method directly avoids clean() validation
@@ -139,6 +141,32 @@ class SeminarSlot(BaseSlot):
         blank=False,
     )
     students = models.ManyToManyField(Student, blank=True)
+
+    @classmethod
+    def validate_booking(cls, seminar_id, student):
+        '''
+        Validate a student booking request.
+
+        Ensure student isn't present in the seminar
+
+        Returns
+        ---
+        - Raises Validation error if not valid
+        - Seminar Slot if valid
+        '''
+        # ensure future slot
+        slots = cls.objects.filter(
+            start_datetime__gt=datetime.now(), id=seminar_id
+        )
+        if not slots:
+            raise ValidationError("No matching future seminar slot")
+        slot = slots[0]
+
+        # ensure student not in selected seminar
+        if slot.students.filter(pk=student.pk).exists():
+            raise ValidationError(f'Student {student} already in seminar {slot}')
+
+        return slot
 
 
 class IndividualSlot(BaseSlot):

@@ -1,0 +1,46 @@
+'''Deserialise objects stored in orders
+and perform any needed actions
+'''
+import json
+
+from class_bookings import models as cb_models
+from class_bookings import const as cb_const
+
+class OrderProcessor:   # pylint: disable=too-few-public-methods
+    '''
+    Base template class for
+    completing an Order
+    '''
+    def __init__(self, order_details):
+        self.order_details = json.loads(order_details)
+
+    def complete(self):
+        '''
+        Perform actions to complete the order
+
+        Returns
+        ---
+        None
+        '''
+        raise NotImplementedError
+
+
+class SemSlotProcessor(OrderProcessor): # pylint: disable=too-few-public-methods
+    '''Order Processor for Seminar Slots'''
+
+    def complete(self):
+        '''
+        Add a student to the seminar slot
+
+        Returns
+        ---
+        None
+        '''
+        student = cb_models.Student.get_existing_or_create(
+            name=self.order_details[cb_const.KEY_NAME],
+            email=self.order_details[cb_const.KEY_EMAIL],
+        )
+        slot = cb_models.SeminarSlot(self.order_details)
+
+        slot.students.add(student)
+        slot.save()

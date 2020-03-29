@@ -34,6 +34,14 @@ class Order(models.Model):
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(editable=False)
 
+    def __str__(self):
+        fields = [
+            f'{field}:{val}'
+            for field, val in self.__dict__.items()
+            if not field.startswith('_')
+        ]
+        return ", ".join(fields)
+
     def save(self, *args, **kwargs):    # pylint: disable=arguments-differ
         ''' On save, update timestamps '''
         if not self.id:
