@@ -39,4 +39,5 @@ jobs:
     - name: Linting
       run: |
         pipenv run pylint -d fixme class_bookings
+        pipenv run pylint -d fixme payments
         pipenv run pylint -d fixme polyglossa
