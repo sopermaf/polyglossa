@@ -112,7 +112,7 @@ class TestViews(TestCase):
         self.assertEqual(responses[0].status_code, 302, 'Success')
         self.assertEqual(responses[1].status_code, BAD_REQUEST_CODE, 'Failure')
 
-        # TODO: assert single student order added
+
         self.assertEqual(len(Order.objects.all()), 1, "Single Success Order added")
 
 

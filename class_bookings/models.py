@@ -147,6 +147,11 @@ class SeminarSlot(BaseSlot):
 
         Ensure student isn't present in the seminar
 
+        Parameters
+        ---
+        - slot_id (int)
+        - student (Student model)
+
         Returns
         ---
         - Raises Validation error if not valid

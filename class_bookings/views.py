@@ -39,16 +39,14 @@ def post_seminar_student(request):
         email=sem_req[const.KEY_EMAIL],
     )
 
-    # Validation Slot Selection
+    # Validate Slot Selection
     try:
         slot = models.SeminarSlot.validate_booking(sem_req[const.KEY_CHOICE], student)
-
         awaiting_orders = Order.objects.filter(
             customer__pk=student.pk, payment_status=Order.PaymentStatus.AWAITING
         )
         for order in awaiting_orders:
             order_details = json.loads(order.order_details)
-            print("Order_details", order_details)
             if order_details[str(const.KEY_CHOICE)] == str(slot.pk):
                 raise ValidationError(f'Student {student} already has an upcoming order {order}')
     except ValidationError as excp:
@@ -56,6 +54,7 @@ def post_seminar_student(request):
         return util.http_bad_request(
             msg='Bad Request'
         )
+
     order = Order(
         customer=student,
         processor=Order.ProcessorEnums.SEMINAR,
