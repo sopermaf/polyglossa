@@ -27,7 +27,7 @@ class OrderProcessor:   # pylint: disable=too-few-public-methods
 
 class SemSlotProcessor(OrderProcessor): # pylint: disable=too-few-public-methods
     '''Order Processor for Seminar Slots'''
-    
+
     def complete(self):
         '''
         Add a student to the seminar slot
