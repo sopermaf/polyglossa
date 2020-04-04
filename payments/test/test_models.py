@@ -1,41 +1,13 @@
-# pylint: disable=missing-module-docstring, missing-class-docstring, missing-function-docstring
-import json
-
-from django.test import TestCase
-
-from class_bookings.test import util
-from class_bookings import models as cb_models
-from class_bookings import const
-
+'''
+Tests for Payments/models
+'''
+# pylint: disable=missing-function-docstring
+from .base_test import TestPayments
 from ..models import Order
 
 
-class TestOrders(TestCase):
-    def setUp(self):
-        self.student = cb_models.Student.objects.create(
-            name='bob', email='bob@test.com'
-        )
-
-        activity = util.create_activity(
-            activity_type=cb_models.Activity.SEMINAR,
-            bookable=True,
-        )
-        slots = util.create_seminar_slots(activity)
-        self.slot = slots['future']
-
-        self.order = Order.objects.create(
-            customer=self.student,
-            payment_status=Order.PaymentStatus.AWAITING,
-            processor=Order.ProcessorEnums.SEMINAR,
-            order_details=json.dumps({
-                const.KEY_CHOICE: self.slot.id,
-                const.KEY_NAME: self.student.name,
-                const.KEY_EMAIL: self.student.email,
-            }),
-        )
-
-    # Tests
-
+class TestOrders(TestPayments):
+    '''Tests for models.Orders'''
     def test_success_status(self):
         self.order.success()
 
