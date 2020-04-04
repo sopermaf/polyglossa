@@ -16,17 +16,10 @@ class TestOrders(TestPayments):
         )
 
     def test_success_complete_action(self):
-        self.assertFalse(
-            self.slot.students.filter(pk=self.student.pk),
-            'Student not in seminar'
-        )
+        self.assertFalse(self.student_in_seminar(), 'Student absent')
 
         self.order.success()
-
-        self.assertTrue(
-            self.slot.students.filter(pk=self.student.pk),
-            'Student now added to seminar'
-        )
+        self.assertTrue(self.student_in_seminar(), 'Student added')
 
     def test_failure_status(self):
         self.order.failure()
@@ -36,9 +29,7 @@ class TestOrders(TestPayments):
         )
 
     def test_failure_student_not_added(self):
+        self.assertFalse(self.student_in_seminar(), 'Student absent')
         self.order.failure()
 
-        self.assertFalse(
-            self.slot.students.filter(pk=self.student.pk),
-            'Student not in seminar'
-        )
+        self.assertFalse(self.student_in_seminar(), 'Student absent')

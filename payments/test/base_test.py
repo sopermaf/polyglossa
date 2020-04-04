@@ -28,13 +28,26 @@ class TestPayments(TestCase):
         slots = util.create_seminar_slots(activity)
         self.slot = slots['future']
 
+        self.order_details = {
+            const.KEY_CHOICE: self.slot.id,
+            const.KEY_NAME: self.student.name,
+            const.KEY_EMAIL: self.student.email,
+        }
         self.order = Order.objects.create(
             customer=self.student,
             payment_status=Order.PaymentStatus.AWAITING,
             processor=Order.ProcessorEnums.SEMINAR,
-            order_details=json.dumps({
-                const.KEY_CHOICE: self.slot.id,
-                const.KEY_NAME: self.student.name,
-                const.KEY_EMAIL: self.student.email,
-            }),
+            order_details=json.dumps(self.order_details),
         )
+
+    # helper functions
+
+    def student_in_seminar(self):
+        '''
+        Check if student in seminar students
+
+        Returns
+        ---
+        bool - (true if present, false if absent)
+        '''
+        return self.slot.students.filter(pk=self.student.pk)
