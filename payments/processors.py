@@ -27,7 +27,7 @@ class OrderProcessor:   # pylint: disable=too-few-public-methods
 
 class SemSlotProcessor(OrderProcessor): # pylint: disable=too-few-public-methods
     '''Order Processor for Seminar Slots'''
-
+    
     def complete(self):
         '''
         Add a student to the seminar slot
@@ -40,7 +40,10 @@ class SemSlotProcessor(OrderProcessor): # pylint: disable=too-few-public-methods
             name=self.order_details[cb_const.KEY_NAME],
             email=self.order_details[cb_const.KEY_EMAIL],
         )
-        slot = cb_models.SeminarSlot(self.order_details)
+
+        slot = cb_models.SeminarSlot.objects.get(
+            id=self.order_details['slot_id']
+        )
 
         slot.students.add(student)
         slot.save()
