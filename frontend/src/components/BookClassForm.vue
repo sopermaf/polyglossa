@@ -47,7 +47,7 @@
             @click="validate"
 
           >
-            Submit
+            Continue to payment
           </v-btn>
 
           <!-- Reset Form -->
