@@ -2,8 +2,7 @@
 Request handlers for Polyglossa payments
 '''
 from django.urls import reverse
-from django.shortcuts import render, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
 
 from paypal.standard.forms import PayPalEncryptedPaymentsForm
 
