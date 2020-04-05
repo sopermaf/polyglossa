@@ -23,23 +23,12 @@ def paypal_form(request):
         'notify_url': 'http://{}{}'.format(host,
                                            reverse('paypal-ipn')),
         'return_url': 'http://{}{}'.format(host,
-                                           reverse('payment-complete')),
+                                           reverse('index')),
         'cancel_return': 'http://{}{}'.format(host,
-                                              reverse('payment-cancelled')),
+                                              reverse('index')),
     }
 
     # Create the instance.
     form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
     context = {"form": form}
     return render(request, "payment.html", context)
-
-
-@csrf_exempt
-def payment_complete(request):  # pylint: disable=unused-argument
-    '''Successful Return'''
-    return HttpResponse('Payment Complete')
-
-@csrf_exempt
-def payment_cancelled(request): # pylint: disable=unused-argument
-    '''Successful Return'''
-    return HttpResponse('Payment Cancelled')
