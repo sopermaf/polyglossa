@@ -14,6 +14,9 @@
       <template v-else-if="pageSelection == 'BOOKING'">
         <BookClassForm :prefilledChoice="courseChoice" />
       </template>
+      <template v-else-if="pageSelection == 'PAYMENT'">
+        <Payment />
+      </template>
     </v-content>
 
     <!-- Footer -->
@@ -27,20 +30,30 @@ import Courses from "./components/Courses";
 import BookClassForm from "./components/BookClassForm";
 import PolyToolbar from "./components/PolyToolbar.vue";
 import PolyFooter from "./components/PolyFooter.vue";
+import Payment from "./components/Payment.vue"
 
 export default {
   name: "Index",
+  props: {
+      form: {
+        type: Object
+      }
+  },
   components: {
     Home,
     Courses,
     BookClassForm,
     PolyToolbar,
-    PolyFooter
+    PolyFooter,
+    Payment,
   },
   data: () => ({
-    pageSelection: "HOME",
+    pageSelection: "PAYMENT",
     courseChoice: null
   }),
+  mounted() {
+    console.log(this.form);
+  },
   methods: {
     updateView(view) {
       this.pageSelection = view;
