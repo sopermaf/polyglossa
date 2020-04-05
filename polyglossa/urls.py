@@ -22,7 +22,7 @@ urlpatterns = [     # pylint: disable=invalid-name
     path(
         "",
         TemplateView.as_view(template_name="index.html"),
-        name="app",
+        name="index",
     ),
     path('book_class/', include('class_bookings.urls')),
     path('paypal/', include('paypal.standard.ipn.urls')),
