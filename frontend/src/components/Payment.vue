@@ -8,10 +8,11 @@
                     <input type="hidden" name="encrypted" :value="button_address"/>
                     <input
                         type="image"
-                        src="https://www.paypal.com/en_US/i/btn/btn_buynowCC_LG.gif"
+                            src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/checkout-logo-large.png"
+                        
                         border="0"
                         name="submit"
-                        alt="Buy it Now"
+                        alt="Check out with PayPal"
                     />
                 </form>
             </v-flex>
