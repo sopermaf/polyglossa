@@ -12,7 +12,7 @@
         <Courses @courseChoice="prefillForm" />
       </template>
       <template v-else-if="pageSelection == 'BOOKING'">
-        <BookClassForm :prefilledChoice="courseChoice" />
+        <BookClassForm :prefilledChoice="courseChoice" @pageSelection="updateView"/>
       </template>
       <template v-else-if="pageSelection == 'PAYMENT'">
         <Payment />
@@ -48,7 +48,7 @@ export default {
     Payment,
   },
   data: () => ({
-    pageSelection: "PAYMENT",
+    pageSelection: "HOME",
     courseChoice: null
   }),
   mounted() {

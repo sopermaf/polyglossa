@@ -115,7 +115,8 @@ export default {
         slot_id: this.bookingChoice.id,
       }))
       .then(function (response) {
-        window.location.assign(response.request.responseURL);
+        console.log(response);
+        //window.location.assign(response.request.responseURL);
       })
       .catch(function (error) {
         console.log(error);
@@ -131,7 +132,8 @@ export default {
         //console.log(this.bookingChoice);
     },
     reset () {
-      this.$refs.form.reset()
+      this.$refs.form.reset();
+      this.updateViewToForm();
     },
     getSlots(id) {
       axios.get('/book_class/get/seminar_slots/' + id).then(response => {
@@ -144,6 +146,9 @@ export default {
       var datetimeStr = moment(slot.start_datetime).format("DD MMM hh:mm a");
 
       return `${datetimeStr} (${slot.duration_in_mins} mins)`;
+    },
+    updateViewToForm() {
+      this.$emit("pageSelection", "PAYMENT");
     }
   },
 }
