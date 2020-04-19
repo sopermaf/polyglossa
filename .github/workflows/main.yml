@@ -43,5 +43,5 @@ jobs:
         pipenv run pylint -d fixme polyglossa
     - name: Frontend Lint
       run: |
-        npm i eslint
-        ./node_modules/.bin/eslint frontend/src/components/*.vue frontend/src/*.vue
+        cd frontend/
+        npm run lint
