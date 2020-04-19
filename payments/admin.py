@@ -9,6 +9,7 @@ class OrderAdmin(admin.ModelAdmin):
     '''Admin Interface for Order model'''
     list_display = (
         'payment_status',
+        'amount',
         'customer',
         'processor',
         'modified',
