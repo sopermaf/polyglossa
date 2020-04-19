@@ -18,16 +18,29 @@ from polyglossa import settings
 ENCRYPTED_BUTTON_REGEX = re.compile(r'(?<=name="encrypted" value=")([^"]+)', re.DOTALL)
 
 
-def paypal_button(request, order, status):
+def paypal_button(request, order, status, **kwargs):
     '''
     Send the encrypted button info for
     a given order
     '''
     host = request.get_host()
 
+    # custom_display order details
+    payment_overview = {
+        'button': {},
+        'order': kwargs.copy(),
+    }
+
+    # mandatory display details
+    payment_overview['order']['email'] = order.customer.email
+    payment_overview['order']['name'] = order.customer.name
+    payment_overview['order']['amount'] = order.amount
+
+
+    # used to generate the public key
     paypal_dict = {
         'business': settings.PAYPAL_EMAIL,
-        'amount': order.amount,
+        'amount': payment_overview['order']['amount'],
         'item_name': 'Order 1',
         'invoice': '101',
         'currency_code': 'USD',
@@ -41,18 +54,9 @@ def paypal_button(request, order, status):
     form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
     button_address = ENCRYPTED_BUTTON_REGEX.search(form.render()).group()
 
-    payment_data = {
-        'button': {
-            'address': button_address,
-        },
-        'order': {
-            'email': order.customer.email,
-            'name': order.customer.name,
-            'amount': paypal_dict['amount'],
-            'ref': paypal_dict['invoice'],
-        },
-    }
-    return JsonResponse(payment_data, status=status)
+
+    payment_overview['button']['address'] = button_address
+    return JsonResponse(payment_overview, status=status)
 
 
 @csrf_exempt
