@@ -130,7 +130,8 @@ class TestSeminarSlots(TestCase):
         Order.objects.create(
             processor=Order.ProcessorEnums.SEMINAR,
             customer=self.students['awaiting'],
-            order_details="example"
+            order_details="example",
+            amount=self.slots['future'].seminar.price,
         )
 
     def test_validation_pass(self):

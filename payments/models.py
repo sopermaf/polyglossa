@@ -3,6 +3,7 @@ Polyglossa payments models
 '''
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 from class_bookings import models as cb_models
 from . import processors
@@ -29,6 +30,7 @@ class Order(models.Model):
     payment_status = models.CharField(
         choices=PaymentStatus.choices, max_length=20, default=PaymentStatus.AWAITING,
     )
+    amount = models.FloatField()
     processor = models.CharField(choices=ProcessorEnums.choices, max_length=30)
     order_details = models.TextField(editable=False)
     created = models.DateTimeField(editable=False)
@@ -41,6 +43,14 @@ class Order(models.Model):
             if not field.startswith('_')
         ]
         return ", ".join(fields)
+
+    def clean(self, *args, **kwargs): # pylint: disable=arguments-differ
+        super().clean(*args, **kwargs)
+
+        if self.amount <= 0:
+            raise ValidationError(
+                f'<order.amount> must be a positive value. Found <{self.amount}>'
+            )
 
     def save(self, *args, **kwargs):    # pylint: disable=arguments-differ
         ''' On save, update timestamps '''

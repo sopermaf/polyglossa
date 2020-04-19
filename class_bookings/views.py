@@ -58,7 +58,8 @@ def post_seminar_student(request):
     order = Order(
         customer=student,
         processor=Order.ProcessorEnums.SEMINAR,
-        order_details=json.dumps(sem_req)
+        order_details=json.dumps(sem_req),
+        amount=slot.seminar.price,
     )
     order.save()
 

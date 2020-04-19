@@ -38,6 +38,7 @@ class TestPayments(TestCase):
             payment_status=Order.PaymentStatus.AWAITING,
             processor=Order.ProcessorEnums.SEMINAR,
             order_details=json.dumps(self.order_details),
+            amount=self.slot.seminar.price,
         )
 
     # helper functions
