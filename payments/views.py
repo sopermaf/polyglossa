@@ -4,40 +4,14 @@ Request handlers for Polyglossa payments
 import re
 
 from django.urls import reverse
-from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from paypal.standard.forms import PayPalEncryptedPaymentsForm
 
 from polyglossa import settings
 
 ENCRYPTED_BUTTON_REGEX = re.compile(r'(?<=name="encrypted" value=")([^"]+)', re.DOTALL)
-
-# Create your views here.
-def paypal_form(request):
-    '''Load the paypal form with payment info'''
-    host = request.get_host()
-
-    paypal_dict = {
-        'business': settings.PAYPAL_EMAIL,
-        'amount': '1.00',
-        'item_name': 'Order 1',
-        'invoice': '101010101',
-        'currency_code': 'USD',
-        'notify_url': 'http://{}{}'.format(host,
-                                           reverse('paypal-ipn')),
-        'return_url': 'http://{}{}'.format(host,
-                                           reverse('index')),
-        'cancel_return': 'http://{}{}'.format(host,
-                                              reverse('index')),
-    }
-
-    # Create the instance.
-    form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
-    print(form.render())
-
-    context = {"form": form, 'payment_details': paypal_dict, 'test': form.render()}
-    return render(request, "payment.html", context)
 
 
 def paypal_button(request, order, status):
@@ -75,3 +49,27 @@ def paypal_button(request, order, status):
         },
     }
     return JsonResponse(payment_data, status=status)
+
+
+@csrf_exempt
+def cancel_awaiting_order(request):
+    '''
+    Process a POST cancelation request for a student
+    before a paypal IPN signal is used.
+
+    Parameters
+    ---
+    - request (post)
+
+    Returns
+    ---
+    HttpResponse
+    '''
+    if request.method != "POST":
+        return HttpResponse("POST requests only", status=400)
+
+    # parse student
+    # get Awaiting Order
+    # cancel awaiting Order
+
+    return HttpResponse("cancelled")
