@@ -1,11 +1,24 @@
 <template>
     <v-container>
         <v-layout justify-center wrap text-center class="mx-auto">
+            <v-flex lg6 s4 xs12>
+                <v-card elevation="10">
+                    <v-card-title>
+                        Order Review
+                    </v-card-title>
+                    <v-card-list>
+                    <ul>
+                        <li v-for="(k, v) in order" :key="k">
+                            {{ v.toUpperCase() }} - {{ k }}
+                        </li>
+                    </ul>
+                    </v-card-list>
+                </v-card>
+            </v-flex>
             <v-flex ma-5 lg6 s4 xs12>
-                <h1> Continue to Paypal </h1>
                 <v-form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
                     <input type="hidden" name="cmd" value="_s-xclick" />
-                    <input type="hidden" name="encrypted" :value="button_address"/>
+                    <input type="hidden" name="encrypted" :value="button.address"/>
                     <input
                         type="image"
                         :src="require('../assets/paypal-checkout-logo-large.png')"
@@ -16,36 +29,40 @@
                     />
                 </v-form>
             </v-flex>
-            <v-flex ma-5 lg6 s4 xs12>
-                <v-btn>
-                    hello world
+            <v-flex lg6 s4 xs12>
+                <v-btn @click="cancelOrder" elevation="15">
+                    Cancel
                 </v-btn>
             </v-flex>
         </v-layout>
     </v-container>
-
-    
-
 </template>
 
 <script>
 import axios from "axios";
 
 export default {
+    props: {
+        order: {
+            type: Object,
+            required: true,
+        },
+        button: {
+            type: Object,
+            required: true,
+        }
+    },
     data: () => ({
-        button_address: null,
     }),
     mounted() {
-        axios.get('/payments/button/').then(response => {
-            console.log(response.data);
-            this.button_address = response.data['button'];
-            console.log("Reached payments COmponent" + response.data);
-        })
+        console.log(this.order);
+        console.log(this.button);
     },
     methods: {
         cancelOrder() {
-            // cancel the order
-            // continue to form page
+            // CANCEL REQUEST
+            // REDIRECT TO FORM?
+            this.$emit("pageSelection", "BOOKING");
         },
     },
 };

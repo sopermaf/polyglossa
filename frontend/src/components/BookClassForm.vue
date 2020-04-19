@@ -47,7 +47,7 @@
             @click="validate"
 
           >
-            Continue to payment
+            Continue to checkout
           </v-btn>
 
           <!-- Reset Form -->
@@ -59,6 +59,9 @@
             Reset Form
           </v-btn>
         </v-form>
+      </v-flex>
+      <v-flex ma-5 lg12 s12 xs12>
+        {{ response_data }}
       </v-flex>
     </v-layout>
   </v-container>
@@ -80,6 +83,7 @@ export default {
     bookingEmail: null,
     seminarChoice: null,
     bookingChoice: null,
+    requestResponse: null,
     // validation rules
     nameRules: [
       v => !!v || 'Name is required',
@@ -114,12 +118,15 @@ export default {
         student_email: this.bookingEmail,
         slot_id: this.bookingChoice.id,
       }))
-      .then(function (response) {
+      .then(response => {
         console.log(response);
-        //window.location.assign(response.request.responseURL);
+        console.log(response.data['order']);
+        this.$emit("orderGenerated", response.data['order']);
+        this.$emit("pageSelection", "PAYMENT");
       })
       .catch(function (error) {
         console.log(error);
+        this.response_data = "hello world";
       });
     },
     validate () {
@@ -133,7 +140,7 @@ export default {
     },
     reset () {
       this.$refs.form.reset();
-      this.updateViewToForm();
+      this.updateViewToForm(-999);
     },
     getSlots(id) {
       axios.get('/book_class/get/seminar_slots/' + id).then(response => {
@@ -147,7 +154,12 @@ export default {
 
       return `${datetimeStr} (${slot.duration_in_mins} mins)`;
     },
-    updateViewToForm() {
+    updateViewToForm(orderId) {
+      this.$emit("pageSelection", "PAYMENT");
+    },
+    paypalButton(response) {
+      console.log(response);
+      this.$emit("orderGenerated", response.data);
       this.$emit("pageSelection", "PAYMENT");
     }
   },

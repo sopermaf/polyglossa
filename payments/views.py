@@ -40,14 +40,18 @@ def paypal_form(request):
     return render(request, "payment.html", context)
 
 
-def paypal_button(request):
+def paypal_button(request, order):
+    '''
+    Send the encrypted button info for
+    a given order
+    '''
     host = request.get_host()
 
     paypal_dict = {
         'business': settings.PAYPAL_EMAIL,
-        'amount': '1.00',
+        'amount': '10.00',
         'item_name': 'Order 1',
-        'invoice': '101010101',
+        'invoice': '101',
         'currency_code': 'USD',
         'notify_url': 'http://{}{}'.format(host,
                                            reverse('paypal-ipn')),
@@ -56,11 +60,18 @@ def paypal_button(request):
         'cancel_return': 'http://{}{}'.format(host,
                                               reverse('index')),
     }
-
-    # Create the instance.
     form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
+    button_address = ENCRYPTED_BUTTON_REGEX.search(form.render()).group()
 
-    button = ENCRYPTED_BUTTON_REGEX.search(form.render()).group()
-
-    data = {'button': button}
-    return JsonResponse(data)
+    payment_data = {
+        'button': {
+            'address': button_address,
+        },
+        'order': {
+            'email': order.customer.email,
+            'name': order.customer.name,
+            'amount': '100',
+            'ref': paypal_dict['invoice'],
+        },
+    }
+    return JsonResponse(payment_data)

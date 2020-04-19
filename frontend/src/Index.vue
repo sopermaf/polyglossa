@@ -12,10 +12,10 @@
         <Courses @courseChoice="prefillForm" />
       </template>
       <template v-else-if="pageSelection == 'BOOKING'">
-        <BookClassForm :prefilledChoice="courseChoice" @pageSelection="updateView"/>
+        <BookClassForm :prefilledChoice="courseChoice" @pageSelection="updateView" @orderGenerated="orderUpdate"/>
       </template>
       <template v-else-if="pageSelection == 'PAYMENT'">
-        <Payment />
+        <Payment @pageSelection="updateView" :order="order" :button="button"/>
       </template>
     </v-content>
 
@@ -34,11 +34,6 @@ import Payment from "./components/Payment.vue"
 
 export default {
   name: "Index",
-  props: {
-      form: {
-        type: Object
-      }
-  },
   components: {
     Home,
     Courses,
@@ -49,11 +44,10 @@ export default {
   },
   data: () => ({
     pageSelection: "HOME",
-    courseChoice: null
+    courseChoice: null,
+    order: {name:'null'},
+    button: {address: 'not set'},
   }),
-  mounted() {
-    console.log(this.form);
-  },
   methods: {
     updateView(view) {
       this.pageSelection = view;
@@ -61,6 +55,14 @@ export default {
     prefillForm(course) {
       this.pageSelection = "BOOKING";
       this.courseChoice = course;
+    },
+    orderUpdate(order) {
+      this.order = order;
+      console.log('reset button and order in index');
+    },
+    doThat(...args) {
+      const [x,y] = args
+      console.log(x,y);
     }
   }
 };

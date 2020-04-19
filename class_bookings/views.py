@@ -5,11 +5,11 @@ import json
 from datetime import datetime
 
 from django.core.exceptions import ValidationError
-from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from payments.models import Order
+from payments.views import paypal_button
 
 from . import parse, const, util
 from . import models
@@ -62,7 +62,7 @@ def post_seminar_student(request):
     )
     order.save()
 
-    return redirect('payment-form')
+    return paypal_button(request, order)
 
 
 def get_activities(request, activity_type): #pylint: disable=unused-argument
