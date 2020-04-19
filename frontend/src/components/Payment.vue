@@ -54,10 +54,6 @@ export default {
     },
     data: () => ({
     }),
-    mounted() {
-        console.log(this.order);
-        console.log(this.button);
-    },
     methods: {
         cancelOrder() {
             // CANCEL REQUEST

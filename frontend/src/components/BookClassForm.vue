@@ -119,8 +119,6 @@ export default {
         slot_id: this.bookingChoice.id,
       }))
       .then(response => {
-        console.log(response);
-        console.log(response.data['order']);
         this.$emit("orderGenerated", response.data['order']);
         this.$emit("buttonGenerated", response.data['button']);
         this.$emit("pageSelection", "PAYMENT");
@@ -149,11 +147,6 @@ export default {
 
       return `${datetimeStr} (${slot.duration_in_mins} mins)`;
     },
-    paypalButton(response) {
-      console.log(response);
-      this.$emit("orderGenerated", response.data);
-      this.$emit("pageSelection", "PAYMENT");
-    }
   },
 }
 </script>

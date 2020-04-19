@@ -63,11 +63,9 @@ export default {
     },
     orderUpdate(order) {
       this.order = order;
-      console.log('order updated');
     },
     updateButton(button) {
       this.button = button;
-      console.log('button updated');
     },
   }
 };
