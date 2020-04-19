@@ -122,6 +122,7 @@ export default {
         console.log(response);
         console.log(response.data['order']);
         this.$emit("orderGenerated", response.data['order']);
+        this.$emit("buttonGenerated", response.data['button']);
         this.$emit("pageSelection", "PAYMENT");
       })
       .catch(function (error) {
@@ -136,11 +137,9 @@ export default {
             this.$refs.form.reset();
         }
         this.snackbar = true;
-        //console.log(this.bookingChoice);
     },
     reset () {
       this.$refs.form.reset();
-      this.updateViewToForm(-999);
     },
     getSlots(id) {
       axios.get('/book_class/get/seminar_slots/' + id).then(response => {
@@ -153,9 +152,6 @@ export default {
       var datetimeStr = moment(slot.start_datetime).format("DD MMM hh:mm a");
 
       return `${datetimeStr} (${slot.duration_in_mins} mins)`;
-    },
-    updateViewToForm(orderId) {
-      this.$emit("pageSelection", "PAYMENT");
     },
     paypalButton(response) {
       console.log(response);

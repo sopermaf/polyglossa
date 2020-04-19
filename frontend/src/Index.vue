@@ -12,7 +12,12 @@
         <Courses @courseChoice="prefillForm" />
       </template>
       <template v-else-if="pageSelection == 'BOOKING'">
-        <BookClassForm :prefilledChoice="courseChoice" @pageSelection="updateView" @orderGenerated="orderUpdate"/>
+        <BookClassForm
+          :prefilledChoice="courseChoice"
+          @pageSelection="updateView"
+          @orderGenerated="orderUpdate"
+          @buttonGenerated="updateButton"
+        />
       </template>
       <template v-else-if="pageSelection == 'PAYMENT'">
         <Payment @pageSelection="updateView" :order="order" :button="button"/>
@@ -45,8 +50,8 @@ export default {
   data: () => ({
     pageSelection: "HOME",
     courseChoice: null,
-    order: {name:'null'},
-    button: {address: 'not set'},
+    order: null,
+    button: null,
   }),
   methods: {
     updateView(view) {
@@ -58,12 +63,12 @@ export default {
     },
     orderUpdate(order) {
       this.order = order;
-      console.log('reset button and order in index');
+      console.log('order updated');
     },
-    doThat(...args) {
-      const [x,y] = args
-      console.log(x,y);
-    }
+    updateButton(button) {
+      this.button = button;
+      console.log('button updated');
+    },
   }
 };
 </script>
