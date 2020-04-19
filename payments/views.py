@@ -6,8 +6,12 @@ import re
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
 
 from paypal.standard.forms import PayPalEncryptedPaymentsForm
+
+from class_bookings.models import Student
+from payments.models import Order
 
 from polyglossa import settings
 
@@ -68,8 +72,24 @@ def cancel_awaiting_order(request):
     if request.method != "POST":
         return HttpResponse("POST requests only", status=400)
 
-    # parse student
-    # get Awaiting Order
-    # cancel awaiting Order
+    try:
+        student_data = {key: request.POST[key] for key in ['name', 'email']}
+    except KeyError:
+        return HttpResponse("Missing parameters", status=400)
+
+    student = get_object_or_404(
+        Student,
+        name=student_data['name'],
+        email=student_data['email'],
+    )
+
+    order = get_object_or_404(
+        Order,
+        payment_status=Order.PaymentStatus.AWAITING,
+        customer=student,
+    )
+
+    order.payment_status = Order.PaymentStatus.FAILED
+    order.save()
 
     return HttpResponse("cancelled")
