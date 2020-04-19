@@ -106,8 +106,8 @@ export default {
   },
   watch: {
     'seminarChoice': {
-      handler: function(after, before){
-        this.getSlots(after.id);
+      handler: function(seminar){
+        this.getSlots(seminar.id);
       }
     }
   },
@@ -125,10 +125,6 @@ export default {
         this.$emit("buttonGenerated", response.data['button']);
         this.$emit("pageSelection", "PAYMENT");
       })
-      .catch(function (error) {
-        console.log(error);
-        this.response_data = "hello world";
-      });
     },
     validate () {
         if (this.$refs.form.validate()) {

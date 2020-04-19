@@ -30,7 +30,6 @@ export default {
   mounted() {
     axios.get('/book_class/get/activities/SEM').then(response => {
       this.classTypes = response.data['activities'];
-      console.log(response);
     });
   },
   methods: {
