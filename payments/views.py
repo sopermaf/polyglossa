@@ -27,7 +27,7 @@ def paypal_button(request, order, status):
 
     paypal_dict = {
         'business': settings.PAYPAL_EMAIL,
-        'amount': '10.00',
+        'amount': order.amount,
         'item_name': 'Order 1',
         'invoice': '101',
         'currency_code': 'USD',
@@ -48,7 +48,7 @@ def paypal_button(request, order, status):
         'order': {
             'email': order.customer.email,
             'name': order.customer.name,
-            'amount': order.amount,
+            'amount': paypal_dict['amount'],
             'ref': paypal_dict['invoice'],
         },
     }
