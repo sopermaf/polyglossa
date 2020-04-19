@@ -9,6 +9,7 @@ from payments.models import Order
 from class_bookings.const import *
 from class_bookings.models import *
 from . import util as t_util
+from .. import const
 
 
 class TestViews(TestCase):
@@ -71,7 +72,11 @@ class TestViews(TestCase):
 
         # assert status code
         for resp in responses:
-            self.assertEqual(resp.status_code, 302, "Successful Code")
+            self.assertEqual(
+                resp.status_code,
+                const.RESOURCE_CREATED_CODE,
+                "Successful Code"
+            )
 
         # validate in student database
         self.assert_num_db_students(exp_num_students=len(test_students))
@@ -109,7 +114,11 @@ class TestViews(TestCase):
         responses = [self.post_seminar(**data) for i in range(2)]
 
         # assert status
-        self.assertEqual(responses[0].status_code, 302, 'Success')
+        self.assertEqual(
+            responses[0].status_code,
+            const.RESOURCE_CREATED_CODE,
+            'Success'
+        )
         self.assertEqual(responses[1].status_code, BAD_REQUEST_CODE, 'Failure')
 
 

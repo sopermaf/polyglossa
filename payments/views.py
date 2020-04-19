@@ -11,7 +11,7 @@ from paypal.standard.forms import PayPalEncryptedPaymentsForm
 
 from polyglossa import settings
 
-ENCRYPTED_BUTTON_REGEX = re.compile(r'(?<=name="encrypted" value=")([^"]+)', re.DOTALL) 
+ENCRYPTED_BUTTON_REGEX = re.compile(r'(?<=name="encrypted" value=")([^"]+)', re.DOTALL)
 
 # Create your views here.
 def paypal_form(request):
@@ -40,7 +40,7 @@ def paypal_form(request):
     return render(request, "payment.html", context)
 
 
-def paypal_button(request, order):
+def paypal_button(request, order, status):
     '''
     Send the encrypted button info for
     a given order
@@ -70,8 +70,8 @@ def paypal_button(request, order):
         'order': {
             'email': order.customer.email,
             'name': order.customer.name,
-            'amount': '100',
+            'amount': order.amount,
             'ref': paypal_dict['invoice'],
         },
     }
-    return JsonResponse(payment_data)
+    return JsonResponse(payment_data, status=status)

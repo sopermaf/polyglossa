@@ -63,7 +63,7 @@ def post_seminar_student(request):
     )
     order.save()
 
-    return paypal_button(request, order)
+    return paypal_button(request, order, status=const.RESOURCE_CREATED_CODE)
 
 
 def get_activities(request, activity_type): #pylint: disable=unused-argument
