@@ -36,8 +36,11 @@ jobs:
     - name: Django Integration Tests
       run: |
         pipenv run python manage.py test
-    - name: Linting
+    - name: Python Lint
       run: |
         pipenv run pylint -d fixme class_bookings
         pipenv run pylint -d fixme payments
         pipenv run pylint -d fixme polyglossa
+    - name: Frontend Lint
+      run: |
+        ./node_modules/.bin/eslint frontend/src/components/*.vue frontend/src/*.vue
