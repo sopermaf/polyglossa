@@ -32,3 +32,4 @@ frontend/webpack-stats.json
 # Sensitive Information
 config/secret/
 env.py
+local_settings.py
