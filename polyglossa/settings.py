@@ -134,4 +134,4 @@ PAYPAL_EMAIL = local_settings.PAYPAL_EMAIL
 PAYPAL_PRIVATE_CERT = '%s/paypal_private.pem' % local_settings.CERT_PATH
 PAYPAL_PUBLIC_CERT = '%s/paypal_public.pem' % local_settings.CERT_PATH
 PAYPAL_CERT = '%s/paypal_cert.pem' % local_settings.CERT_PATH
-PAYPAL_CERT_ID = os.environ.get('POLYGLOSSA_PAYPAL_CERT')
+PAYPAL_CERT_ID = local_settings.PAYPAL_CERT_ID
