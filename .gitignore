@@ -33,3 +33,4 @@ frontend/webpack-stats.json
 config/secret/
 env.py
 local_settings.py
+*.pem
