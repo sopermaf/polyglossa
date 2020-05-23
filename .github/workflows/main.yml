@@ -13,6 +13,21 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
+    - name: Setup Project Files
+      shell: bash
+      env:
+        CERTS_PATH: resources/certs
+        PAYPAL_CERT: ${{secrets.PAYPAL_CERT}} 
+        PAYPAL_PUBLIC: ${{secrets.PAYPAL_PUBLIC}}
+        PAYPAL_PRIVATE: ${{secrets.PAYPAL_PRIVATE}}
+        LOCAL_SETTINGS: ${{secrets.LOCAL_SETTINGS}}
+        SETTINGS_PATH: polyglossa/local_settings.py
+      run: |
+        mkdir -p $HOME/polyglossa && echo "$LOCAL_SETTINGS" > $SETTINGS_PATH
+        mkdir -p $HOME/CERTS_PATH
+        echo "$PAYPAL_CERT" > $CERTS_PATH/paypal_cert.pem
+        echo "$PAYPAL_PUBLIC" > $CERTS_PATH/paypal_public.pem
+        echo "$PAYPAL_PRIVATE" > $CERTS_PATH/paypal_private.pem
     - name: Install dependencies
       run: |
         sudo apt-get install -y swig
