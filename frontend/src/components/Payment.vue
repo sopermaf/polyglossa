@@ -57,7 +57,7 @@ export default {
     }),
     methods: {
         cancelOrder() {
-            axios.post('/payments/cancel/', qs.stringify({
+            axios.post(process.env.VUE_APP_API_URL + '/payments/cancel/', qs.stringify({
                 name: this.order.name,
                 email: this.order.email,
             }))

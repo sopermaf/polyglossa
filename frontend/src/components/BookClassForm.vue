@@ -113,7 +113,7 @@ export default {
   },
   methods: {
     postData() {
-      axios.post('/book_class/signup/seminar', qs.stringify({
+      axios.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_API_URL + '/book_class/signup/seminar', qs.stringify({
         student_name: this.bookingName,
         student_email: this.bookingEmail,
         slot_id: this.bookingChoice.id,
