@@ -10,6 +10,7 @@ from . import local_settings
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
+VUE_DIST_DIR = os.path.join(BASE_DIR, 'frontend', 'dist')
 
 
 SECRET_KEY = local_settings.SECRET_KEY
@@ -54,7 +55,8 @@ ROOT_URLCONF = 'polyglossa.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR,],
+        #'DIRS': [TEMPLATES_DIR],   # FAST RELOAD
+        'DIRS': [VUE_DIST_DIR], # PRODUCTION
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -118,6 +120,13 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(VUE_DIST_DIR, 'css'),
+    os.path.join(VUE_DIST_DIR, 'img'),
+    os.path.join(VUE_DIST_DIR, 'js'),
+    os.path.join(VUE_DIST_DIR),
+]
 
 WEBPACK_LOADER = {
     'DEFAULT': {
