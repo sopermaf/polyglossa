@@ -99,7 +99,7 @@ export default {
     slots: [],
   }),
   mounted() {
-    axios.get(process.env.VUE_APP_API_URL + '/book_class/get/activities/SEM').then(response => {
+    axios.get('/book_class/get/activities/SEM').then(response => {
       this.seminars = response.data['activities'];
     })
     this.seminarChoice = this.prefilledChoice;
@@ -113,7 +113,7 @@ export default {
   },
   methods: {
     postData() {
-      axios.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_API_URL + '/book_class/signup/seminar', qs.stringify({
+      axios.post('/book_class/signup/seminar', qs.stringify({
         student_name: this.bookingName,
         student_email: this.bookingEmail,
         slot_id: this.bookingChoice.id,
@@ -136,7 +136,7 @@ export default {
       this.$refs.form.reset();
     },
     getSlots(id) {
-      axios.get(process.env.VUE_APP_API_URL + '/book_class/get/seminar_slots/' + id).then(response => {
+      axios.get('/book_class/get/seminar_slots/' + id).then(response => {
         this.slots = response.data["slots"] || [];
       })
     },
