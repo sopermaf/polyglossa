@@ -2,7 +2,10 @@ const BundleTracker = require("webpack-bundle-tracker");
 
 module.exports = {
     //publicPath: "http://localhost:8000/static/",
-    publicPath: "http://sopermaf.pythonanywhere.com/static/",
+    //publicPath: "http://sopermaf.pythonanywhere.com/static/",
+    publicPath: process.env.NODE_ENV === 'production'
+    ? 'http://sopermaf.pythonanywhere.com/static/'
+    : 'http://localhost:8000/static/',
     outputDir: './dist/',
 
     chainWebpack: config => {

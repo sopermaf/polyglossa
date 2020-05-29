@@ -99,7 +99,7 @@ export default {
     slots: [],
   }),
   mounted() {
-    axios.get('/book_class/get/activities/SEM').then(response => {
+    axios.get(process.env.API_URL + '/book_class/get/activities/SEM').then(response => {
       this.seminars = response.data['activities'];
     })
     this.seminarChoice = this.prefilledChoice;
@@ -136,7 +136,7 @@ export default {
       this.$refs.form.reset();
     },
     getSlots(id) {
-      axios.get('/book_class/get/seminar_slots/' + id).then(response => {
+      axios.get(process.env.API_URL + '/book_class/get/seminar_slots/' + id).then(response => {
         this.slots = response.data["slots"] || [];
       })
     },

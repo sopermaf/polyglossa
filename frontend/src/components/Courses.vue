@@ -28,7 +28,7 @@ export default {
     courseChoice: null,
   }),
   mounted() {
-    axios.get('/book_class/get/activities/SEM').then(response => {
+    axios.get(process.env.API_URL + '/book_class/get/activities/SEM').then(response => {
       this.classTypes = response.data['activities'];
     });
   },
