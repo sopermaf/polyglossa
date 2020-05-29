@@ -11,10 +11,6 @@ module.exports = {
         config.optimization
             .splitChunks(false)
 
-
-
-
-
         config
             .plugin('BundleTracker')
             .use(BundleTracker, [{filename: '../frontend/webpack-stats.json'}])
