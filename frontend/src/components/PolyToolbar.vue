@@ -55,7 +55,6 @@ export default {
       this.$emit("pageSelection", choice);
     },
     openDrawer() {
-      console.log("called");
       this.$emit("drawer", true);
     }
   }
