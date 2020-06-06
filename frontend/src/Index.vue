@@ -10,24 +10,12 @@
         absolute
         temporary
       >
-        <v-list-item>
-          <v-list-item-avatar>
-            <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
-          </v-list-item-avatar>
-
-          <v-list-item-content>
-            <v-list-item-title>John Leider</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-divider></v-divider>
-
-        <v-list dense>
+        <v-list >
 
           <v-list-item
-            v-for="item in items"
+            v-for="item in navItems"
             :key="item.title"
-            link
+            @click="updateView(item.pageSelection)"
           >
             <v-list-item-icon>
               <v-icon>{{ item.icon }}</v-icon>
@@ -38,6 +26,26 @@
             </v-list-item-content>
           </v-list-item>
         </v-list>
+
+        <v-divider></v-divider>
+        
+        <template
+          v-for="item in socialMediaItems"
+        >
+          <v-list-item
+              :key="item.title"
+              :href="item.pageLink"
+          >
+            <v-list-item-avatar>
+              <v-img :src="item.imageLink"></v-img>
+            </v-list-item-avatar>
+
+            <v-list-item-content>
+              <v-list-item-title>{{item.title}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+        
       </v-navigation-drawer>
 
       <template v-if="pageSelection == 'HOME'">
@@ -71,6 +79,7 @@ import BookClassForm from "./components/BookClassForm";
 import PolyToolbar from "./components/PolyToolbar.vue";
 import PolyFooter from "./components/PolyFooter.vue";
 import Payment from "./components/Payment.vue"
+import {mdiClipboardTextOutline, mdiHome, mdiBookOpenPageVariant } from '@mdi/js'
 
 export default {
   name: "Index",
@@ -88,13 +97,28 @@ export default {
     order: null,
     button: null,
     drawer: false,
-    items: [
-      {title: 'helloworld', icon: 'house'}
+    navItems: [
+      {title: 'Home', icon: mdiHome, pageSelection: "HOME"},
+      {title: 'Courses', icon: mdiBookOpenPageVariant, pageSelection: "COURSES"},
+      {title: 'Book a class', icon: mdiClipboardTextOutline, pageSelection: "BOOKING"},
+    ],
+    socialMediaItems: [
+      {
+        title: 'Youtube',
+        imageLink: 'https://w7.pngwing.com/pngs/963/811/png-transparent-youtube-logo-youtube-red-logo-computer-icons-youtube-television-angle-rectangle.png',
+        pageLink: 'https://www.youtube.com/conneringles'
+      },
+      {
+        title: 'Instagram',
+        imageLink: 'https://p7.hiclipart.com/preview/477/609/118/logo-computer-icons-clip-art-instagram-logo.jpg',
+        pageLink: 'https://www.instagram.com/polyglossalanguages/'
+      },
     ]
   }),
   methods: {
     updateView(view) {
       this.pageSelection = view;
+      this.drawer = false;
     },
     drawerVisible(val) {
       this.drawer = val;
