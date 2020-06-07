@@ -1,52 +1,59 @@
 <template>
   <v-app>
     <!-- Header -->
-    <PolyToolbar @pageSelection="updateView" @drawer="drawerVisible"/>
+    <PolyToolbar
+      @pageSelection="updateView"
+      @drawer="drawerVisible"
+      :isNavBarVisible="isNavBarVisible"
+    />
 
     <!-- Page Content -->
     <v-content>
-      <v-navigation-drawer
-        v-model="drawer"
-        absolute
-        temporary
-      >
-        <v-list >
-
-          <v-list-item
-            v-for="item in navItems"
-            :key="item.title"
-            @click="updateView(item.pageSelection)"
-          >
-            <v-list-item-icon>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-icon>
-
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-
-        <v-divider></v-divider>
-        
-        <template
-          v-for="item in socialMediaItems"
+      
+      <template
+        v-if="isNavBarVisible">
+        <v-navigation-drawer
+          v-model="drawer"
+          absolute
+          temporary
         >
-          <v-list-item
+          <v-list >
+            <!-- Navigation Items -->
+            <v-list-item
+              v-for="item in navItems"
+              :key="item.title"
+              @click="updateView(item.pageSelection)"
+            >
+              <v-list-item-icon>
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-content>
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+
+          <v-divider></v-divider>
+          <!-- Social Media Items -->
+          <template
+            v-for="item in socialMediaItems"
+          >
+            <v-list-item
               :key="item.title"
               :href="item.pageLink"
-          >
-            <v-list-item-avatar>
-              <v-img :src="item.imageLink"></v-img>
-            </v-list-item-avatar>
+            >
+              <v-list-item-avatar>
+                <v-img :src="item.imageLink"></v-img>
+              </v-list-item-avatar>
 
-            <v-list-item-content>
-              <v-list-item-title>{{item.title}}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-        
-      </v-navigation-drawer>
+              <v-list-item-content>
+                <v-list-item-title>{{item.title}}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </v-navigation-drawer>
+      </template>
 
       <template v-if="pageSelection == 'HOME'">
         <Home />
@@ -97,6 +104,7 @@ export default {
     order: null,
     button: null,
     drawer: false,
+    isNavBarVisible: false,
     navItems: [
       {title: 'Home', icon: mdiHome, pageSelection: "HOME"},
       {title: 'Courses', icon: mdiBookOpenPageVariant, pageSelection: "COURSES"},
@@ -115,6 +123,11 @@ export default {
       },
     ]
   }),
+  mounted() {
+    if(window.innerWidth < 800){
+      this.isNavBarVisible = true;
+    }
+  },
   methods: {
     updateView(view) {
       this.pageSelection = view;
@@ -136,3 +149,12 @@ export default {
   }
 };
 </script>
+
+
+<style >
+ @media screen and (max-width: 600px) {
+  body {
+    background-color: olive;
+  }
+}
+</style>
