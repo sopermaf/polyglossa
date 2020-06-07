@@ -149,12 +149,3 @@ export default {
   }
 };
 </script>
-
-
-<style >
- @media screen and (max-width: 600px) {
-  body {
-    background-color: olive;
-  }
-}
-</style>
