@@ -25,23 +25,10 @@ def paypal_button(request, order, status, **kwargs):
     '''
     host = request.get_host()
 
-    # custom_display order details
-    payment_overview = {
-        'button': {},
-        'order': kwargs.copy(),
-    }
-
-    # mandatory display details
-    payment_overview['order']['email'] = order.customer.email
-    payment_overview['order']['name'] = order.customer.name
-    payment_overview['order']['amount'] = order.amount
-
-
     # used to generate the public key
-    # TODO: add the rest of this info to paypal button
     paypal_dict = {
         'business': settings.PAYPAL_EMAIL,
-        'amount': payment_overview['order']['amount'],
+        'amount': order.amount,
         'item_name': 'Order %s' % order.id,
         'invoice': str(order.id),   # NOTE: used to updated order
         'currency_code': 'USD',
@@ -55,7 +42,17 @@ def paypal_button(request, order, status, **kwargs):
     form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
 
     button_address = ENCRYPTED_BUTTON_REGEX.search(form.render()).group()
-    payment_overview['button']['address'] = button_address
+
+    payment_overview = {
+        'button': {'address': button_address},
+
+        # custom_display order details
+        'order': kwargs.copy(),
+    }
+    payment_overview['order']['email'] = order.customer.email
+    payment_overview['order']['name'] = order.customer.name
+    payment_overview['order']['amount'] = order.amount
+
 
     return JsonResponse(payment_overview, status=status)
 
