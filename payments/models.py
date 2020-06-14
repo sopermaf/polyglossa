@@ -77,7 +77,7 @@ class Order(models.Model):
 
         order_processor = ProcessorClass(self.order_details)
         order_processor.complete()
-        self.payment_status = self.PaymentStatus.COMPLETE
+        self.payment_status = self.PaymentStatus.COMPLETED
 
         self.save()
 

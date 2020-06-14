@@ -31,13 +31,10 @@ def payment_notification(sender, **kwargs): # pylint: disable=unused-argument
     order = get_object_or_404(Order, id=ipn.invoice)
     if ipn.payment_status.upper() == 'COMPLETED':
         if order.amount == ipn.mc_gross:
-            order.payment_status = Order.PaymentStatus.COMPLETED
-            # TODO: add in handler actions
+            order.success()
         else:
             print("Order amount didn't match: {}!={}".format(
                 order.amount, ipn.mc_gross
             ))
     else:
-        order.payment_status = Order.PaymentStatus.FAILED
-
-    order.save()
+        order.failure()

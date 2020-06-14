@@ -12,7 +12,7 @@ class TestOrders(TestPayments):
         self.order.success()
 
         self.assertEqual(
-            self.order.payment_status, Order.PaymentStatus.COMPLETE
+            self.order.payment_status, Order.PaymentStatus.COMPLETED
         )
 
     def test_success_complete_action(self):
