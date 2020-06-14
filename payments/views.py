@@ -38,24 +38,25 @@ def paypal_button(request, order, status, **kwargs):
 
 
     # used to generate the public key
+    # TODO: add the rest of this info to paypal button
     paypal_dict = {
         'business': settings.PAYPAL_EMAIL,
         'amount': payment_overview['order']['amount'],
-        'item_name': 'Order 1',
-        'invoice': '101',
+        'item_name': 'Order %s' % order.id,
+        'invoice': str(order.id),   # NOTE: used to updated order
         'currency_code': 'USD',
         'notify_url': 'http://{}{}'.format(host,
                                            reverse('paypal-ipn')),
         'return_url': 'http://{}{}'.format(host,
                                            reverse('index')),
         'cancel_return': 'http://{}{}'.format(host,
-                                              reverse('index')),
+                                              reverse('cancel-awaiting')),
     }
     form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
+
     button_address = ENCRYPTED_BUTTON_REGEX.search(form.render()).group()
-
-
     payment_overview['button']['address'] = button_address
+
     return JsonResponse(payment_overview, status=status)
 
 
@@ -96,4 +97,4 @@ def cancel_awaiting_order(request):
     order.payment_status = Order.PaymentStatus.FAILED
     order.save()
 
-    return HttpResponse("cancelled")
+    return HttpResponse("cancelled")    # TODO: return to home page
