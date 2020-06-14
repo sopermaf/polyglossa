@@ -18,8 +18,10 @@ class Order(models.Model):
     class PaymentStatus(models.TextChoices):
         '''Payment Status Enum'''
         AWAITING = 'Awaiting'
-        COMPLETE = 'Complete'
+        COMPLETED = 'Completed'
         FAILED = 'Failed'
+        DENIED = 'Denied'
+        REFUNDED = 'Refunded'
 
     class ProcessorEnums(models.TextChoices):
         '''Enums for processor to perform further order actions'''
