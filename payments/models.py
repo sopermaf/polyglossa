@@ -18,8 +18,11 @@ class Order(models.Model):
     class PaymentStatus(models.TextChoices):
         '''Payment Status Enum'''
         AWAITING = 'Awaiting'
-        COMPLETE = 'Complete'
+        COMPLETED = 'Completed'
         FAILED = 'Failed'
+        CANCELLED = 'Cancelled'
+        DENIED = 'Denied'
+        REFUNDED = 'Refunded'
 
     class ProcessorEnums(models.TextChoices):
         '''Enums for processor to perform further order actions'''
@@ -75,7 +78,7 @@ class Order(models.Model):
 
         order_processor = ProcessorClass(self.order_details)
         order_processor.complete()
-        self.payment_status = self.PaymentStatus.COMPLETE
+        self.payment_status = self.PaymentStatus.COMPLETED
 
         self.save()
 

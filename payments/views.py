@@ -6,16 +6,16 @@ import re
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 
 from paypal.standard.forms import PayPalEncryptedPaymentsForm
 
-from class_bookings.models import Student
 from payments.models import Order
 
 from polyglossa import settings
 
-ENCRYPTED_BUTTON_REGEX = re.compile(r'(?<=name="encrypted" value=")([^"]+)', re.DOTALL)
+RE_ENCRYPTED_BUTTON = re.compile(r'(?<=name="encrypted" value=")([^"]+)', re.DOTALL)
+RE_FORM_URL = re.compile(r'(?<=action=")([^"]+)',)
 
 
 def paypal_button(request, order, status, **kwargs):
@@ -23,47 +23,54 @@ def paypal_button(request, order, status, **kwargs):
     Send the encrypted button info for
     a given order
     '''
+    # create paypal form
     host = request.get_host()
-
-    # custom_display order details
-    payment_overview = {
-        'button': {},
-        'order': kwargs.copy(),
-    }
-
-    # mandatory display details
-    payment_overview['order']['email'] = order.customer.email
-    payment_overview['order']['name'] = order.customer.name
-    payment_overview['order']['amount'] = order.amount
-
-
-    # used to generate the public key
     paypal_dict = {
         'business': settings.PAYPAL_EMAIL,
-        'amount': payment_overview['order']['amount'],
-        'item_name': 'Order 1',
-        'invoice': '101',
+        'amount': order.amount,
+        'item_name': 'Order %s' % order.id,
+        'invoice': str(order.id),   # NOTE: used to updated order
         'currency_code': 'USD',
         'notify_url': 'http://{}{}'.format(host,
                                            reverse('paypal-ipn')),
         'return_url': 'http://{}{}'.format(host,
                                            reverse('index')),
         'cancel_return': 'http://{}{}'.format(host,
-                                              reverse('index')),
+                                              reverse('cancel-awaiting')),
     }
     form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
-    button_address = ENCRYPTED_BUTTON_REGEX.search(form.render()).group()
 
+    # extract key parts for Vue form
+    form_str = form.render()
+    encrypted_inputs = RE_ENCRYPTED_BUTTON.search(form_str).group()
+    form_url = RE_FORM_URL.search(form_str).group()
 
-    payment_overview['button']['address'] = button_address
+    payment_overview = {
+        'button': {
+            'encrypted_inputs': encrypted_inputs,
+            'url': form_url,
+        },
+
+        # custom_display order details
+        'order': kwargs.copy(),
+    }
+    payment_overview['order']['email'] = order.customer.email
+    payment_overview['order']['name'] = order.customer.name
+    payment_overview['order']['amount'] = paypal_dict['amount']
+    payment_overview['order']['currency'] = paypal_dict['currency_code']
+
+    request.session['order_id'] = order.id
+
     return JsonResponse(payment_overview, status=status)
 
 
 @csrf_exempt
 def cancel_awaiting_order(request):
     '''
-    Process a POST cancelation request for a student
-    before a paypal IPN signal is used.
+    Cancels an existing order based on session
+    cookies.
+
+    NOTE: Used on paypal and from payment page
 
     Parameters
     ---
@@ -73,27 +80,20 @@ def cancel_awaiting_order(request):
     ---
     HttpResponse
     '''
-    if request.method != "POST":
-        return HttpResponse("POST requests only", status=400)
+    if 'order_id' not in request.session:
+        print(f"No order found for {request}")
+        return HttpResponse('Not Found', status=404)
+    order_id = request.session['order_id']
 
-    try:
-        student_data = {key: request.POST[key] for key in ['name', 'email']}
-    except KeyError:
-        return HttpResponse("Missing parameters", status=400)
-
-    student = get_object_or_404(
-        Student,
-        name=student_data['name'],
-        email=student_data['email'],
-    )
-
+    # only cancels awaiting orders
     order = get_object_or_404(
         Order,
         payment_status=Order.PaymentStatus.AWAITING,
-        customer=student,
+        id=order_id,
     )
 
-    order.payment_status = Order.PaymentStatus.FAILED
+    order.payment_status = Order.PaymentStatus.CANCELLED
     order.save()
+    print(f"Order {order} cancelled")
 
-    return HttpResponse("cancelled")
+    return redirect('index')

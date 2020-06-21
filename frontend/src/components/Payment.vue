@@ -16,9 +16,9 @@
                 </v-card>
             </v-flex>
             <v-flex ma-5 lg6 s4 xs12>
-                <v-form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+                <v-form :action="button.url" method="post">
                     <input type="hidden" name="cmd" value="_s-xclick" />
-                    <input type="hidden" name="encrypted" :value="button.address"/>
+                    <input type="hidden" name="encrypted" :value="button.encrypted_inputs"/>
                     <input
                         type="image"
                         :src="require('../assets/paypal-checkout-logo-large.png')"
@@ -40,7 +40,6 @@
 
 <script>
 import axios from "axios";
-import qs from "qs";
 
 export default {
     props: {
@@ -57,10 +56,7 @@ export default {
     }),
     methods: {
         cancelOrder() {
-            axios.post('/payments/cancel/', qs.stringify({
-                name: this.order.name,
-                email: this.order.email,
-            }))
+            axios.post('/payments/cancel/');
             this.$emit("pageSelection", "BOOKING");
         },
     },
