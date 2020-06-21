@@ -14,7 +14,7 @@ from payments.models import Order
 
 from polyglossa import settings
 
-ENCRYPTED_BUTTON_REGEX = re.compile(r'(?<=name="encrypted" value=")([^"]+)', re.DOTALL)
+RE_ENCRYPTED_BUTTON = re.compile(r'(?<=name="encrypted" value=")([^"]+)', re.DOTALL)
 RE_FORM_URL = re.compile(r'(?<=action=")([^"]+)',)
 
 
@@ -42,12 +42,12 @@ def paypal_button(request, order, status, **kwargs):
 
     # extract key parts for Vue form
     form_str = form.render()
-    button_address = ENCRYPTED_BUTTON_REGEX.search(form_str).group()
+    encrypted_inputs = RE_ENCRYPTED_BUTTON.search(form_str).group()
     form_url = RE_FORM_URL.search(form_str).group()
 
     payment_overview = {
         'button': {
-            'address': button_address,
+            'encrypted_inputs': encrypted_inputs,
             'url': form_url,
         },
 

@@ -18,7 +18,7 @@
             <v-flex ma-5 lg6 s4 xs12>
                 <v-form :action="button.url" method="post">
                     <input type="hidden" name="cmd" value="_s-xclick" />
-                    <input type="hidden" name="encrypted" :value="button.address"/>
+                    <input type="hidden" name="encrypted" :value="button.encrypted_inputs"/>
                     <input
                         type="image"
                         :src="require('../assets/paypal-checkout-logo-large.png')"
