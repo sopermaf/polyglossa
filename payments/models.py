@@ -20,6 +20,7 @@ class Order(models.Model):
         AWAITING = 'Awaiting'
         COMPLETED = 'Completed'
         FAILED = 'Failed'
+        CANCELLED = 'Cancelled'
         DENIED = 'Denied'
         REFUNDED = 'Refunded'
 

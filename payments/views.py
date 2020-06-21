@@ -92,7 +92,7 @@ def cancel_awaiting_order(request):
         id=order_id,
     )
 
-    order.payment_status = Order.PaymentStatus.FAILED
+    order.payment_status = Order.PaymentStatus.CANCELLED
     order.save()
     print(f"Order {order} cancelled")
 

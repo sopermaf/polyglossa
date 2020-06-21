@@ -27,7 +27,7 @@ class TestViews(TestPayments):
         self.client.post(reverse('cancel-awaiting'))
         self.assertEqual(
             Order.objects.get(id=self.order.id).payment_status,
-            Order.PaymentStatus.FAILED,
+            Order.PaymentStatus.CANCELLED,
             "Order Status Updated"
         )
 
