@@ -16,6 +16,7 @@ from payments.models import Order
 from polyglossa import settings
 
 ENCRYPTED_BUTTON_REGEX = re.compile(r'(?<=name="encrypted" value=")([^"]+)', re.DOTALL)
+RE_FORM_URL = re.compile(r'(?<=action=")([^"]+)',)
 
 
 def paypal_button(request, order, status, **kwargs):
@@ -23,9 +24,8 @@ def paypal_button(request, order, status, **kwargs):
     Send the encrypted button info for
     a given order
     '''
+    # create paypal form
     host = request.get_host()
-
-    # used to generate the public key
     paypal_dict = {
         'business': settings.PAYPAL_EMAIL,
         'amount': order.amount,
@@ -41,18 +41,24 @@ def paypal_button(request, order, status, **kwargs):
     }
     form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
 
-    button_address = ENCRYPTED_BUTTON_REGEX.search(form.render()).group()
+    # extract key parts for Vue form
+    form_str = form.render()
+    button_address = ENCRYPTED_BUTTON_REGEX.search(form_str).group()
+    form_url = RE_FORM_URL.search(form_str).group()
 
     payment_overview = {
-        'button': {'address': button_address},
+        'button': {
+            'address': button_address,
+            'url': form_url,
+        },
 
         # custom_display order details
         'order': kwargs.copy(),
     }
     payment_overview['order']['email'] = order.customer.email
     payment_overview['order']['name'] = order.customer.name
-    payment_overview['order']['amount'] = order.amount
-
+    payment_overview['order']['amount'] = paypal_dict['amount']
+    payment_overview['order']['currency'] = paypal_dict['currency_code']
 
     return JsonResponse(payment_overview, status=status)
 

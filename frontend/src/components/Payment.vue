@@ -16,7 +16,7 @@
                 </v-card>
             </v-flex>
             <v-flex ma-5 lg6 s4 xs12>
-                <v-form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+                <v-form :action="button.url" method="post">
                     <input type="hidden" name="cmd" value="_s-xclick" />
                     <input type="hidden" name="encrypted" :value="button.address"/>
                     <input
