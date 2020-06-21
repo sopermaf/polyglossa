@@ -6,7 +6,7 @@ import re
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 
 from paypal.standard.forms import PayPalEncryptedPaymentsForm
 
@@ -60,14 +60,18 @@ def paypal_button(request, order, status, **kwargs):
     payment_overview['order']['amount'] = paypal_dict['amount']
     payment_overview['order']['currency'] = paypal_dict['currency_code']
 
+    request.session['order_id'] = order.id
+
     return JsonResponse(payment_overview, status=status)
 
 
 @csrf_exempt
 def cancel_awaiting_order(request):
     '''
-    Process a POST cancelation request for a student
-    before a paypal IPN signal is used.
+    Cancels an existing order based on session
+    cookies.
+
+    NOTE: Used on paypal and from payment page
 
     Parameters
     ---
@@ -77,27 +81,16 @@ def cancel_awaiting_order(request):
     ---
     HttpResponse
     '''
-    if request.method != "POST":
-        return HttpResponse("POST requests only", status=400)
+    order_id = request.session['order_id']
 
-    try:
-        student_data = {key: request.POST[key] for key in ['name', 'email']}
-    except KeyError:
-        return HttpResponse("Missing parameters", status=400)
-
-    student = get_object_or_404(
-        Student,
-        name=student_data['name'],
-        email=student_data['email'],
-    )
-
+    # only cancels awaiting orders
     order = get_object_or_404(
         Order,
         payment_status=Order.PaymentStatus.AWAITING,
-        customer=student,
+        id=order_id,
     )
 
     order.payment_status = Order.PaymentStatus.FAILED
     order.save()
 
-    return HttpResponse("cancelled")    # TODO: return to home page
+    return redirect('index')
