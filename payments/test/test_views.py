@@ -19,30 +19,20 @@ class TestViews(TestPayments):
 
 
     def test_cancel_order_success(self):
-        response = self.client.post(
-            reverse('cancel-awaiting'),
-            data={
-                'name': self.student.name,
-                'email': self.student.email,
-            }
-        )
+        # setup cookie from `payments.views.paypal_button`
+        session = self.client.session
+        session['order_id'] = self.order.id
+        session.save()
 
-        self.assertEqual(response.status_code, 200, "Success code")
+        self.client.post(reverse('cancel-awaiting'))
         self.assertEqual(
-            Order.objects.get(id=1).payment_status,
+            Order.objects.get(id=self.order.id).payment_status,
             Order.PaymentStatus.FAILED,
             "Order Status Updated"
         )
 
-
     def test_cancel_order_not_found(self):
         response = self.client.post(
             reverse('cancel-awaiting'),
-            data={'name': 'not real', 'email': 'not real'}
         )
         self.assertEqual(response.status_code, 404, "Bad Request")
-
-
-    def test_cancel_order_missing_params(self):
-        response = self.client.post(reverse('cancel-awaiting'))
-        self.assertEqual(response.status_code, 400, "Missing parameters")

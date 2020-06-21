@@ -10,7 +10,6 @@ from django.shortcuts import get_object_or_404, redirect
 
 from paypal.standard.forms import PayPalEncryptedPaymentsForm
 
-from class_bookings.models import Student
 from payments.models import Order
 
 from polyglossa import settings
@@ -81,6 +80,9 @@ def cancel_awaiting_order(request):
     ---
     HttpResponse
     '''
+    if 'order_id' not in request.session:
+        print(f"No order found for {request}")
+        return HttpResponse('Not Found', status=404)
     order_id = request.session['order_id']
 
     # only cancels awaiting orders
@@ -92,5 +94,6 @@ def cancel_awaiting_order(request):
 
     order.payment_status = Order.PaymentStatus.FAILED
     order.save()
+    print(f"Order {order} cancelled")
 
     return redirect('index')
