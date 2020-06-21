@@ -40,7 +40,6 @@
 
 <script>
 import axios from "axios";
-import qs from "qs";
 
 export default {
     props: {
@@ -57,10 +56,7 @@ export default {
     }),
     methods: {
         cancelOrder() {
-            axios.post('/payments/cancel/', qs.stringify({
-                name: this.order.name,
-                email: this.order.email,
-            }))
+            axios.post('/payments/cancel/');
             this.$emit("pageSelection", "BOOKING");
         },
     },
