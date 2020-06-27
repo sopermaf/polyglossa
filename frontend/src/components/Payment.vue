@@ -2,18 +2,20 @@
     <v-container>
         <v-layout justify-center wrap class="mx-auto">
             <v-flex ma-5 lg7 s12 xs12>
-                <v-card >
+                <v-card outlined>
                     <v-card-title>
                         Order Review
                     </v-card-title>
-                    <v-simple-table>
-                        <tbody>
-                            <tr v-for="(k, v) in order" :key="k">
-                                <td><b>{{ v.toUpperCase() }}</b></td>
-                                <td>{{ k }}</td>
-                            </tr>
-                        </tbody>
-                    </v-simple-table>
+                    <v-card-text>
+                        <v-simple-table>
+                            <tbody>
+                                <tr v-for="(k, v) in order" :key="k">
+                                    <td><b>{{ v.toUpperCase() }}</b></td>
+                                    <td>{{ k }}</td>
+                                </tr>
+                            </tbody>
+                        </v-simple-table>
+                    </v-card-text>
                 </v-card>
             </v-flex>
             <v-flex mt-2 lg5 s4 xs12 text-center>
@@ -57,7 +59,7 @@ export default {
         order: {
             name: 'Ferdia Soper Mac Cafraidh',
             email: 'sopermaf@tcd.ie',
-            amount: 10.50,
+            amount: "10.50",
             currency: 'USD'
         },
         button: {
@@ -72,3 +74,11 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">  
+  tbody {
+     tr:hover {
+        background-color: transparent !important;
+     }
+  }
+</style>
