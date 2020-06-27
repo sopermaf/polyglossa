@@ -1,21 +1,20 @@
 <template>
     <v-container>
-        <v-layout justify-center wrap text-center class="mx-auto">
-            <v-flex lg6 s4 xs12>
-                <v-card elevation="10">
+        <v-layout justify-center wrap  class="mx-auto">
+            <v-flex ma-5 lg7 s12 xs12>
+                <v-card elevation="1">
                     <v-card-title>
                         Order Review
                     </v-card-title>
-                    <v-card-list>
-                    <ul>
+                    <ul class="no-bullets" ma-2>
                         <li v-for="(k, v) in order" :key="k">
-                            {{ v.toUpperCase() }} - {{ k }}
+                            <b>{{ v.toUpperCase() }}:</b> {{ k }}
                         </li>
                     </ul>
-                    </v-card-list>
+                    
                 </v-card>
             </v-flex>
-            <v-flex ma-5 lg6 s4 xs12>
+            <v-flex mt-2 lg5 s4 xs12 text-center>
                 <v-form :action="button.url" method="post">
                     <input type="hidden" name="cmd" value="_s-xclick" />
                     <input type="hidden" name="encrypted" :value="button.encrypted_inputs"/>
@@ -29,7 +28,7 @@
                     />
                 </v-form>
             </v-flex>
-            <v-flex lg6 s4 xs12>
+            <v-flex mt-2 lg5 s4 xs12 text-center>
                 <v-btn @click="cancelOrder" elevation="15">
                     Cancel
                 </v-btn>
@@ -43,16 +42,25 @@ import axios from "axios";
 
 export default {
     props: {
-        order: {
+        /*order: {
             type: Object,
             required: true,
         },
         button: {
             type: Object,
             required: true,
-        }
+        }*/
     },
     data: () => ({
+        order: {
+            name: 'Ferdia Soper Mac Cafraidh',
+            email: 'sopermaf@tcd.ie',
+            amount: 10.50,
+            currency: 'USD'
+        },
+        button: {
+            url: 'example.com',
+        },
     }),
     methods: {
         cancelOrder() {
@@ -62,3 +70,10 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+ul.no-bullets {
+  list-style-type: none;
+  text-align: left;
+}
+</style>
