@@ -51,13 +51,15 @@ def paypal_button(request, order, status, **kwargs):
             'url': form_url,
         },
 
-        # custom_display order details
-        'order': kwargs.copy(),
+        # order overview details
+        'order': [
+            _order_item('name', order.customer.name),
+            _order_item('email', order.customer.email),
+            _order_item('amount', paypal_dict['amount']),
+            _order_item('currency', paypal_dict['currency_code']),
+        ]
     }
-    payment_overview['order']['email'] = order.customer.email
-    payment_overview['order']['name'] = order.customer.name
-    payment_overview['order']['amount'] = paypal_dict['amount']
-    payment_overview['order']['currency'] = paypal_dict['currency_code']
+    payment_overview['order'].extend([_order_item(k, v) for k, v in kwargs.items()])
 
     request.session['order_id'] = order.id
 
@@ -97,3 +99,7 @@ def cancel_awaiting_order(request):
     print(f"Order {order} cancelled")
 
     return redirect('index')
+
+
+def _order_item(title, value):
+    return {'title': title, 'value': value}

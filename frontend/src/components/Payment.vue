@@ -1,21 +1,27 @@
 <template>
     <v-container>
-        <v-layout justify-center wrap text-center class="mx-auto">
-            <v-flex lg6 s4 xs12>
-                <v-card elevation="10">
+        <v-layout justify-center wrap class="mx-auto">
+            <v-flex ma-5 lg6 s12 xs12>
+                <v-card outlined>
                     <v-card-title>
                         Order Review
                     </v-card-title>
-                    <v-card-list>
-                    <ul>
-                        <li v-for="(k, v) in order" :key="k">
-                            {{ v.toUpperCase() }} - {{ k }}
-                        </li>
-                    </ul>
-                    </v-card-list>
+                    <v-card-text>
+                        <v-simple-table>
+                            <tbody>
+                                <tr v-for="detail in order" :key="detail.title">
+                                    <td><b>{{ detail.title.toUpperCase() }}</b></td>
+                                    <td>{{ detail.value }}</td>
+                                </tr>
+                            </tbody>
+                        </v-simple-table>
+                    </v-card-text>
                 </v-card>
             </v-flex>
-            <v-flex ma-5 lg6 s4 xs12>
+
+            <div class="break" />
+
+            <v-flex mt-2 lg3 s4 xs12 text-center>
                 <v-form :action="button.url" method="post">
                     <input type="hidden" name="cmd" value="_s-xclick" />
                     <input type="hidden" name="encrypted" :value="button.encrypted_inputs"/>
@@ -29,8 +35,8 @@
                     />
                 </v-form>
             </v-flex>
-            <v-flex lg6 s4 xs12>
-                <v-btn @click="cancelOrder" elevation="15">
+            <v-flex mt-2 lg3 s4 xs12 text-center>
+                <v-btn @click="cancelOrder">
                     Cancel
                 </v-btn>
             </v-flex>
@@ -62,3 +68,11 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">  
+  tbody {
+     tr:hover {
+        background-color: transparent !important;
+     }
+  }
+</style>
