@@ -49,25 +49,16 @@ import axios from "axios";
 
 export default {
     props: {
-        /*order: {
+        order: {
             type: Object,
             required: true,
         },
         button: {
             type: Object,
             required: true,
-        }*/
+        }
     },
     data: () => ({
-        order: [
-            {title: 'name', value: 'Ferdia SMC'},
-            {title: 'email', value: 'sopermaf@tcd.ie'},
-            {title: 'amount', value: '10.50'},
-            {title: 'currency', value: 'USD'},
-        ],
-        button: {
-            url: 'example.com',
-        },
     }),
     methods: {
         cancelOrder() {
