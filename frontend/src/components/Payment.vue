@@ -1,17 +1,19 @@
 <template>
     <v-container>
-        <v-layout justify-center wrap  class="mx-auto">
+        <v-layout justify-center wrap class="mx-auto">
             <v-flex ma-5 lg7 s12 xs12>
-                <v-card elevation="1">
+                <v-card >
                     <v-card-title>
                         Order Review
                     </v-card-title>
-                    <ul class="no-bullets" ma-2>
-                        <li v-for="(k, v) in order" :key="k">
-                            <b>{{ v.toUpperCase() }}:</b> {{ k }}
-                        </li>
-                    </ul>
-                    
+                    <v-simple-table>
+                        <tbody>
+                            <tr v-for="(k, v) in order" :key="k">
+                                <td><b>{{ v.toUpperCase() }}</b></td>
+                                <td>{{ k }}</td>
+                            </tr>
+                        </tbody>
+                    </v-simple-table>
                 </v-card>
             </v-flex>
             <v-flex mt-2 lg5 s4 xs12 text-center>
