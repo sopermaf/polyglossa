@@ -9,9 +9,9 @@
                     <v-card-text>
                         <v-simple-table>
                             <tbody>
-                                <tr v-for="(k, v) in order" :key="k">
-                                    <td><b>{{ v.toUpperCase() }}</b></td>
-                                    <td>{{ k }}</td>
+                                <tr v-for="detail in order" :key="detail.title">
+                                    <td><b>{{ detail.title.toUpperCase() }}</b></td>
+                                    <td>{{ detail.value }}</td>
                                 </tr>
                             </tbody>
                         </v-simple-table>
@@ -56,12 +56,12 @@ export default {
         }*/
     },
     data: () => ({
-        order: {
-            name: 'Ferdia Soper Mac Cafraidh',
-            email: 'sopermaf@tcd.ie',
-            amount: "10.50",
-            currency: 'USD'
-        },
+        order: [
+            {title: 'name', value: 'Ferdia SMC'},
+            {title: 'email', value: 'sopermaf@tcd.ie'},
+            {title: 'amount', value: '10.50'},
+            {title: 'currency', value: 'USD'},
+        ],
         button: {
             url: 'example.com',
         },
