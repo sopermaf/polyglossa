@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <v-layout justify-center wrap class="mx-auto">
-            <v-flex ma-5 lg7 s12 xs12>
+            <v-flex ma-5 lg6 s12 xs12>
                 <v-card outlined>
                     <v-card-title>
                         Order Review
@@ -18,7 +18,10 @@
                     </v-card-text>
                 </v-card>
             </v-flex>
-            <v-flex mt-2 lg5 s4 xs12 text-center>
+
+            <div class="break" />
+
+            <v-flex mt-2 lg3 s4 xs12 text-center>
                 <v-form :action="button.url" method="post">
                     <input type="hidden" name="cmd" value="_s-xclick" />
                     <input type="hidden" name="encrypted" :value="button.encrypted_inputs"/>
@@ -32,7 +35,7 @@
                     />
                 </v-form>
             </v-flex>
-            <v-flex mt-2 lg5 s4 xs12 text-center>
+            <v-flex mt-2 lg3 s4 xs12 text-center>
                 <v-btn @click="cancelOrder">
                     Cancel
                 </v-btn>
