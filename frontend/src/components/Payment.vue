@@ -72,10 +72,3 @@ export default {
     },
 };
 </script>
-
-<style scoped>
-ul.no-bullets {
-  list-style-type: none;
-  text-align: left;
-}
-</style>
