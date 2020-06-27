@@ -33,7 +33,7 @@
                 </v-form>
             </v-flex>
             <v-flex mt-2 lg5 s4 xs12 text-center>
-                <v-btn @click="cancelOrder" elevation="15">
+                <v-btn @click="cancelOrder">
                     Cancel
                 </v-btn>
             </v-flex>
