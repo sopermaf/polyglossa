@@ -6,7 +6,7 @@ from datetime import datetime
 
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.middleware.csrf import get_token
 
 from payments.models import Order
 from payments.views import paypal_button
@@ -15,7 +15,6 @@ from . import parse, const, util
 from . import models
 
 
-@csrf_exempt
 def post_seminar_student(request):
     '''
     Receive a Seminar Request and create
@@ -70,13 +69,17 @@ def get_activities(request, activity_type): #pylint: disable=unused-argument
     '''Return all the `bookable` activities
     for a given `activity_type`.
     '''
+    token = get_token(request)
     activities = models.Activity.objects.filter(
         activity_type=activity_type,
         is_bookable=True,
     ).values()
     print(f"GET Request for Type: {activity_type}\n{activities}")
 
-    return JsonResponse({'activities': list(activities)})
+    return JsonResponse({
+        'activities': list(activities),
+        'token': token,
+    })
 
 
 def get_future_seminar_slots(request, seminar_id): #pylint: disable=unused-argument
