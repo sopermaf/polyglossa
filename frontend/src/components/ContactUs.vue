@@ -24,16 +24,17 @@
 
         <v-flex ma-5 lg3 s3 xs3 v-for="social in socialMedia" :key="social.title">
             <v-card
+                hover
                 shaped
                 :href="social.link"
             >
                 <v-img
                     :src="social.image"
                     max-height="100"
-                    :aspect-ratio="16/9"
+                    contain
                 />
                 <v-card-title>
-                    {{social.title}}
+                    {{social.detail}}
                 </v-card-title>
             </v-card>
         </v-flex>
