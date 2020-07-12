@@ -40,7 +40,7 @@
         <span class="mr-2">Texts</span>
       </v-btn>
 
-      <v-btn text  >
+      <v-btn text @click="viewChoice('CONTACT_US')">
         <span class="mr-2">Contact Us</span>
       </v-btn>
     </template>
