@@ -44,7 +44,7 @@
               :href="item.pageLink"
             >
               <v-list-item-avatar>
-                <v-img :src="item.imageLink"></v-img>
+                <v-img :src="item.image"></v-img>
               </v-list-item-avatar>
 
               <v-list-item-content>
@@ -119,15 +119,17 @@ export default {
     socialMediaItems: [
       {
         title: 'Youtube',
+        detail: 'Conner Ingles',
         link: 'https://www.youtube.com/conneringles',
         icon: 'https://w7.pngwing.com/pngs/963/811/png-transparent-youtube-logo-youtube-red-logo-computer-icons-youtube-television-angle-rectangle.png',
-        image: 'https://w7.pngwing.com/pngs/963/811/png-transparent-youtube-logo-youtube-red-logo-computer-icons-youtube-television-angle-rectangle.png',
+        image: 'https://image.flaticon.com/icons/svg/174/174883.svg',
       },
       {
         title: 'Instagram',
+        detail: '@polyglossalanguages',
         link: 'https://www.instagram.com/polyglossalanguages/',
         icon: 'https://p7.hiclipart.com/preview/477/609/118/logo-computer-icons-clip-art-instagram-logo.jpg',
-        image: 'https://p7.hiclipart.com/preview/477/609/118/logo-computer-icons-clip-art-instagram-logo.jpg',
+        image: 'https://image.flaticon.com/icons/svg/1409/1409946.svg',
       },
     ]
   }),
