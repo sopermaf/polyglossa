@@ -84,6 +84,7 @@ export default {
     seminarChoice: null,
     bookingChoice: null,
     requestResponse: null,
+    crsfToken: null,
     // validation rules
     nameRules: [
       v => !!v || 'Name is required',
@@ -99,8 +100,12 @@ export default {
     slots: [],
   }),
   mounted() {
+    axios.defaults.xsrfHeaderName = "X-CSRFToken";
+    axios.defaults.withCredentials = true
+
     axios.get('/book_class/get/activities/SEM').then(response => {
       this.seminars = response.data['activities'];
+      this.crsf = response.data['token']
     })
     this.seminarChoice = this.prefilledChoice;
   },
@@ -117,18 +122,19 @@ export default {
         student_name: this.bookingName,
         student_email: this.bookingEmail,
         slot_id: this.bookingChoice.id,
+        csrfMiddleWare: this.crsfToken
       }))
       .then(response => {
         this.$emit("orderGenerated", response.data['order']);
         this.$emit("buttonGenerated", response.data['button']);
         this.$emit("pageSelection", "PAYMENT");
+        this.$refs.form.reset();
       })
     },
     validate () {
         if (this.$refs.form.validate()) {
             this.snackbar = true;
             this.postData();
-            this.$refs.form.reset();
         }
         this.snackbar = true;
     },

@@ -50,6 +50,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CSRF_COOKIE_NAME = 'XSRF-TOKEN'
+
+
 ROOT_URLCONF = 'polyglossa.urls'
 
 TEMPLATES = [
