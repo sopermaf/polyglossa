@@ -22,21 +22,22 @@
 
         <div class="break" />
 
-        <v-flex ma-5 lg3 s3 xs3 v-for="social in socialMedia" :key="social.title">
-            <v-card
-                hover
-                shaped
-                :href="social.link"
-            >
-                <v-img
-                    :src="social.image"
-                    max-height="100"
-                    contain
-                />
-                <v-card-title>
-                    {{social.detail}}
-                </v-card-title>
-            </v-card>
+        <v-flex ma-5 lg4 md4 s4 xs12 >
+            <v-list>
+                <v-list-item
+                    v-for="social in socialMedia" :key="social.title"
+                    :href="social.link"
+                    flat
+                >
+                    <v-list-item-avatar>
+                        <v-img :src="social.image" href="google.com" />
+                    </v-list-item-avatar>
+
+                    <v-list-item-content>
+                        <v-list-item-title>{{ social.detail }}</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
         </v-flex>
     </v-layout>
   </v-container>
