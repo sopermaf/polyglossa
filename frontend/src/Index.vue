@@ -72,6 +72,9 @@
       <template v-else-if="pageSelection == 'PAYMENT'">
         <Payment @pageSelection="updateView" :order="order" :button="button"/>
       </template>
+      <template v-else-if="pageSelection == 'CONTACT_US'">
+        <ContactUs :socialMedia="socialMediaItems"/>
+      </template>
     </v-content>
 
     <!-- Footer -->
@@ -86,7 +89,8 @@ import BookClassForm from "./components/BookClassForm";
 import PolyToolbar from "./components/PolyToolbar.vue";
 import PolyFooter from "./components/PolyFooter.vue";
 import Payment from "./components/Payment.vue"
-import {mdiClipboardTextOutline, mdiHome, mdiBookOpenPageVariant } from '@mdi/js'
+import ContactUs from "./components/ContactUs.vue"
+import {mdiClipboardTextOutline, mdiHome, mdiBookOpenPageVariant, mdiHeadQuestion } from '@mdi/js'
 
 export default {
   name: "Index",
@@ -97,6 +101,7 @@ export default {
     PolyToolbar,
     PolyFooter,
     Payment,
+    ContactUs,
   },
   data: () => ({
     pageSelection: "HOME",
@@ -109,17 +114,20 @@ export default {
       {title: 'Home', icon: mdiHome, pageSelection: "HOME"},
       {title: 'Courses', icon: mdiBookOpenPageVariant, pageSelection: "COURSES"},
       {title: 'Book a class', icon: mdiClipboardTextOutline, pageSelection: "BOOKING"},
+      {title: 'Contact Us', icon: mdiHeadQuestion, pageSelection: "CONTACT_US"},
     ],
     socialMediaItems: [
       {
         title: 'Youtube',
-        imageLink: 'https://w7.pngwing.com/pngs/963/811/png-transparent-youtube-logo-youtube-red-logo-computer-icons-youtube-television-angle-rectangle.png',
-        pageLink: 'https://www.youtube.com/conneringles'
+        link: 'https://www.youtube.com/conneringles',
+        icon: 'https://w7.pngwing.com/pngs/963/811/png-transparent-youtube-logo-youtube-red-logo-computer-icons-youtube-television-angle-rectangle.png',
+        image: 'https://w7.pngwing.com/pngs/963/811/png-transparent-youtube-logo-youtube-red-logo-computer-icons-youtube-television-angle-rectangle.png',
       },
       {
         title: 'Instagram',
-        imageLink: 'https://p7.hiclipart.com/preview/477/609/118/logo-computer-icons-clip-art-instagram-logo.jpg',
-        pageLink: 'https://www.instagram.com/polyglossalanguages/'
+        link: 'https://www.instagram.com/polyglossalanguages/',
+        icon: 'https://p7.hiclipart.com/preview/477/609/118/logo-computer-icons-clip-art-instagram-logo.jpg',
+        image: 'https://p7.hiclipart.com/preview/477/609/118/logo-computer-icons-clip-art-instagram-logo.jpg',
       },
     ]
   }),
