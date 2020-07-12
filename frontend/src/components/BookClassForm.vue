@@ -129,8 +129,6 @@ export default {
         this.$emit("buttonGenerated", response.data['button']);
         this.$emit("pageSelection", "PAYMENT");
         this.$refs.form.reset();
-      }).catch(error => {
-        // show users an error message
       })
     },
     validate () {
