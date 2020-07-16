@@ -62,6 +62,47 @@
           </p>
       </v-flex>
 
+      <div class="break" />
+
+      <!-- Seminars -->
+      <v-col>
+        <h2>Top Seminar Types</h2>
+        <v-card
+          mb-5
+          hover
+          v-for="sem in seminars"
+          :key="sem.title"
+        >
+          <v-card-title>
+            {{sem.title}}
+          </v-card-title>
+        </v-card>
+      </v-col>
+
+      <!-- Calendar -->
+      <v-col>
+        <h2>Upcoming Seminars</h2>
+        <v-card
+          v-for="slotDate in upcomingSlots"
+          :key="slotDate.date"
+        >
+          <v-card-title>
+            {{slotDate.date}}
+          </v-card-title>
+          
+          <v-list>
+            <v-list-item
+              v-for="slotType in slotDate.slotTypes"
+              :key="slotType"
+            >
+              <v-list-item-title>
+                {{slotType}}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-col>
+
 
     </v-layout>
   </v-container>
@@ -70,24 +111,34 @@
 <script>
 export default {
   data: () => ({
-    classTypes: [
-      {
-        text: 'Personalised Class',
-        href: 'https://vuetifyjs.com/components/api-explorer',
-      },
-      {
-        text: '$2 Live Classes',
-        href: 'https://vuetifyjs.com/layout/pre-defined',
-      },
-      {
-        text: 'PolyProgram',
-        href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
-      },
-      {
-        text: 'Try an Experimental Class',
-        href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
-      },
+    seminars: [
+      {id: 0, title: "Grammar Essentials \"get\"", description: "name", price: 10.5},
+      {id: 0, title: "English Pronunciation", description: "name", price: 10.5},
+      {id: 0, title: "Phrasal Verbs", description: "name", price: 10.5},
     ],
+    upcomingSlots: [
+      {
+        date: "July 10th",
+        slotTypes: [
+          "Grammar Essentials \"get\"",
+          "English Pronunciation",
+        ]
+      },
+      {
+        date: "July 11th",
+        slotTypes: [
+          "Phrasal Verbs",
+          "English Pronunciation",
+        ]
+      },
+      {
+        date: "July 12th",
+        slotTypes: [
+          "Phrasal Verbs",
+          "Beginner English",
+        ]
+      },
+    ]
   }),
 };
 </script>
