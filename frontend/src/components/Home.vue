@@ -1,12 +1,6 @@
 <template>
   <v-container>
-    <v-layout text-center wrap>
-      <v-img
-          :src="require('../assets/polyglossa_logo.png')"
-          class="my-3"
-          contain
-          height="200"
-        ></v-img>
+    <v-layout text-center wrap justify-center>
 
       <v-flex mt-5 mb-5 xs12>
         <v-layout justify-center>
@@ -25,8 +19,7 @@
       </v-flex>
 
       <v-flex mb-5 xs12>
-        <v-layout justify-center>
-          <p>
+          <p v-for="i in 5" :key="i">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus a nulla molestie, congue neque ut,
             accumsan sapien. Nullam vestibulum est sed turpis consequat iaculis.
             Sed semper vel tellus id varius. In ac lectus vel sem posuere porttitor sit amet quis lectus. Duis
@@ -37,7 +30,6 @@
              Mauris lorem risus, interdum vel lorem at, semper efficitur dolor. Maecenas eu semper ex. Ut pretium erat
               nec aliquam fringilla.
           </p>
-        </v-layout>
       </v-flex>
     </v-layout>
   </v-container>
