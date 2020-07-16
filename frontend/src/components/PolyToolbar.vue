@@ -2,7 +2,7 @@
   <v-app-bar
     app
     class="banner"
-    color="#2f3253"
+    color="#2b2f52"
   >
 
     <template v-if="isNavBarVisible">
