@@ -2,7 +2,6 @@
   <v-app-bar
     app
     class="banner"
-    dense
     color="#2f3253"
   >
 
@@ -23,10 +22,11 @@
     
     <v-spacer></v-spacer>
     
-    <v-toolbar-title class="headline text-uppercase">
-      <span>Poly</span>
-      <span class="font-weight-light">Glossa</span>
-    </v-toolbar-title>
+    <v-img
+      :src="require('../assets/rsz_logo.png')"
+      contain
+      height="100%"
+    ></v-img>
 
     <v-spacer></v-spacer>
 
