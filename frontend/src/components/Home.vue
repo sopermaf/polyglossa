@@ -65,26 +65,34 @@
       <div class="break" />
 
       <!-- Seminars -->
-      <v-col>
-        <h2>Top Seminar Types</h2>
+      <v-col
+        lg="6"
+        sm="4"
+      >
+        <h2 class="mb-2">Top Seminar Types</h2>
         <v-card
-          mb-5
           hover
           v-for="sem in seminars"
           :key="sem.title"
+          class="mb-2 mr-2"
         >
-          <v-card-title>
-            {{sem.title}}
-          </v-card-title>
+          <v-card-text
+          >
+           <b> {{sem.title}} </b>
+          </v-card-text>
         </v-card>
       </v-col>
 
       <!-- Calendar -->
-      <v-col>
-        <h2>Upcoming Seminars</h2>
+      <v-col
+        sm="4"
+        lg="6"
+      >
+        <h2 class="mb-3">Upcoming Seminars</h2>
         <v-card
           v-for="slotDate in upcomingSlots"
           :key="slotDate.date"
+          class="mb-2"
         >
           <v-card-title>
             {{slotDate.date}}
@@ -113,8 +121,9 @@ export default {
   data: () => ({
     seminars: [
       {id: 0, title: "Grammar Essentials \"get\"", description: "name", price: 10.5},
-      {id: 0, title: "English Pronunciation", description: "name", price: 10.5},
-      {id: 0, title: "Phrasal Verbs", description: "name", price: 10.5},
+      {id: 1, title: "English Pronunciation", description: "name", price: 10.5},
+      {id: 2, title: "Phrasal Verbs", description: "name", price: 10.5},
+      {id: 3, title: "Free Trial Seminar!", description: "Free Seminar!", price: 0.0},
     ],
     upcomingSlots: [
       {
