@@ -2,7 +2,7 @@
   <v-app-bar
     app
     class="banner"
-    color="#2b2f52"
+    color="#2f3253"
   >
 
     <template v-if="isNavBarVisible">
@@ -23,7 +23,7 @@
     <v-spacer></v-spacer>
     
     <v-img
-      :src="require('../assets/rsz_logo.png')"
+      :src="require('../assets/logo.png')"
       contain
       height="100%"
     ></v-img>
