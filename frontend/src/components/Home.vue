@@ -75,6 +75,7 @@
           v-for="sem in seminars"
           :key="sem.title"
           class="mb-2 mr-2"
+          @click="changePage()"
         >
           <v-card-text
           >
@@ -153,5 +154,10 @@ export default {
       },
     ]
   }),
+  methods: {
+    changePage() {
+      this.$emit("pageSelection", "COURSES")
+    }
+  },
 };
 </script>
