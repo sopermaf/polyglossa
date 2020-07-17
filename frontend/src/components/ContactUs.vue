@@ -11,8 +11,7 @@
                 please send an email to help@polyglossa.com.
             </p>
             <p>
-                Alternatively check out our social media channels
-                for more information or inquiries.
+                Check out our social media channels for more English tips, lessons, and practice.
             </p>
         </v-flex>
 
