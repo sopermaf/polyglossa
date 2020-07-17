@@ -2,7 +2,8 @@
   <v-container>
     <v-layout justify-center wrap text-center class="mx-auto">
       <v-flex md-5 lg6 s4 xs12>
-        <v-form ref="form" v-model="valid" lazy-validation>
+        <h2>Seminar Signup Form</h2>
+        <v-form ref="form" v-model="valid" lazy-validation class="elevation-1 pa-5">
           <!-- Name -->
           <v-text-field
             v-model="bookingName"
@@ -43,9 +44,9 @@
           <v-btn
             :disabled="!valid"
             color="success"
-            class="mr-4"
+            class="mr-4 mb-2"
             @click="validate"
-
+            mb-3
           >
             Continue to checkout
           </v-btn>
@@ -53,7 +54,7 @@
           <!-- Reset Form -->
           <v-btn
             color="error"
-            class="mr-4"
+            class="mr-4 mb-2"
             @click="reset"
           >
             Reset Form

@@ -56,7 +56,7 @@
       </template>
 
       <template v-if="pageSelection == 'HOME'">
-        <Home />
+        <Home @pageSelection="updateView"/>
       </template>
       <template v-else-if="pageSelection == 'COURSES'">
         <Courses @courseChoice="prefillForm" />
