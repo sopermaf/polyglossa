@@ -72,6 +72,9 @@
       <template v-else-if="pageSelection == 'PAYMENT'">
         <Payment @pageSelection="updateView" :order="order" :button="button"/>
       </template>
+      <template v-else-if="pageSelection == 'LEARNING'">
+        <Learning />
+      </template>
       <template v-else-if="pageSelection == 'CONTACT_US'">
         <ContactUs :socialMedia="socialMediaItems"/>
       </template>
@@ -88,8 +91,9 @@ import Courses from "./components/Courses";
 import BookClassForm from "./components/BookClassForm";
 import PolyToolbar from "./components/PolyToolbar.vue";
 import PolyFooter from "./components/PolyFooter.vue";
-import Payment from "./components/Payment.vue"
-import ContactUs from "./components/ContactUs.vue"
+import Payment from "./components/Payment.vue";
+import ContactUs from "./components/ContactUs.vue";
+import Learning from "./components/Learning.vue";
 import {mdiClipboardTextOutline, mdiHome, mdiBookOpenPageVariant, mdiHeadQuestion } from '@mdi/js'
 
 export default {
@@ -102,9 +106,10 @@ export default {
     PolyFooter,
     Payment,
     ContactUs,
+    Learning,
   },
   data: () => ({
-    pageSelection: "HOME",
+    pageSelection: "LEARNING",
     courseChoice: null,
     order: null,
     button: null,
@@ -114,6 +119,7 @@ export default {
       {title: 'Home', icon: mdiHome, pageSelection: "HOME"},
       {title: 'Courses', icon: mdiBookOpenPageVariant, pageSelection: "COURSES"},
       {title: 'Book a class', icon: mdiClipboardTextOutline, pageSelection: "BOOKING"},
+      {title: 'Learning Materials', icon: mdiHeadQuestion, pageSelection: "LEARNING"},
       {title: 'Contact Us', icon: mdiHeadQuestion, pageSelection: "CONTACT_US"},
     ],
     socialMediaItems: [
