@@ -66,7 +66,7 @@
 
       <!-- Seminars -->
       <v-col
-        lg="6"
+        lg="3"
         sm="4"
       >
         <h2 class="mb-2">Top Seminar Types</h2>
@@ -86,7 +86,7 @@
       <!-- Calendar -->
       <v-col
         sm="4"
-        lg="6"
+        lg="3"
       >
         <h2 class="mb-3">Upcoming Seminars</h2>
         <v-card
@@ -94,7 +94,9 @@
           :key="slotDate.date"
           class="mb-2"
         >
-          <v-card-title>
+          <v-card-title
+            class="font-weight-black"
+          >
             {{slotDate.date}}
           </v-card-title>
           
@@ -102,6 +104,8 @@
             <v-list-item
               v-for="slotType in slotDate.slotTypes"
               :key="slotType"
+              dense
+              class="text-left"
             >
               <v-list-item-title>
                 {{slotType}}
