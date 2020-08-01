@@ -52,10 +52,10 @@
                                     <v-card
                                         v-for="download in data"
                                         :key="download.link"
-                                        class="mb-1"
-                                        hover
+                                        class="mb-2 elevation-5"
                                         :href="download.link"
                                         target="_new"
+                                        outlined
                                     >
                                         {{download.title}}
                                     </v-card>
@@ -86,10 +86,10 @@
                                 <v-card
                                     v-for="download in data"
                                     :key="download.link"
-                                    class="mb-1"
-                                    hover
+                                    class="mb-2 elevation-15"
                                     :href="download.link"
                                     target="_new"
+                                    outlined
                                 >
                                     {{download.title}}
                                 </v-card>
