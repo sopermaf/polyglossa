@@ -30,52 +30,55 @@
                 v-for="item in learingMaterials"
                 :key="item.title"
             >
-                <v-row>
+                <!-- Show all for larger screens -->
+                <v-row
+                    justify="center"
+                    class="hidden-sm-and-down"
+                >
                     <v-col
-                        lg="12"
-                        sm="4"
+                        cols="4"
+                        v-for="(data, title) in item.content"
+                        :key="title"
+                        class="mt-2"
                     >
-                        <h2> Exercises </h2>
+                        <h2> {{title}} </h2>
                         <v-card
-                            v-for="exercise in item.exercises"
-                            :key="exercise"
+                            v-for="download in data"
+                            :key="download.link"
                             class="mb-2 d-flex-inline"
+                            :href="download.link"
                         >
-                            {{exercise}}
+                            {{download.title}}
                         </v-card>
                     </v-col>
-                <!--</v-row>
-                <v-row>-->
-                    <v-col
-                        lg="4"
-                        sm="12"
-                    >
-                        <h2> Videos </h2>
-                        <v-card
-                            v-for="video in item.videos"
-                            :key="video"
-                            class="mb-2 d-flex-inline"
-                        >
-                            {{video}}
-                        </v-card>
-                    </v-col>
-                <!--</v-row>
-                <v-row>-->
-                    <v-col
-                        lg="4"
-                        sm="12"
-                    >
-                        <h2> Readings </h2>
-                        <v-card
-                            v-for="reading in item.readings"
-                            :key="reading"
-                            class="mb-2 d-flex-inline"
-                        >
-                            {{reading}}
-                        </v-card>
-                    </v-col>
-
                 </v-row>
+
+                <!-- Expansion panels for small screens -->
+                <v-expansion-panels
+                    class="hidden-md-and-up"
+                >
+                    <v-expansion-panel
+                        v-for="(data, title) in item.content"
+                        :key="title"
+                        class="mt-2"
+                    >
+                        <v-expansion-panel-header>
+                            <h3> {{title}} </h3>
+                        </v-expansion-panel-header>
+                        
+                        <v-expansion-panel-content
+                        >
+                                <v-card
+                                    v-for="download in data"
+                                    :key="download.link"
+                                    class="mb-1"
+                                    hover
+                                >
+                                    {{download.title}}
+                                </v-card>
+                        </v-expansion-panel-content>
+                    </v-expansion-panel>
+                </v-expansion-panels>
             </v-tab-item>
         </v-tabs-items>
 
@@ -90,94 +93,109 @@ export default {
     learingMaterials: [
         {
             title: "A1",
-            exercises: [
-                "test",
-                "test",
-                "test",
-            ],
-            videos: [
-                "test",
-                "test",
-                "test",
-            ],
-            readings: [
-                "test",
-                "test",
-                "test",
-            ],
+            content:{
+                exercises: [
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                    {title: "exercise", link: "http://google.com"},
+                ],
+                videos: [
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                    {title: "video", link: "http://google.com"},
+                ],
+                readings: [
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                    {title: "reading", link: "http://google.com"},
+                ]
+            }
         },
-        {
-            title: "A2",
-            exercises: [
-                "test",
-                "test",
-                "test",
-            ],
-            videos: [
-                "test",
-                "test",
-                "test",
-            ],
-            readings: [
-                "test",
-                "test",
-                "test",
-            ],
-        },
-        {
-            title: "B1",
-            exercises: [
-                "test",
-                "test",
-                "test",
-            ],
-            videos: [
-                "test",
-                "test",
-                "test",
-            ],
-            readings: [
-                "test",
-                "test",
-                "test",
-            ],
-        },
-        {
-            title: "B2",
-            exercises: [
-                "test",
-                "test",
-                "test",
-            ],
-            videos: [
-                "test",
-                "test",
-                "test",
-            ],
-            readings: [
-                "test",
-                "test",
-                "test",
-            ],
-        },
-        {
-            title: "C1",
-            exercises: [
-                "test",
-                "test",
-                "test",
-            ],
-            videos: [
-                "test",
-                "test",
-                "test",
-            ],
-            readings: [
-                "test",
-                "test",
-                "test",
-            ],
-        },
+        {title: "A2", content: {exercises: [], videos: [], readings: []}},
+        {title: "B1", content: {exercises: [], videos: [], readings: []}},
+        {title: "B2", content: {exercises: [], videos: [], readings: []}},
+        {title: "C1", content: {exercises: [], videos: [], readings: []}},
     ]
   }),
 };
