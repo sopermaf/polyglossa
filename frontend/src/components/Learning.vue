@@ -24,60 +24,79 @@
 
         <v-tabs-items
             v-model="tab"
-            style="height: 500px; width: 100%;"
+            style="width: 100%;"
         >
             <v-tab-item
                 v-for="item in learingMaterials"
                 :key="item.title"
             >
-                <!-- Show all for larger screens -->
+                <!-- Side by side expansions for above XS -->
                 <v-row
-                    justify="center"
-                    class="hidden-sm-and-down"
+                    class="hidden-xs-only"
                 >
                     <v-col
                         cols="4"
                         v-for="(data, title) in item.content"
                         :key="title"
                         class="mt-2"
-                    >
-                        <h2> {{title}} </h2>
-                        <v-card
-                            v-for="download in data"
-                            :key="download.link"
-                            class="mb-2 d-flex-inline"
-                            :href="download.link"
+                    >    
+                        <v-expansion-panels
                         >
-                            {{download.title}}
-                        </v-card>
+                            <v-expansion-panel
+                            >
+                                <v-expansion-panel-header>
+                                    <h3> {{title}} </h3>
+                                </v-expansion-panel-header>
+                                
+                                <v-expansion-panel-content
+                                >
+                                    <v-card
+                                        v-for="download in data"
+                                        :key="download.link"
+                                        class="mb-1"
+                                        hover
+                                        :href="download.link"
+                                        target="_new"
+                                    >
+                                        {{download.title}}
+                                    </v-card>
+                                </v-expansion-panel-content>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
                     </v-col>
                 </v-row>
 
-                <!-- Expansion panels for small screens -->
+                <!-- Connected Expansion Panels for XS screen -->
                 <v-expansion-panels
-                    class="hidden-md-and-up"
+                    class="hidden-sm-and-up"
                 >
-                    <v-expansion-panel
-                        v-for="(data, title) in item.content"
-                        :key="title"
-                        class="mt-2"
+                    <v-col
+                        cols="12"
                     >
-                        <v-expansion-panel-header>
-                            <h3> {{title}} </h3>
-                        </v-expansion-panel-header>
-                        
-                        <v-expansion-panel-content
+                        <v-expansion-panel
+                            v-for="(data, title) in item.content"
+                            :key="title"
+                            class="mt-2"
                         >
+                            <v-expansion-panel-header>
+                                <h3> {{title}} </h3>
+                            </v-expansion-panel-header>
+                            
+                            <v-expansion-panel-content
+                            >
                                 <v-card
                                     v-for="download in data"
                                     :key="download.link"
                                     class="mb-1"
                                     hover
+                                    :href="download.link"
+                                    target="_new"
                                 >
                                     {{download.title}}
                                 </v-card>
-                        </v-expansion-panel-content>
-                    </v-expansion-panel>
+                            </v-expansion-panel-content>
+                        </v-expansion-panel>
+                    </v-col>
                 </v-expansion-panels>
             </v-tab-item>
         </v-tabs-items>
@@ -94,7 +113,7 @@ export default {
         {
             title: "A1",
             content:{
-                exercises: [
+                Exercises: [
                     {title: "exercise", link: "http://google.com"},
                     {title: "exercise", link: "http://google.com"},
                     {title: "exercise", link: "http://google.com"},
@@ -126,7 +145,7 @@ export default {
                     {title: "exercise", link: "http://google.com"},
                     {title: "exercise", link: "http://google.com"},
                 ],
-                videos: [
+                Videos: [
                     {title: "video", link: "http://google.com"},
                     {title: "video", link: "http://google.com"},
                     {title: "video", link: "http://google.com"},
@@ -158,7 +177,7 @@ export default {
                     {title: "video", link: "http://google.com"},
                     {title: "video", link: "http://google.com"},
                 ],
-                readings: [
+                Readings: [
                     {title: "reading", link: "http://google.com"},
                     {title: "reading", link: "http://google.com"},
                     {title: "reading", link: "http://google.com"},
@@ -192,10 +211,10 @@ export default {
                 ]
             }
         },
-        {title: "A2", content: {exercises: [], videos: [], readings: []}},
-        {title: "B1", content: {exercises: [], videos: [], readings: []}},
-        {title: "B2", content: {exercises: [], videos: [], readings: []}},
-        {title: "C1", content: {exercises: [], videos: [], readings: []}},
+        {title: "A2", content: {Exercises: [], Videos: [], Readings: []}},
+        {title: "B1", content: {Exercises: [], Videos: [], Readings: []}},
+        {title: "B2", content: {Exercises: [], Videos: [], Readings: []}},
+        {title: "C1", content: {Exercises: [], Videos: [], Readings: []}},
     ]
   }),
 };
