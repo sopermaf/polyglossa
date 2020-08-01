@@ -5,20 +5,23 @@
     color="#2f3253"
   >
 
-    <template v-if="isNavBarVisible">
+    <span
+      class="d-flex d-sm-none"
+    >
       <v-app-bar-nav-icon @click="openDrawer()"></v-app-bar-nav-icon>
-    </template>
-    <template v-else>
-      <span v-for="b in preLogoButtons" :key="b.export">
-        <v-btn
-          text
-          @click="viewChoice(b.export)"
-          class="white--text"
-        >
-          <span class="mr-2">{{b.text}}</span>
-        </v-btn>
-      </span>
-    </template>
+    </span>
+    
+    <span
+      class="hidden-xs-only"
+      v-for="b in preLogoButtons" :key="b.export">
+      <v-btn
+        text
+        @click="viewChoice(b.export)"
+        class="white--text"
+      >
+        <span class="mr-2">{{b.text}}</span>
+      </v-btn>
+    </span>
     
     <v-spacer></v-spacer>
     
@@ -30,28 +33,24 @@
 
     <v-spacer></v-spacer>
 
-    <template v-if="!isNavBarVisible">    
-      <span v-for="b in postLogoButtons" :key="b.export">
-        <v-btn
-          text
-          @click="viewChoice(b.export)"
-          class="white--text"
-        >
-          <span class="mr-2">{{b.text}}</span>
-        </v-btn>
-      </span>
-    </template>
+    <span
+      class="hidden-xs-only"
+      v-for="b in postLogoButtons" :key="b.export"
+    >
+      <v-btn
+        text
+        @click="viewChoice(b.export)"
+        class="white--text"
+      >
+        <span class="mr-2">{{b.text}}</span>
+      </v-btn>
+    </span>
   </v-app-bar>
 </template>
 
 <script>
 export default {
   name: "PolyToolbar",
-  props: {
-    isNavBarVisible: {
-      type: Boolean
-    }
-  },
   data: () => ({
     preLogoButtons: [
       {text: 'Home', export: 'HOME'},
