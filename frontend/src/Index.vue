@@ -94,7 +94,7 @@ import PolyFooter from "./components/PolyFooter.vue";
 import Payment from "./components/Payment.vue";
 import ContactUs from "./components/ContactUs.vue";
 import Learning from "./components/Learning.vue";
-import {mdiClipboardTextOutline, mdiHome, mdiBookOpenPageVariant, mdiHeadQuestion } from '@mdi/js'
+import {mdiHome, mdiBookOpenPageVariant, mdiClipboardEditOutline, mdiInformationVariant, mdiBookshelf, mdiCommentTextMultiple } from '@mdi/js'
 
 export default {
   name: "Index",
@@ -118,9 +118,10 @@ export default {
     navItems: [
       {title: 'Home', icon: mdiHome, pageSelection: "HOME"},
       {title: 'Courses', icon: mdiBookOpenPageVariant, pageSelection: "COURSES"},
-      {title: 'Book a class', icon: mdiClipboardTextOutline, pageSelection: "BOOKING"},
-      {title: 'Learning Materials', icon: mdiHeadQuestion, pageSelection: "LEARNING"},
-      {title: 'Contact Us', icon: mdiHeadQuestion, pageSelection: "CONTACT_US"},
+      {title: 'Join a Seminar', icon: mdiClipboardEditOutline, pageSelection: "BOOKING"},
+      {title: 'Learning Materials', icon: mdiBookshelf, pageSelection: "LEARNING"},
+      {title: 'Contact Us', icon: mdiCommentTextMultiple, pageSelection: "CONTACT_US"},
+      {title: 'About Us', icon: mdiInformationVariant, pageSelection: "CONTACT_US"},
     ],
     socialMediaItems: [
       {
