@@ -11,6 +11,7 @@ from .models import LearningMaterial
 URL_GET_ALL = reverse('get-all-materials')
 
 
+@pytest.mark.django_db
 def test_get_materials_exists(client):
     response = client.get(URL_GET_ALL)
     assert response.status_code == 200
