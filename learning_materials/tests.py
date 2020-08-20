@@ -26,7 +26,7 @@ def test_get_materials_ordered_by_level(client):
     response = client.get(URL_GET_ALL)
     materials = json.loads(response.content)
 
-    assert materials == sorted(materials, key=lambda item: item['title'])
+    assert materials == sorted(materials, key=lambda item: item['level'])
     assert len(materials) == 3
 
 
@@ -52,9 +52,9 @@ def test_get_materials_ordered_within_section(client):
     response = client.get(URL_GET_ALL)
     a1_content = json.loads(response.content)[0]['content']['Readings']
 
-    exp_order = [{'title': m.display_name, 'link': m.link}
-                 for m in LearningMaterial.objects.order_by('ordering')]
-    assert a1_content == exp_order
+    # only title used as names should be unique
+    exp_order = [m.display_name for m in LearningMaterial.objects.order_by('ordering')]
+    assert [lm['title'] for lm in a1_content] == exp_order
 
 
 # helper functions
