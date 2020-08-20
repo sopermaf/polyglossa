@@ -1,6 +1,7 @@
 # pylint: disable=missing-module-docstring,missing-class-docstring, missing-function-docstring
 import uuid
 import json
+import random
 
 import pytest
 from django.urls import reverse
@@ -19,15 +20,16 @@ def test_get_materials_exists(client):
 
 @pytest.mark.django_db
 def test_get_materials_ordered_by_level(client):
-    add_material_to_db(1, 'A2', 'Readings')
-    add_material_to_db(1, 'B2', 'Readings')
-    add_material_to_db(1, 'A1', 'Readings')
+    # shuffle list randomly out of order by level
+    levels = [str(level) for level in LearningMaterial.CERFLevel]
+    random.shuffle(levels)
+    for level in levels:
+        add_material_to_db(1, level, 'Readings') 
 
     response = client.get(URL_GET_ALL)
     materials = json.loads(response.content)
 
     assert materials == sorted(materials, key=lambda item: item['level'])
-    assert len(materials) == 3
 
 
 @pytest.mark.django_db

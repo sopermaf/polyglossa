@@ -12,7 +12,6 @@ def get_all_materials(request):
     Expected format:
     ---
     [
-        # sorted by `title`
         {
             'level': 'A1',
             'content': {
@@ -29,32 +28,21 @@ def get_all_materials(request):
         }
     ]
     '''
-    # get all materials
-    materials = [
+    # NOTE: number of materials should be small < 200
+    transform = lambda lm: {'title': lm.display_name, 'link': lm.link}
+    all_materials = LearningMaterial.objects.order_by('level', 'ordering')
+
+    organised_materials = [
         {
-            'level': lm.level,
-            'type': lm.material_type,
-            'link': lm.link,
-            'title': lm.display_name
+            'level': str(level),
+            'content': {
+                str(m_type): [
+                    transform(lm) for lm in all_materials.filter(level=level, material_type=m_type)
+                ]
+                for m_type in LearningMaterial.MaterialType
+            }
         }
-        for lm in LearningMaterial.objects.order_by('ordering')
+        for level in LearningMaterial.CERFLevel
     ]
 
-    # group by level
-    materials_by_level = []
-    for level in LearningMaterial.CERFLevel:
-        materials_by_level.append([mat for mat in materials if mat['level'] == str(level)])
-
-    fully_sorted = []
-    for level_materials, level in zip(materials_by_level, LearningMaterial.CERFLevel):
-        if not level_materials:
-            continue
-
-        level_content = {}
-        for section in LearningMaterial.MaterialType:
-            level_content[section] = [lm for lm in level_materials if lm['type'] == str(section)]
-        fully_sorted.append({'content': level_content, 'level': str(level)})
-
-    print(f"final content:\n{json.dumps(fully_sorted, indent=4)}\n")
-    
-    return JsonResponse(fully_sorted, safe=False)
+    return JsonResponse(organised_materials, safe=False)
