@@ -109,7 +109,7 @@ export default {
     Learning,
   },
   data: () => ({
-    pageSelection: "LEARNING",
+    pageSelection: "HOME",
     courseChoice: null,
     order: null,
     button: null,
