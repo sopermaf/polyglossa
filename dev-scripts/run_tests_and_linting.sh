@@ -1,10 +1,10 @@
 set -e
 
 echo "Running Django Tests"
-pipenv run python manage.py test
+pipenv run pytest
 
 echo "Running Python Linting"
-pipenv run pylint -d fixme payments polyglossa class_bookings
+pipenv run pylint -d fixme payments polyglossa class_bookings learning_materials
 
 echo "Running Frontend Linting"
 cd frontend/
