@@ -27,4 +27,5 @@ urlpatterns = [     # pylint: disable=invalid-name
     path('book_class/', include('class_bookings.urls')),
     path('paypal/', include('paypal.standard.ipn.urls')),
     path('payments/', include('payments.urls')),
+    path('materials/', include('learning_materials.urls')),
 ]

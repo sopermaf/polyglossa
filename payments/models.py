@@ -47,7 +47,7 @@ class Order(models.Model):
         ]
         return ", ".join(fields)
 
-    def clean(self, *args, **kwargs): # pylint: disable=arguments-differ
+    def clean(self, *args, **kwargs):
         super().clean(*args, **kwargs)
 
         if self.amount <= 0:
@@ -55,7 +55,7 @@ class Order(models.Model):
                 f'<order.amount> must be a positive value. Found <{self.amount}>'
             )
 
-    def save(self, *args, **kwargs):    # pylint: disable=arguments-differ
+    def save(self, *args, **kwargs):    # pylint: disable=signature-differs
         ''' On save, update timestamps '''
         if not self.id:
             self.created = timezone.now()
