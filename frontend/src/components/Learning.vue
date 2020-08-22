@@ -15,10 +15,10 @@
         >
             <v-tab
                 v-for="level in learingMaterials"
-                :key="level.title"
+                :key="level.level"
                 class="d-flex-3"
             >
-                {{level.title}}
+                {{level.level}}
             </v-tab>
         </v-tabs>
 
@@ -105,120 +105,17 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data: () => ({
     tab: null,
-    learingMaterials: [
-        {
-            title: "A1",
-            content:{
-                Exercises: [
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                    {title: "Exercise name", link: "http://google.com"},
-                ],
-                Videos: [
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                    {title: "Video Title", link: "http://google.com"},
-                ],
-                Readings: [
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                    {title: "Reading Title", link: "http://google.com"},
-                ]
-            }
-        },
-        {title: "A2", content: {Exercises: [], Videos: [], Readings: []}},
-        {title: "B1", content: {Exercises: [], Videos: [], Readings: []}},
-        {title: "B2", content: {Exercises: [], Videos: [], Readings: []}},
-        {title: "C1", content: {Exercises: [], Videos: [], Readings: []}},
-    ]
+    learingMaterials: []
   }),
+  mounted() {
+      axios.get('/materials/get-all').then(response => {
+          this.learingMaterials = response.data;
+      })
+  }
 };
 </script>
-
-<style>
-
-</style>
