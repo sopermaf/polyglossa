@@ -72,6 +72,9 @@
       <template v-else-if="pageSelection == 'PAYMENT'">
         <Payment @pageSelection="updateView" :order="order" :button="button"/>
       </template>
+      <template v-else-if="pageSelection == 'LEARNING'">
+        <Learning />
+      </template>
       <template v-else-if="pageSelection == 'CONTACT_US'">
         <ContactUs :socialMedia="socialMediaItems"/>
       </template>
@@ -88,9 +91,10 @@ import Courses from "./components/Courses";
 import BookClassForm from "./components/BookClassForm";
 import PolyToolbar from "./components/PolyToolbar.vue";
 import PolyFooter from "./components/PolyFooter.vue";
-import Payment from "./components/Payment.vue"
-import ContactUs from "./components/ContactUs.vue"
-import {mdiClipboardTextOutline, mdiHome, mdiBookOpenPageVariant, mdiHeadQuestion } from '@mdi/js'
+import Payment from "./components/Payment.vue";
+import ContactUs from "./components/ContactUs.vue";
+import Learning from "./components/Learning.vue";
+import {mdiHome, mdiBookOpenPageVariant, mdiClipboardEditOutline, mdiInformationVariant, mdiBookshelf, mdiCommentTextMultiple } from '@mdi/js'
 
 export default {
   name: "Index",
@@ -102,6 +106,7 @@ export default {
     PolyFooter,
     Payment,
     ContactUs,
+    Learning,
   },
   data: () => ({
     pageSelection: "HOME",
@@ -113,8 +118,10 @@ export default {
     navItems: [
       {title: 'Home', icon: mdiHome, pageSelection: "HOME"},
       {title: 'Courses', icon: mdiBookOpenPageVariant, pageSelection: "COURSES"},
-      {title: 'Book a class', icon: mdiClipboardTextOutline, pageSelection: "BOOKING"},
-      {title: 'Contact Us', icon: mdiHeadQuestion, pageSelection: "CONTACT_US"},
+      {title: 'Join a Seminar', icon: mdiClipboardEditOutline, pageSelection: "BOOKING"},
+      {title: 'Learning Materials', icon: mdiBookshelf, pageSelection: "LEARNING"},
+      {title: 'Contact Us', icon: mdiCommentTextMultiple, pageSelection: "CONTACT_US"},
+      {title: 'About Us', icon: mdiInformationVariant, pageSelection: "CONTACT_US"},
     ],
     socialMediaItems: [
       {

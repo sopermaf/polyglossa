@@ -59,7 +59,7 @@ export default {
       {text: 'Join a Seminar', export: 'BOOKING'},
     ],
     postLogoButtons: [
-      {text: 'Learning Material', export: 'MATERIALS'},
+      {text: 'Learning Material', export: 'LEARNING'},
       {text: 'About Us', export: 'ABOUT_US'},
       {text: 'Contact Us', export: 'CONTACT_US'},
     ],
