@@ -1,4 +1,4 @@
-# pylint: disable=missing-module-docstring,missing-class-docstring
+# pylint: disable=missing-module-docstring,missing-class-docstring, unused-argument
 
 from django.http import JsonResponse
 

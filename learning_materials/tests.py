@@ -24,7 +24,7 @@ def test_get_materials_ordered_by_level(client):
     levels = [str(level) for level in LearningMaterial.CERFLevel]
     random.shuffle(levels)
     for level in levels:
-        add_material_to_db(1, level, 'Readings') 
+        add_material_to_db(1, level, 'Readings')
 
     response = client.get(URL_GET_ALL)
     materials = json.loads(response.content)
