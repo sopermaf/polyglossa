@@ -68,15 +68,19 @@ class Activity(models.Model):
     ]
 
     id = models.AutoField(primary_key=True)
-    activity_type = models.CharField(
-        max_length=3,
-        choices=ACTIVITY_TYPES,
-        default=INDIVIDUAL,
-    )
     title = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=1000, blank=True, default="")
     price = models.FloatField()
     is_bookable = models.BooleanField(default=False)
+    activity_type = models.CharField(
+        max_length=3,
+        choices=ACTIVITY_TYPES,
+        default=SEMINAR,
+    )
+
+    # related to showing on homepage
+    order_shown = models.PositiveSmallIntegerField(default=100)
+    is_highlighted = models.BooleanField(default=False)
 
     def __str__(self):
         booking_status = "Bookable" if self.is_bookable else "Not Bookable"
