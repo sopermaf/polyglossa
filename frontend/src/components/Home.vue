@@ -72,7 +72,8 @@
         <h2 class="mb-2">Top Seminar Types</h2>
         <v-card
           hover
-          v-for="sem in seminars"
+          v-for="sem in highlightedSeminars"
+
           :key="sem.title"
           class="mb-2 mr-2"
           @click="changePage()"
@@ -123,13 +124,13 @@
 
 <script>
 export default {
+  props: {
+    seminars: {
+      type: Array,
+      required: true,
+    }
+  },
   data: () => ({
-    seminars: [
-      {id: 0, title: "Grammar Essentials \"get\"", description: "name", price: 10.5},
-      {id: 1, title: "English Pronunciation", description: "name", price: 10.5},
-      {id: 2, title: "Phrasal Verbs", description: "name", price: 10.5},
-      {id: 3, title: "Free Trial Seminar!", description: "Free Seminar!", price: 0.0},
-    ],
     upcomingSlots: [
       {
         date: "July 10th",
@@ -159,5 +160,10 @@ export default {
       this.$emit("pageSelection", "COURSES")
     }
   },
+  computed: {
+    highlightedSeminars: function() {
+      return this.seminars.filter(function(sem) { return sem.is_highlighted})
+    }
+  }
 };
 </script>
