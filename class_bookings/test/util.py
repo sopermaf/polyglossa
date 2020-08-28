@@ -1,21 +1,21 @@
 '''
 Set of util functions for testing
 '''
-from random import random
+from uuid import uuid4
 from datetime import datetime, timedelta
 
 from class_bookings import models
 
 
-def create_activity(*, activity_type, bookable=True, order=1):
+def create_activity(*, activity_type, bookable=True, order=1, title=None):
     '''Create a seminar activity'''
     if activity_type not in {models.Activity.INDIVIDUAL, models.Activity.SEMINAR}:
         raise ValueError(f"Invalid activity_type: {activity_type}")
 
     activity = models.Activity(
         activity_type=activity_type,
-        title='%s' % random(),
-        description='%s' % random(),
+        title=title or uuid4(),
+        description='description',
         price=20,
         is_bookable=bookable,
         order_shown=order,
@@ -42,3 +42,18 @@ def create_seminar_slots(activity):
     for slot in slots.values():
         slot.save()
     return slots
+
+
+def create_seminar_slots(activity, *dts):
+    '''
+    Create a slot for each datetime in `dts`
+
+    Returns
+    -------
+    None
+    '''
+    for slot_dt in dts:
+        models.SeminarSlots.objects.create(
+            start_datetime=slot_dt,
+            seminar=activity
+        )
