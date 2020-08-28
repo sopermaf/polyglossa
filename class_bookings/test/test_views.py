@@ -1,6 +1,7 @@
 # pylint: disable=missing-module-docstring, missing-class-docstring, missing-function-docstring, no-self-use, unused-wildcard-import, wildcard-import
 import json
 
+import pytest
 from django.test import TestCase, Client
 from django.urls import reverse
 
@@ -136,17 +137,32 @@ class TestViews(TestCase):
         self.assertEqual(self.slots['future'].id, slots[0]['id'], "Future slot returned")
 
 
-    def test_get_activities(self):
-        test_cases = [
-            (Activity.SEMINAR, 1),
-            (Activity.INDIVIDUAL, 1),
-            ('NOT REAL', 0),
-        ]
+@pytest.mark.django_db
+def test_get_activities(client):
+    t_util.create_activity(activity_type=Activity.SEMINAR, order=2)
+    t_util.create_activity(activity_type=Activity.SEMINAR, order=1)
+    t_util.create_activity(activity_type=Activity.INDIVIDUAL)
 
-        for activity_type, exp_num, in test_cases:
-            response = self.client.get(reverse(
-                'get-activities', kwargs={'activity_type': activity_type}
-            ))
-            self.assertEqual(200, response.status_code, "SuccessfulRequest")
-            activities = json.loads(response.content)['activities']
-            self.assertEqual(exp_num, len(activities))
+    test_cases = [
+        (Activity.SEMINAR, 2),
+        (Activity.INDIVIDUAL, 1),
+        ('NOT REAL', 0),
+    ]
+
+    for activity_type, exp_num, in test_cases:
+        response = client.get(reverse(
+            'get-activities', kwargs={'activity_type': activity_type}
+        ))
+
+        # successful request
+        assert response.status_code == 200
+
+        # assert data is of expected length and type
+        activities = json.loads(response.content)['activities']
+        assert len(activities) == exp_num
+
+        # assert ordered and type
+        for i, activity in enumerate(activities):
+            if i > 0:
+                assert activities[i-1]['order_shown'] < activity['order_shown']
+            assert activity['activity_type'] == activity_type
