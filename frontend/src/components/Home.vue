@@ -104,13 +104,13 @@
           
           <v-list>
             <v-list-item
-              v-for="slotType in slotDate.slotTypes"
-              :key="slotType"
+              v-for="seminar in slotDate.seminars"
+              :key="seminar"
               dense
               class="text-left"
             >
               <v-list-item-title>
-                {{slotType}}
+                {{seminar}}
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -123,6 +123,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   props: {
     seminars: {
@@ -131,30 +133,13 @@ export default {
     }
   },
   data: () => ({
-    upcomingSlots: [
-      {
-        date: "July 10th",
-        slotTypes: [
-          "Grammar Essentials \"get\"",
-          "English Pronunciation",
-        ]
-      },
-      {
-        date: "July 11th",
-        slotTypes: [
-          "Phrasal Verbs",
-          "English Pronunciation",
-        ]
-      },
-      {
-        date: "July 12th",
-        slotTypes: [
-          "Phrasal Verbs",
-          "Beginner English",
-        ]
-      },
-    ]
+    upcomingSlots: [],
   }),
+  mounted() {
+    axios.get('/book_class/get/seminars/upcoming/').then(reponse => {
+      this.upcomingSlots = reponse.data;
+    })
+  },
   methods: {
     changePage() {
       this.$emit("pageSelection", "COURSES")

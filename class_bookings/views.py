@@ -120,7 +120,6 @@ def get_upcoming_seminars(request):
     for slot in upcoming:
         seminars_per_days[slot.start_datetime.strftime('%b %d')].add(slot.seminar.title)
 
-    print("seminars_per_day =", seminars_per_days)
     # format as a list
     formatted_days_and_seminars = [
         {
@@ -129,6 +128,5 @@ def get_upcoming_seminars(request):
         }
         for date, seminars in seminars_per_days.items()
     ]
-    print("formatted=", formatted_days_and_seminars)
 
     return JsonResponse(formatted_days_and_seminars, safe=False)
