@@ -199,7 +199,7 @@ def test_get_upcoming_seminars_success(client):
 def test_get_upcoming_seminars_date_range(client):
     t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
 
-    dts = (datetime.now() + timedelta(days=i, minutes=1) for i in range(-1, 4))
+    dts = (datetime.now() + timedelta(days=i, minutes=1) for i in range(4, -2, -1))
     t_util.create_seminar_slot(Activity.objects.get(id=1), *dts)
 
     response = client.get(reverse('get-upcoming-seminars'))
@@ -208,6 +208,7 @@ def test_get_upcoming_seminars_date_range(client):
     # only today, tmw, and next day shown
     # controlled by views.UPCOMING_TIME_DELTA
     assert len(ret) == 3
+    print(ret)
     for i, day in enumerate(ret):
         assert day['date'] == (datetime.now() + timedelta(days=i)).strftime('%b %d')
 
