@@ -218,8 +218,8 @@ def test_get_upcoming_seminars_unique(client):
     seminar = Activity.objects.get(id=1)
 
     # add 2 slots on same day
-    t_util.create_seminar_slot(seminar, (datetime.now() + timedelta(days=1, minutes=10)))
-    t_util.create_seminar_slot(seminar, (datetime.now() + timedelta(days=1, hours=6)))
+    t_util.create_seminar_slot(seminar, (datetime.now() + timedelta(days=1)))
+    t_util.create_seminar_slot(seminar, (datetime.now() + timedelta(days=1)))
 
     response = client.get(reverse('get-upcoming-seminars'))
     ret = json.loads(response.content)

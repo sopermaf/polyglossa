@@ -4,9 +4,10 @@ section of the polyglossa website.
 # pylint: disable=unused-argument
 import json
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 from django.core.exceptions import ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 
@@ -118,7 +119,7 @@ def get_upcoming_seminars(request):
     # creates a set of each day
     seminars_per_days = defaultdict(set)
     for slot in upcoming:
-        seminars_per_days[slot.start_datetime.strftime('%b %d')].add(slot.seminar.title)
+        seminars_per_days[slot.start_datetime.date()].add(slot.seminar.title)
 
     # format as a list
     formatted_days_and_seminars = [
@@ -129,4 +130,16 @@ def get_upcoming_seminars(request):
         for date, seminars in seminars_per_days.items()
     ]
 
-    return JsonResponse(formatted_days_and_seminars, safe=False)
+    formatted_days_and_seminars.sort(key=lambda day: day['date'])
+
+    return JsonResponse(formatted_days_and_seminars, safe=False, encoder=_HomePageDateSerializer)
+
+
+class _HomePageDateSerializer(DjangoJSONEncoder):
+    """
+    Serialisation of dates and datetime added
+    """
+    def default(self, obj): # pylint: disable=arguments-differ
+        if isinstance(obj, (datetime, date)):
+            return obj.strftime('%b %d')
+        return super().default(obj)
