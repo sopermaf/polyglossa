@@ -60,8 +60,10 @@ def create_seminar_slot(activity, *dts):
     -------
     None
     '''
-    for slot_dt in dts:
+    return [
         models.SeminarSlot.objects.create(
             start_datetime=slot_dt,
             seminar=activity
         )
+        for slot_dt in dts
+    ]

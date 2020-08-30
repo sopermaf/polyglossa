@@ -126,15 +126,39 @@ class TestViews(TestCase):
         self.assertEqual(len(Order.objects.all()), 1, "Single Success Order added")
 
 
-    def test_get_future_seminar_slots(self):
-        response = self.client.get(
-            reverse('sem-slots', kwargs={'seminar_id': self.activities['SEM']['bookable'].id})
-        )
-        self.assertEqual(200, response.status_code, "Successful Request")
+@pytest.mark.django_db
+def test_get_future_seminar_slots_future_only(client):
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, order=1)
 
-        slots = json.loads(response.content)['slots']
-        self.assertEqual(1, len(slots), "Single slot returned")
-        self.assertEqual(self.slots['future'].id, slots[0]['id'], "Future slot returned")
+    created_slot_pair = t_util.create_seminar_slot_pair(seminar)
+
+    response = client.get(
+        reverse(
+            'sem-slots',
+            kwargs={'seminar_id': seminar.id}
+        )
+    )
+
+    assert response.status_code == 200
+    ret = json.loads(response.content)['slots']
+
+    assert len(ret) == 1
+    assert ret[0]['id'] == created_slot_pair['future'].id
+
+
+@pytest.mark.django_db
+def test_get_future_seminar_slots_sorted(client):
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, order=1)
+
+    t_util.create_seminar_slot(
+        seminar,
+        *(datetime.now() + timedelta(days=i) for i in range(5, 1))
+    )
+
+    response = client.get(reverse('sem-slots', kwargs={'seminar_id': seminar.id}))
+
+    ret = [slot['id'] for slot in json.loads(response.content)['slots']]
+    assert ret == [slot.id for slot in SeminarSlot.objects.order_by('start_datetime')]
 
 
 @pytest.mark.django_db
@@ -168,15 +192,14 @@ def test_get_activities(client):
             assert activity['activity_type'] == activity_type
 
 
-
 @pytest.mark.django_db
 def test_get_upcoming_seminars_success(client):
-    t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
-    t_util.create_activity(activity_type=Activity.SEMINAR, title='bar')
+    sem_foo = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
+    sem_bar = t_util.create_activity(activity_type=Activity.SEMINAR, title='bar')
 
     tmw = datetime.now() + timedelta(days=1, minutes=10)
-    t_util.create_seminar_slot(Activity.objects.get(id=1), tmw)
-    t_util.create_seminar_slot(Activity.objects.get(id=2), tmw)
+    t_util.create_seminar_slot(sem_foo, tmw)
+    t_util.create_seminar_slot(sem_bar, tmw)
 
     response = client.get(reverse('get-upcoming-seminars'))
     assert response.status_code == 200
@@ -197,10 +220,10 @@ def test_get_upcoming_seminars_success(client):
 
 @pytest.mark.django_db
 def test_get_upcoming_seminars_date_range(client):
-    t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
 
     dts = (datetime.now() + timedelta(days=i, minutes=1) for i in range(4, -2, -1))
-    t_util.create_seminar_slot(Activity.objects.get(id=1), *dts)
+    t_util.create_seminar_slot(seminar, *dts)
 
     response = client.get(reverse('get-upcoming-seminars'))
     ret = json.loads(response.content)
@@ -214,8 +237,7 @@ def test_get_upcoming_seminars_date_range(client):
 
 @pytest.mark.django_db
 def test_get_upcoming_seminars_unique(client):
-    t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
-    seminar = Activity.objects.get(id=1)
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
 
     # add 2 slots on same day
     t_util.create_seminar_slot(seminar, (datetime.now() + timedelta(days=1)))

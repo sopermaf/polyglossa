@@ -93,7 +93,7 @@ def get_future_seminar_slots(request, seminar_id):
         models.SeminarSlot.objects.filter(
             start_datetime__gt=datetime.now(),
             seminar__id=seminar_id,
-        ).values()
+        ).order_by('start_datetime').values()
     )
 
     return JsonResponse({'slots': slots})
