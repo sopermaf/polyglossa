@@ -208,7 +208,6 @@ def test_get_upcoming_seminars_date_range(client):
     # only today, tmw, and next day shown
     # controlled by views.UPCOMING_TIME_DELTA
     assert len(ret) == 3
-    print(ret)
     for i, day in enumerate(ret):
         assert day['date'] == (datetime.now() + timedelta(days=i)).strftime('%b %d')
 
