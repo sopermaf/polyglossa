@@ -24,11 +24,19 @@ def create_activity(*, activity_type, bookable=True, order=1, title=None):
     return activity
 
 
-def create_seminar_slots(activity):
-    '''Returns a dict containing
-    a `future` and `past` seminar slot for testing
-    using the activity set
-    '''
+def create_seminar_slot_pair(activity):
+    """
+    Create a future/past slot pair for the given
+    `activitiy`.
+
+    Parameter
+    ---------
+    activitiy : Activity
+
+    Returns
+    -------
+    dict : 'future' and 'past' seminar slots
+    """
     slots = {
         'future': models.SeminarSlot(
             start_datetime=datetime.now() + timedelta(days=1),
@@ -44,7 +52,7 @@ def create_seminar_slots(activity):
     return slots
 
 
-def create_seminar_slots(activity, *dts):
+def create_seminar_slot(activity, *dts):
     '''
     Create a slot for each datetime in `dts`
 
@@ -53,7 +61,7 @@ def create_seminar_slots(activity, *dts):
     None
     '''
     for slot_dt in dts:
-        models.SeminarSlots.objects.create(
+        models.SeminarSlot.objects.create(
             start_datetime=slot_dt,
             seminar=activity
         )

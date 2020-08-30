@@ -29,7 +29,7 @@ class TestViews(TestCase):
             }
         }
 
-        self.slots = t_util.create_seminar_slots(self.activities['SEM']['bookable'])
+        self.slots = t_util.create_seminar_slot_pair(self.activities['SEM']['bookable'])
 
     # helper functions
 
@@ -166,3 +166,53 @@ def test_get_activities(client):
             if i > 0:
                 assert activities[i-1]['order_shown'] < activity['order_shown']
             assert activity['activity_type'] == activity_type
+
+
+
+@pytest.mark.django_db
+def test_get_upcoming_seminars_success(client):
+    # create activiti and slots on diff days
+    t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
+
+    # single slot for tomorrow
+    tmw = datetime.now() + timedelta(days=1, minutes=10)
+    t_util.create_seminar_slot(Activity.objects.get(id=1), tmw)
+
+    response = client.get(reverse('get-upcoming-seminars'))
+
+    assert response.status_code == 200
+
+    ret = json.loads(response.content)
+    exp = [
+        {
+            'date': tmw.strftime('%b %d'),
+            'seminars': [
+                'foo',
+            ]
+        }
+    ]
+
+    assert ret == exp
+
+
+@pytest.mark.django_db
+def test_get_upcoming_seminars_date_range(client):
+    t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
+
+    # only 3 days max should show
+    dts = (datetime.now() + timedelta(days=i) for i in range(-1, 4))
+    t_util.create_seminar_slot(Activity.objects.get(id=1), *dts)
+
+    response = client.get(reverse('get-upcoming-seminars'))
+    ret = json.loads(response.content)
+
+    # only today, tmw, and next day shown
+    assert len(ret) == 3
+    assert ret[0]['date'] == datetime.now().strftime('%b %d')
+    assert ret[1]['date'] == (datetime.now() + timedelta(days=1)).strftime('%b %d')
+    assert ret[2]['date'] == (datetime.now() + timedelta(days=2)).strftime('%b %d')
+
+
+@pytest.mark.django_db
+def test_get_upcoming_seminars_unique_seminars_only(client):
+    raise NotImplementedError
