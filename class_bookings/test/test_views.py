@@ -171,15 +171,14 @@ def test_get_activities(client):
 
 @pytest.mark.django_db
 def test_get_upcoming_seminars_success(client):
-    # create activiti and slots on diff days
     t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
+    t_util.create_activity(activity_type=Activity.SEMINAR, title='bar')
 
-    # single slot for tomorrow
     tmw = datetime.now() + timedelta(days=1, minutes=10)
     t_util.create_seminar_slot(Activity.objects.get(id=1), tmw)
+    t_util.create_seminar_slot(Activity.objects.get(id=2), tmw)
 
     response = client.get(reverse('get-upcoming-seminars'))
-
     assert response.status_code == 200
 
     ret = json.loads(response.content)
@@ -188,6 +187,7 @@ def test_get_upcoming_seminars_success(client):
             'date': tmw.strftime('%b %d'),
             'seminars': [
                 'foo',
+                'bar'
             ]
         }
     ]
@@ -199,20 +199,30 @@ def test_get_upcoming_seminars_success(client):
 def test_get_upcoming_seminars_date_range(client):
     t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
 
-    # only 3 days max should show
-    dts = (datetime.now() + timedelta(days=i) for i in range(-1, 4))
+    dts = (datetime.now() + timedelta(days=i, minutes=1) for i in range(-1, 4))
     t_util.create_seminar_slot(Activity.objects.get(id=1), *dts)
 
     response = client.get(reverse('get-upcoming-seminars'))
     ret = json.loads(response.content)
 
     # only today, tmw, and next day shown
+    # controlled by views.UPCOMING_TIME_DELTA
     assert len(ret) == 3
-    assert ret[0]['date'] == datetime.now().strftime('%b %d')
-    assert ret[1]['date'] == (datetime.now() + timedelta(days=1)).strftime('%b %d')
-    assert ret[2]['date'] == (datetime.now() + timedelta(days=2)).strftime('%b %d')
+    for i, day in enumerate(ret):
+        assert day['date'] == (datetime.now() + timedelta(days=i)).strftime('%b %d')
 
 
 @pytest.mark.django_db
-def test_get_upcoming_seminars_unique_seminars_only(client):
-    raise NotImplementedError
+def test_get_upcoming_seminars_unique(client):
+    t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
+    seminar = Activity.objects.get(id=1)
+
+    # add 2 slots on same day
+    t_util.create_seminar_slot(seminar, (datetime.now() + timedelta(days=1, minutes=10)))
+    t_util.create_seminar_slot(seminar, (datetime.now() + timedelta(days=1, hours=6)))
+
+    response = client.get(reverse('get-upcoming-seminars'))
+    ret = json.loads(response.content)
+
+    assert len(ret) == 1    # single day
+    assert ret[0]['seminars'] == ['foo']
