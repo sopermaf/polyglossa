@@ -1,8 +1,9 @@
 '''These are the request handlers for the class_bookings
 section of the polyglossa website.
 '''
+# pylint: disable=unused-argument
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
@@ -10,9 +11,11 @@ from django.middleware.csrf import get_token
 
 from payments.models import Order
 from payments.views import paypal_button
-
 from . import parse, const, util
 from . import models
+
+
+UPCOMING_TIME_DELTA = timedelta(days=3)
 
 
 def post_seminar_student(request):
@@ -65,7 +68,7 @@ def post_seminar_student(request):
     return paypal_button(request, order, status=const.RESOURCE_CREATED_CODE)
 
 
-def get_activities(request, activity_type): #pylint: disable=unused-argument
+def get_activities(request, activity_type):
     '''Return all the `bookable` activities
     for a given `activity_type`.
     '''
@@ -82,7 +85,7 @@ def get_activities(request, activity_type): #pylint: disable=unused-argument
     })
 
 
-def get_future_seminar_slots(request, seminar_id): #pylint: disable=unused-argument
+def get_future_seminar_slots(request, seminar_id):
     '''Return all upcoming SeminarSlots for a given `seminar_id`'''
     slots = list(
         models.SeminarSlot.objects.filter(
@@ -92,3 +95,23 @@ def get_future_seminar_slots(request, seminar_id): #pylint: disable=unused-argum
     )
 
     return JsonResponse({'slots': slots})
+
+
+def get_upcoming_seminars(request):
+    """
+    Returns seminars with upcoming slots between now and future
+    point that is `UPCOMING_TIME_DELTA` into the future
+
+    Returns
+    -------
+    JSONResponse
+        list of dicts with seminars grouped by date
+    """
+    now = datetime.now()
+
+    upcoming = models.SeminarSlot.objects.filter(
+        start_datetime__gt=now,
+        start_datetime__lte=(now + UPCOMING_TIME_DELTA),
+    )
+
+    return JsonResponse({})
