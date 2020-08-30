@@ -185,9 +185,9 @@ def test_get_upcoming_seminars_success(client):
     exp = [
         {
             'date': tmw.strftime('%b %d'),
-            'seminars': [
+            'seminars': [   # sorted
+                'bar',
                 'foo',
-                'bar'
             ]
         }
     ]

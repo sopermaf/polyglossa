@@ -3,6 +3,7 @@ section of the polyglossa website.
 '''
 # pylint: disable=unused-argument
 import json
+from collections import defaultdict
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
@@ -114,4 +115,20 @@ def get_upcoming_seminars(request):
         start_datetime__lte=(now + UPCOMING_TIME_DELTA),
     )
 
-    return JsonResponse({})
+    # creates a set of each day
+    seminars_per_days = defaultdict(set)
+    for slot in upcoming:
+        seminars_per_days[slot.start_datetime.strftime('%b %d')].add(slot.seminar.title)
+
+    print("seminars_per_day =", seminars_per_days)
+    # format as a list
+    formatted_days_and_seminars = [
+        {
+            'date': date,
+            'seminars': sorted(seminars),
+        }
+        for date, seminars in seminars_per_days.items()
+    ]
+    print("formatted=", formatted_days_and_seminars)
+
+    return JsonResponse(formatted_days_and_seminars, safe=False)
