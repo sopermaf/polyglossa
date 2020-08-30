@@ -56,14 +56,22 @@
       </template>
 
       <template v-if="pageSelection == 'HOME'">
-        <Home @pageSelection="updateView"/>
+        <Home
+          :seminars="seminars"
+          @pageSelection="updateView"
+        />
       </template>
       <template v-else-if="pageSelection == 'COURSES'">
-        <Courses @courseChoice="prefillForm" />
+        <Courses
+          :seminars="seminars"
+          @courseChoice="prefillForm"
+        />
       </template>
       <template v-else-if="pageSelection == 'BOOKING'">
         <BookClassForm
           :prefilledChoice="courseChoice"
+          :seminars="seminars"
+          :crsf="crsf"
           @pageSelection="updateView"
           @orderGenerated="orderUpdate"
           @buttonGenerated="updateButton"
@@ -95,6 +103,7 @@ import Payment from "./components/Payment.vue";
 import ContactUs from "./components/ContactUs.vue";
 import Learning from "./components/Learning.vue";
 import {mdiHome, mdiBookOpenPageVariant, mdiClipboardEditOutline, mdiInformationVariant, mdiBookshelf, mdiCommentTextMultiple } from '@mdi/js'
+import axios from "axios";
 
 export default {
   name: "Index",
@@ -115,6 +124,9 @@ export default {
     button: null,
     drawer: false,
     isNavBarVisible: false,
+    seminars: [],
+    crsf: null,
+    
     navItems: [
       {title: 'Home', icon: mdiHome, pageSelection: "HOME"},
       {title: 'Courses', icon: mdiBookOpenPageVariant, pageSelection: "COURSES"},
@@ -138,12 +150,17 @@ export default {
         icon: 'https://p7.hiclipart.com/preview/477/609/118/logo-computer-icons-clip-art-instagram-logo.jpg',
         image: 'https://image.flaticon.com/icons/svg/1409/1409946.svg',
       },
-    ]
+    ],
   }),
   mounted() {
     if(window.innerWidth < 800){
       this.isNavBarVisible = true;
     }
+
+    axios.get('/book_class/get/activities/SEM').then(response => {
+      this.seminars = response.data['activities'];
+      this.crsf = response.data['token'];
+    })
   },
   methods: {
     updateView(view) {

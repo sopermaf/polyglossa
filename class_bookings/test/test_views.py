@@ -1,6 +1,7 @@
 # pylint: disable=missing-module-docstring, missing-class-docstring, missing-function-docstring, no-self-use, unused-wildcard-import, wildcard-import
 import json
 
+import pytest
 from django.test import TestCase, Client
 from django.urls import reverse
 
@@ -28,7 +29,7 @@ class TestViews(TestCase):
             }
         }
 
-        self.slots = t_util.create_seminar_slots(self.activities['SEM']['bookable'])
+        self.slots = t_util.create_seminar_slot_pair(self.activities['SEM']['bookable'])
 
     # helper functions
 
@@ -125,28 +126,125 @@ class TestViews(TestCase):
         self.assertEqual(len(Order.objects.all()), 1, "Single Success Order added")
 
 
-    def test_get_future_seminar_slots(self):
-        response = self.client.get(
-            reverse('sem-slots', kwargs={'seminar_id': self.activities['SEM']['bookable'].id})
+@pytest.mark.django_db
+def test_get_future_seminar_slots_future_only(client):
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, order=1)
+
+    created_slot_pair = t_util.create_seminar_slot_pair(seminar)
+
+    response = client.get(
+        reverse(
+            'sem-slots',
+            kwargs={'seminar_id': seminar.id}
         )
-        self.assertEqual(200, response.status_code, "Successful Request")
+    )
 
-        slots = json.loads(response.content)['slots']
-        self.assertEqual(1, len(slots), "Single slot returned")
-        self.assertEqual(self.slots['future'].id, slots[0]['id'], "Future slot returned")
+    assert response.status_code == 200
+    ret = json.loads(response.content)['slots']
+
+    assert len(ret) == 1
+    assert ret[0]['id'] == created_slot_pair['future'].id
 
 
-    def test_get_activities(self):
-        test_cases = [
-            (Activity.SEMINAR, 1),
-            (Activity.INDIVIDUAL, 1),
-            ('NOT REAL', 0),
-        ]
+@pytest.mark.django_db
+def test_get_future_seminar_slots_sorted(client):
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, order=1)
 
-        for activity_type, exp_num, in test_cases:
-            response = self.client.get(reverse(
-                'get-activities', kwargs={'activity_type': activity_type}
-            ))
-            self.assertEqual(200, response.status_code, "SuccessfulRequest")
-            activities = json.loads(response.content)['activities']
-            self.assertEqual(exp_num, len(activities))
+    t_util.create_seminar_slot(
+        seminar,
+        *(datetime.now() + timedelta(days=i) for i in range(5, 1))
+    )
+
+    response = client.get(reverse('sem-slots', kwargs={'seminar_id': seminar.id}))
+
+    ret = [slot['id'] for slot in json.loads(response.content)['slots']]
+    assert ret == [slot.id for slot in SeminarSlot.objects.order_by('start_datetime')]
+
+
+@pytest.mark.django_db
+def test_get_activities(client):
+    t_util.create_activity(activity_type=Activity.SEMINAR, order=2)
+    t_util.create_activity(activity_type=Activity.SEMINAR, order=1)
+    t_util.create_activity(activity_type=Activity.INDIVIDUAL)
+
+    test_cases = [
+        (Activity.SEMINAR, 2),
+        (Activity.INDIVIDUAL, 1),
+        ('NOT REAL', 0),
+    ]
+
+    for activity_type, exp_num, in test_cases:
+        response = client.get(reverse(
+            'get-activities', kwargs={'activity_type': activity_type}
+        ))
+
+        # successful request
+        assert response.status_code == 200
+
+        # assert data is of expected length and type
+        activities = json.loads(response.content)['activities']
+        assert len(activities) == exp_num
+
+        # assert ordered and type
+        for i, activity in enumerate(activities):
+            if i > 0:
+                assert activities[i-1]['order_shown'] < activity['order_shown']
+            assert activity['activity_type'] == activity_type
+
+
+@pytest.mark.django_db
+def test_get_upcoming_seminars_success(client):
+    sem_foo = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
+    sem_bar = t_util.create_activity(activity_type=Activity.SEMINAR, title='bar')
+
+    tmw = datetime.now() + timedelta(days=1, minutes=10)
+    t_util.create_seminar_slot(sem_foo, tmw)
+    t_util.create_seminar_slot(sem_bar, tmw)
+
+    response = client.get(reverse('get-upcoming-seminars'))
+    assert response.status_code == 200
+
+    ret = json.loads(response.content)
+    exp = [
+        {
+            'date': tmw.strftime('%b %d'),
+            'seminars': [   # sorted
+                'bar',
+                'foo',
+            ]
+        }
+    ]
+
+    assert ret == exp
+
+
+@pytest.mark.django_db
+def test_get_upcoming_seminars_date_range(client):
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
+
+    dts = (datetime.now() + timedelta(days=i, minutes=1) for i in range(4, -2, -1))
+    t_util.create_seminar_slot(seminar, *dts)
+
+    response = client.get(reverse('get-upcoming-seminars'))
+    ret = json.loads(response.content)
+
+    # only today, tmw, and next day shown
+    # controlled by views.UPCOMING_TIME_DELTA
+    assert len(ret) == 3
+    for i, day in enumerate(ret):
+        assert day['date'] == (datetime.now() + timedelta(days=i)).strftime('%b %d')
+
+
+@pytest.mark.django_db
+def test_get_upcoming_seminars_unique(client):
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
+
+    # add 2 slots on same day
+    t_util.create_seminar_slot(seminar, (datetime.now() + timedelta(days=1)))
+    t_util.create_seminar_slot(seminar, (datetime.now() + timedelta(days=1)))
+
+    response = client.get(reverse('get-upcoming-seminars'))
+    ret = json.loads(response.content)
+
+    assert len(ret) == 1    # single day
+    assert ret[0]['seminars'] == ['foo']

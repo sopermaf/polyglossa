@@ -75,7 +75,12 @@ import qs from "qs";
 export default {
   props: {
     prefilledChoice: {
-      type: Object
+      type: Object,
+      required: true,
+    },
+    seminars: {
+      type: Array,
+      required: true,
     }
   },
   data: () => ({
@@ -97,17 +102,12 @@ export default {
     notNullRules: [
       v => !!v || 'Seminar choice required'
     ],
-    seminars: [],
     slots: [],
   }),
   mounted() {
     axios.defaults.xsrfHeaderName = "X-CSRFToken";
     axios.defaults.withCredentials = true
 
-    axios.get('/book_class/get/activities/SEM').then(response => {
-      this.seminars = response.data['activities'];
-      this.crsf = response.data['token']
-    })
     this.seminarChoice = this.prefilledChoice;
   },
   watch: {
