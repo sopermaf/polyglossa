@@ -87,7 +87,7 @@ class Activity(models.Model):
         return f"{self.title} (${self.price:.2f})"
 
     def __repr__(self):
-        return f"<{self.activity_type}: {self.title} {self.price} {self.is_bookable}"
+        return f"<{self.activity_type}: {self.title},{self.price},{self.is_bookable}>"
 
 
 class BaseSlot(models.Model):
