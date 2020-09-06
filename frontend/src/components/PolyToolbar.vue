@@ -21,7 +21,7 @@
         <v-spacer></v-spacer>
 
         <v-toolbar-title
-          class="float-c"
+          @click="viewChoice('HOME')"
         >
           <PolyGlossaTitle />
         </v-toolbar-title> 
@@ -51,8 +51,10 @@
 
         <v-toolbar-title
           class="d-flex"
+          @click="viewChoice('HOME')"
         >
-          <PolyGlossaTitle />
+          <PolyGlossaTitle
+          />
         </v-toolbar-title> 
 
         <span
