@@ -6,7 +6,7 @@
         <h1> Seminars </h1>
       </v-flex>
 
-      <v-flex ma-3 lg6 md4 xs12 v-for="sem in seminars" :key="sem">
+      <v-flex ma-2 lg4 md4 sm4 xs6 v-for="sem in seminars" :key="sem">
         <CourseSlot :sem="sem" @courseChoice="openForm"/>
       </v-flex>
 
