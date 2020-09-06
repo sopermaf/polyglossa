@@ -76,7 +76,7 @@
 
           :key="sem.title"
           class="mb-2 mr-2"
-          @click="changePage()"
+          @click="changePage('COURSES')"
         >
           <v-card-text
           >
@@ -108,6 +108,7 @@
               :key="seminar"
               dense
               class="text-left"
+              @click="changePage('BOOKING')"
             >
               <v-list-item-title>
                 {{seminar}}
@@ -141,8 +142,8 @@ export default {
     })
   },
   methods: {
-    changePage() {
-      this.$emit("pageSelection", "COURSES")
+    changePage(destinationPage) {
+      this.$emit("pageSelection", destinationPage);
     }
   },
   computed: {
