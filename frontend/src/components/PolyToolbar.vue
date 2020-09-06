@@ -3,47 +3,66 @@
     app
     class="banner"
     color="#2f3253"
-    prominent
     absolute
   >
 
     <v-container>
-      <v-layout row justify-center no-gutters class="">
+      <!-- Smaller Display Toolbar -->
+      <v-layout
+        row
+        :class="`d-${switchPoint}-none d-flex justify--center`"
+      >
         <v-app-bar-nav-icon
-          class=" d-md-none"
+          class="mt-2"
           @click="openDrawer()"
           >
         </v-app-bar-nav-icon>
-        
+
+        <v-spacer></v-spacer>
+
         <v-toolbar-title
-          class="d-flex"
+          class="float-c"
         >
           <PolyGlossaTitle />
-        </v-toolbar-title>  
+        </v-toolbar-title> 
+
+        <v-spacer></v-spacer>
       </v-layout>
 
-      <v-layout row justify-center no-gutters class="pb-5">
+      <!-- Larger Display Toolbar -->
+      <v-layout
+        row
+        justify-space-around
+        no-gutters
+        :class="`mb-1 d-none d-${switchPoint}-flex`"
+      >
         <span
-          class="d-none d-md-flex"
+          class="d-flex"
           v-for="b in preLogoButtons" :key="b.export"
         >
           <v-btn
             text
             @click="viewChoice(b.export)"
-            class="white--text"
+            class="white--text mt-4"
           >
             <span class="mr-2">{{b.text}}</span>
           </v-btn>
         </span>
 
+        <v-toolbar-title
+          class="d-flex"
+        >
+          <PolyGlossaTitle />
+        </v-toolbar-title> 
+
         <span
-          class="d-none d-md-flex"
+          class="d-flex"
           v-for="b in postLogoButtons" :key="b.export"
         >
           <v-btn
             text
             @click="viewChoice(b.export)"
-            class="white--text"
+            class="white--text mt-4"
           >
             <span class="mr-2">{{b.text}}</span>
           </v-btn>
@@ -58,7 +77,13 @@ import PolyGlossaTitle from "./PolyGlossaTitle";
 
 export default {
   name: "PolyToolbar",
-   components: {
+  props: {
+    switchPoint: {
+      type: String,
+      required: true,
+    }
+  },
+  components: {
     PolyGlossaTitle,
   },
   data: () => ({

@@ -4,6 +4,7 @@
     <PolyToolbar
       @pageSelection="updateView"
       @drawer="drawerVisible"
+      :switchPoint="breakPoint"
     />
 
     <!-- Page Content -->
@@ -13,7 +14,7 @@
         v-model="drawer"
         absolute
         temporary
-        class="d-flex d-sm-none"
+        :class="`d-flex d-${breakPoint}-none`"
       >
         <v-list >
           <!-- Navigation Items -->
@@ -116,6 +117,7 @@ export default {
   },
   data: () => ({
     pageSelection: "HOME",
+    breakPoint: 'lg',
     courseChoice: null,
     order: null,
     button: null,
