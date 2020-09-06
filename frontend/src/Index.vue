@@ -4,56 +4,54 @@
     <PolyToolbar
       @pageSelection="updateView"
       @drawer="drawerVisible"
-      :isNavBarVisible="isNavBarVisible"
+      :switchPoint="breakPoint"
     />
 
     <!-- Page Content -->
     <v-content>
       
-      <template
-        v-if="isNavBarVisible">
-        <v-navigation-drawer
-          v-model="drawer"
-          absolute
-          temporary
-        >
-          <v-list >
-            <!-- Navigation Items -->
-            <v-list-item
-              v-for="item in navItems"
-              :key="item.title"
-              @click="updateView(item.pageSelection)"
-            >
-              <v-list-item-icon>
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-
-          <v-divider></v-divider>
-          <!-- Social Media Items -->
-          <template
-            v-for="item in socialMediaItems"
+      <v-navigation-drawer
+        v-model="drawer"
+        absolute
+        temporary
+        :class="`d-flex d-${breakPoint}-none`"
+      >
+        <v-list >
+          <!-- Navigation Items -->
+          <v-list-item
+            v-for="item in navItems"
+            :key="item.title"
+            @click="updateView(item.pageSelection)"
           >
-            <v-list-item
-              :key="item.title"
-              :href="item.pageLink"
-            >
-              <v-list-item-avatar>
-                <v-img :src="item.image"></v-img>
-              </v-list-item-avatar>
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
 
-              <v-list-item-content>
-                <v-list-item-title>{{item.title}}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </template>
-        </v-navigation-drawer>
-      </template>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+
+        <v-divider></v-divider>
+        <!-- Social Media Items -->
+        <template
+          v-for="item in socialMediaItems"
+        >
+          <v-list-item
+            :key="item.title"
+            :href="item.pageLink"
+          >
+            <v-list-item-avatar>
+              <v-img :src="item.image"></v-img>
+            </v-list-item-avatar>
+
+            <v-list-item-content>
+              <v-list-item-title>{{item.title}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+      </v-navigation-drawer>
 
       <template v-if="pageSelection == 'HOME'">
         <Home
@@ -119,6 +117,7 @@ export default {
   },
   data: () => ({
     pageSelection: "HOME",
+    breakPoint: 'lg',
     courseChoice: null,
     order: null,
     button: null,
@@ -153,10 +152,6 @@ export default {
     ],
   }),
   mounted() {
-    if(window.innerWidth < 800){
-      this.isNavBarVisible = true;
-    }
-
     axios.get('/book_class/get/activities/SEM').then(response => {
       this.seminars = response.data['activities'];
       this.crsf = response.data['token'];

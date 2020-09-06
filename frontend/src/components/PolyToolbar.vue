@@ -3,54 +3,90 @@
     app
     class="banner"
     color="#2f3253"
+    absolute
   >
 
-    <template v-if="isNavBarVisible">
-      <v-app-bar-nav-icon @click="openDrawer()"></v-app-bar-nav-icon>
-    </template>
-    <template v-else>
-      <span v-for="b in preLogoButtons" :key="b.export">
-        <v-btn
-          text
-          @click="viewChoice(b.export)"
-          class="white--text"
-        >
-          <span class="mr-2">{{b.text}}</span>
-        </v-btn>
-      </span>
-    </template>
-    
-    <v-spacer></v-spacer>
-    
-    <v-img
-      :src="require('../assets/logo.png')"
-      contain
-      height="100%"
-    ></v-img>
+    <v-container>
+      <!-- Smaller Display Toolbar -->
+      <v-layout
+        row
+        :class="`d-${switchPoint}-none d-flex justify--center`"
+      >
+        <v-app-bar-nav-icon
+          class="mt-2"
+          @click="openDrawer()"
+          >
+        </v-app-bar-nav-icon>
 
-    <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
 
-    <template v-if="!isNavBarVisible">    
-      <span v-for="b in postLogoButtons" :key="b.export">
-        <v-btn
-          text
-          @click="viewChoice(b.export)"
-          class="white--text"
+        <v-toolbar-title
+          @click="viewChoice('HOME')"
         >
-          <span class="mr-2">{{b.text}}</span>
-        </v-btn>
-      </span>
-    </template>
+          <PolyGlossaTitle />
+        </v-toolbar-title> 
+
+        <v-spacer></v-spacer>
+      </v-layout>
+
+      <!-- Larger Display Toolbar -->
+      <v-layout
+        row
+        justify-space-around
+        no-gutters
+        :class="`mb-1 d-none d-${switchPoint}-flex`"
+      >
+        <span
+          class="d-flex"
+          v-for="b in preLogoButtons" :key="b.export"
+        >
+          <v-btn
+            text
+            @click="viewChoice(b.export)"
+            class="white--text mt-4"
+          >
+            <span class="mr-2">{{b.text}}</span>
+          </v-btn>
+        </span>
+
+        <v-toolbar-title
+          class="d-flex"
+          @click="viewChoice('HOME')"
+        >
+          <PolyGlossaTitle
+          />
+        </v-toolbar-title> 
+
+        <span
+          class="d-flex"
+          v-for="b in postLogoButtons" :key="b.export"
+        >
+          <v-btn
+            text
+            @click="viewChoice(b.export)"
+            class="white--text mt-4"
+          >
+            <span class="mr-2">{{b.text}}</span>
+          </v-btn>
+        </span>
+      </v-layout>
+    </v-container>
   </v-app-bar>
 </template>
 
 <script>
+import PolyGlossaTitle from "./PolyGlossaTitle";
+
 export default {
   name: "PolyToolbar",
   props: {
-    isNavBarVisible: {
-      type: Boolean
+    switchPoint: {
+      type: String,
+      required: true,
     }
+  },
+  components: {
+    PolyGlossaTitle,
   },
   data: () => ({
     preLogoButtons: [
