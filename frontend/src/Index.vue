@@ -129,11 +129,11 @@ export default {
     
     navItems: [
       {title: 'Home', icon: mdiHome, pageSelection: "HOME"},
-      {title: 'Courses', icon: mdiBookOpenPageVariant, pageSelection: "COURSES"},
+      {title: 'Seminars Types', icon: mdiBookOpenPageVariant, pageSelection: "COURSES"},
       {title: 'Join a Seminar', icon: mdiClipboardEditOutline, pageSelection: "BOOKING"},
       {title: 'Learning Materials', icon: mdiBookshelf, pageSelection: "LEARNING"},
-      {title: 'Contact Us', icon: mdiCommentTextMultiple, pageSelection: "CONTACT_US"},
       {title: 'About Us', icon: mdiInformationVariant, pageSelection: "CONTACT_US"},
+      {title: 'Contact Us', icon: mdiCommentTextMultiple, pageSelection: "CONTACT_US"},
     ],
     socialMediaItems: [
       {
