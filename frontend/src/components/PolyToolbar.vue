@@ -4,56 +4,50 @@
     class="banner"
     color="#2f3253"
     prominent
+    absolute
   >
 
     <v-container>
-      <v-layout row justify-center class="">
-        <span
-          class="d-flex-box-inline h1 mt-1"
+      <v-layout row justify-center no-gutters class="">
+        <v-app-bar-nav-icon
+          class=" d-md-none"
+          @click="openDrawer()"
+          >
+        </v-app-bar-nav-icon>
+        
+        <v-toolbar-title
+          class="d-flex"
         >
           <PolyGlossaTitle />
-        </span>
+        </v-toolbar-title>  
       </v-layout>
 
-      <v-layout row justify-center class="mb-4">
-      <span
-        class="d-flex-box-inline d-md-none"
-      >
-        <v-app-bar-nav-icon
-          @click="openDrawer()"
+      <v-layout row justify-center no-gutters class="pb-5">
+        <span
+          class="d-none d-md-flex"
+          v-for="b in preLogoButtons" :key="b.export"
         >
-        </v-app-bar-nav-icon>
-      </span>
-      
-      <span
-        class="d-none d-md-flex"
-        v-for="b in preLogoButtons" :key="b.export"
-      >
-        <v-btn
-          text
-          @click="viewChoice(b.export)"
-          class="white--text"
-        >
-          <span class="mr-2">{{b.text}}</span>
-        </v-btn>
-      </span>
+          <v-btn
+            text
+            @click="viewChoice(b.export)"
+            class="white--text"
+          >
+            <span class="mr-2">{{b.text}}</span>
+          </v-btn>
+        </span>
 
-      <v-spacer></v-spacer>
-      
-      <v-spacer class=""></v-spacer>
-
-      <span
-        class="d-none d-md-flex"
-        v-for="b in postLogoButtons" :key="b.export"
-      >
-        <v-btn
-          text
-          @click="viewChoice(b.export)"
-          class="white--text"
+        <span
+          class="d-none d-md-flex"
+          v-for="b in postLogoButtons" :key="b.export"
         >
-          <span class="mr-2">{{b.text}}</span>
-        </v-btn>
-      </span>
+          <v-btn
+            text
+            @click="viewChoice(b.export)"
+            class="white--text"
+          >
+            <span class="mr-2">{{b.text}}</span>
+          </v-btn>
+        </span>
       </v-layout>
     </v-container>
   </v-app-bar>
