@@ -6,32 +6,30 @@
         <h1> Seminars </h1>
       </v-flex>
 
-      <v-flex ma-3 lg6 md4 xs12 v-for="sem in classTypes" :key="sem">
+      <v-flex ma-3 lg6 md4 xs12 v-for="sem in seminars" :key="sem">
         <CourseSlot :sem="sem" @courseChoice="openForm"/>
       </v-flex>
-
 
     </v-layout>
   </v-container>
 </template>
 
 <script>
-import axios from "axios";
 import CourseSlot from "./CourseSlot";
 
 export default {
   components: {
     CourseSlot,
   },
+  props: {
+    seminars: {
+      type: Array,
+      required: true,
+    }
+  },
   data: () => ({
-    classTypes: [],
     courseChoice: null,
   }),
-  mounted() {
-    axios.get('/book_class/get/activities/SEM').then(response => {
-      this.classTypes = response.data['activities'];
-    });
-  },
   methods: {
     openForm(seminar) {
       this.$emit("courseChoice", seminar);

@@ -123,7 +123,7 @@ class TestSeminarSlots(TestCase):
 
         # add seminar and seminar slot with student
         self.seminar = t_util.create_activity(bookable=True, activity_type="SEM")
-        self.slots = t_util.create_seminar_slots(self.seminar)
+        self.slots = t_util.create_seminar_slot_pair(self.seminar)
         self.slots['future'].students.add(self.students['signed_up'])
 
         # Add awaiting order

@@ -14,13 +14,22 @@ class StudentAdmin(admin.ModelAdmin):
 
 
 class ActivityAdmin(admin.ModelAdmin):
-    list_display = ('activity_type', 'title', 'price', 'is_bookable')
+    list_display = (
+        'activity_type',
+        'title',
+        'price',
+        'is_bookable',
+        'is_highlighted',
+        'order_shown'
+    )
     fields = (
         'activity_type',
         'title',
+        'description',
         ('price', 'is_bookable'),
-        'description'
+        ('order_shown', 'is_highlighted'),
     )
+    ordering = ['order_shown', 'activity_type', 'title']
 
 
 class SeminarSlotAdmin(admin.ModelAdmin):

@@ -72,10 +72,11 @@
         <h2 class="mb-2">Top Seminar Types</h2>
         <v-card
           hover
-          v-for="sem in seminars"
+          v-for="sem in highlightedSeminars"
+
           :key="sem.title"
           class="mb-2 mr-2"
-          @click="changePage()"
+          @click="changePage('COURSES')"
         >
           <v-card-text
           >
@@ -103,13 +104,14 @@
           
           <v-list>
             <v-list-item
-              v-for="slotType in slotDate.slotTypes"
-              :key="slotType"
+              v-for="seminar in slotDate.seminars"
+              :key="seminar"
               dense
               class="text-left"
+              @click="changePage('BOOKING')"
             >
               <v-list-item-title>
-                {{slotType}}
+                {{seminar}}
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -122,42 +124,32 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
-  data: () => ({
-    seminars: [
-      {id: 0, title: "Grammar Essentials \"get\"", description: "name", price: 10.5},
-      {id: 1, title: "English Pronunciation", description: "name", price: 10.5},
-      {id: 2, title: "Phrasal Verbs", description: "name", price: 10.5},
-      {id: 3, title: "Free Trial Seminar!", description: "Free Seminar!", price: 0.0},
-    ],
-    upcomingSlots: [
-      {
-        date: "July 10th",
-        slotTypes: [
-          "Grammar Essentials \"get\"",
-          "English Pronunciation",
-        ]
-      },
-      {
-        date: "July 11th",
-        slotTypes: [
-          "Phrasal Verbs",
-          "English Pronunciation",
-        ]
-      },
-      {
-        date: "July 12th",
-        slotTypes: [
-          "Phrasal Verbs",
-          "Beginner English",
-        ]
-      },
-    ]
-  }),
-  methods: {
-    changePage() {
-      this.$emit("pageSelection", "COURSES")
+  props: {
+    seminars: {
+      type: Array,
+      required: true,
     }
   },
+  data: () => ({
+    upcomingSlots: [],
+  }),
+  mounted() {
+    axios.get('/book_class/get/seminars/upcoming/').then(reponse => {
+      this.upcomingSlots = reponse.data;
+    })
+  },
+  methods: {
+    changePage(destinationPage) {
+      this.$emit("pageSelection", destinationPage);
+    }
+  },
+  computed: {
+    highlightedSeminars: function() {
+      return this.seminars.filter(function(sem) { return sem.is_highlighted})
+    }
+  }
 };
 </script>

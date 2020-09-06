@@ -25,7 +25,7 @@ class TestPayments(TestCase):
             activity_type=cb_models.Activity.SEMINAR,
             bookable=True,
         )
-        slots = util.create_seminar_slots(activity)
+        slots = util.create_seminar_slot_pair(activity)
         self.slot = slots['future']
 
         self.order_details = {

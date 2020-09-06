@@ -5,6 +5,9 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
+ipython = "*"
+pytest = "*"
+pytest-django = "*"
 
 [packages]
 django = "~=3.0"
