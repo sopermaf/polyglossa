@@ -110,6 +110,11 @@ class TestSlots(TestCase):
         with self.assertRaises(ValidationError):
             ind.clean()
 
+    def test_update_existing_slot(self):
+        self.slot.duration_in_mins = 30
+        self.slot.clean()
+        self.slot.save()
+
 
 class TestSeminarSlots(TestCase):
     '''Test Seminar Specific Functions'''

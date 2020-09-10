@@ -112,7 +112,9 @@ class BaseSlot(models.Model):
         if self.start_datetime < datetime.now():
             raise ValidationError('Slot start must be in the future')
 
-        upcoming_slots = BaseSlot.objects.filter(start_datetime__gt=datetime.now())
+        upcoming_slots = BaseSlot.objects \
+                                .filter(start_datetime__gt=datetime.now()) \
+                                .exclude(id=self.id)
         for slot in upcoming_slots:
             if (max(slot.start_datetime, self.start_datetime)
                     < min(slot.end_datetime, self.end_datetime)):
