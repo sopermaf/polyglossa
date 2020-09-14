@@ -107,22 +107,16 @@ class TestViews(TestCase):
         self.assertFalse(Order.objects.all(), 'No orders added')
 
 
-    def test_seminar_error_validation(self):
+    def test_booking_error_same_student(self):
+        # attempt 2 sign ups by same student
         data = self.create_sem_params(
             slot='future', name='joe', email='joe@test.com'
         )
-        # send two identical requests
-        responses = [self.post_seminar(**data) for i in range(2)]
+        success, failure = (self.post_seminar(**data) for _ in range(2))
 
         # assert status
-        self.assertEqual(
-            responses[0].status_code,
-            const.RESOURCE_CREATED_CODE,
-            'Success'
-        )
-        self.assertEqual(responses[1].status_code, BAD_REQUEST_CODE, 'Failure')
-
-
+        self.assertEqual(success.status_code, RESOURCE_CREATED_CODE, 'Success')
+        self.assertEqual(failure.status_code, BAD_REQUEST_CODE, 'Failure')
         self.assertEqual(len(Order.objects.all()), 1, "Single Success Order added")
 
 

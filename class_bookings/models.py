@@ -25,33 +25,6 @@ class Student(models.Model):
     def __str__(self):
         return f"{self.name}, {self.email}"
 
-    @staticmethod
-    def get_student_safe(email):
-        '''Find a student by their email address.\n\n
-        Returns `None` if Student doesn't exist
-        '''
-        try:
-            student = Student.objects.get(
-                email=email)  # pylint: disable=no-member
-        except Student.DoesNotExist:    # pylint: disable=no-member
-            student = None
-
-        return student
-
-    @staticmethod
-    def get_existing_or_create(name, email):
-        '''Adds to DB and returns new student
-        if no student using `email` exists.
-        '''
-        student = Student.get_student_safe(email)
-        if student is None:
-            student = Student(
-                name=name,
-                email=email
-            )
-            student.save()
-        return student
-
 
 class Activity(models.Model):
     '''

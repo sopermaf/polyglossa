@@ -22,23 +22,23 @@ UPCOMING_TIME_DELTA = timedelta(days=3)
 
 def post_seminar_student(request):
     '''
-    Receive a Seminar Request and create
-    an `Order` which can then be completed
-    upon payment.
+    Receive a Seminar Request and create an `Order` which
+    can then be completed upon payment.
 
-    Redirects to the Paypal payments page.
+    Returns
+    -------
+    JSONResponse
+        - order details
+        - paypal secure button code
     '''
-    # Parsing
     try:
         sem_req = parse.parse_seminar_request(request)
     except KeyError as excp:
         print(f"POST Seminar parsing failed\nMissing param: '{excp}'\nParams: {request.POST}")
-        return util.http_bad_request(
-            msg="Missing booking param"
-        )
+        return util.http_bad_request(msg="Missing booking data")
 
     # create student
-    student = models.Student.get_existing_or_create(
+    student, _ = models.Student.objects.get_or_create(
         name=sem_req[const.KEY_NAME],
         email=sem_req[const.KEY_EMAIL],
     )
