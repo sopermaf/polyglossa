@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from .parse import parse_dt_as_str
+from . import errors
 
 # NOTE: calling the save() method directly avoids clean() validation
 
@@ -120,34 +121,36 @@ class SeminarSlot(BaseSlot):
     students = models.ManyToManyField(Student, blank=True)
 
     @classmethod
-    def validate_booking(cls, slot_id, student):
+    def validate_signup(cls, slot_id, student):
         '''
-        Validate a student booking request.
-
-        Ensure student isn't present in the seminar
+        Ensure a student can sign up for the given
+        SeminarSlot specified by its id.
 
         Parameters
-        ---
-        - slot_id (int)
-        - student (Student model)
+        ----------
+        - slot_id   : int (id of SeminarSlot to join)
+        - student   : Student (student who wants to join)
 
-        Returns
-        ---
-        - Raises Validation error if not valid
-        - Seminar Slot if valid
+        Raises
+        ------
+        - SlotNotFoundError          : no upcoming slot found
+        - StudentAlreadyPresentError : student already in slot
         '''
         # ensure future slot
         slots = cls.objects.filter(
             start_datetime__gt=datetime.now(), id=slot_id
         )
         if not slots:
-            raise ValidationError("No matching future seminar slot")
+            raise errors.SlotNotFoundError(
+                f'No upcoming slot found: {slot_id=}'
+            )
         slot = slots[0]
 
         # ensure student not in selected seminar
         if slot.students.filter(pk=student.pk).exists():
-            raise ValidationError(f'Student {student} already in seminar {slot}')
-
+            raise errors.StudentAlreadyPresentError(
+                f'Student {student} already in seminar {slot}'
+            )
         return slot
 
 
