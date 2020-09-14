@@ -147,7 +147,7 @@ class SeminarSlot(BaseSlot):
         )
         if not slots:
             raise errors.SlotNotFoundError(
-                f'No upcoming slot found: {slot_id=}'
+                f'No upcoming slot found: {slot_id}'
             )
         slot = slots[0]
 

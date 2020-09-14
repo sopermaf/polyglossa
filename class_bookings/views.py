@@ -64,16 +64,16 @@ def seminar_signup(request):
             order_details = json.loads(order.order_details)
             if order_details[str(const.KEY_CHOICE)] == str(slot.pk):
                 raise err.UnpaidOrderError(
-                    f'Booking failed. {student=} has existing {order=} for {slot=}'
+                    f'Booking failed. {student} has existing {order} for {slot}'
                 )
     except err.StudentAlreadyPresentError as excp:
-        print(f'Booking failure\n\t{request.POST=}\n\t{excp=}')
+        print(f'Booking failure\n\t{request.POST}\n\t{excp}')
         return util.http_bad_request('Student already signed up for this seminar')
     except err.SlotNotFoundError as excp:
-        print(f'Booking failure\n\t{request.POST=}\n\t{excp=}')
+        print(f'Booking failure\n\t{request.POST}\n\t{excp}')
         return util.http_bad_request('No matching slot found')
     except err.UnpaidOrderError as excp:
-        print(f'Booking failure\n\t{request.POST=}\n\t{excp=}')
+        print(f'Booking failure\n\t{request.POST}\n\t{excp}')
         return util.http_bad_request('Unpaid order found. Please contact support')
 
     order = Order(
