@@ -135,6 +135,11 @@ class SeminarSlot(BaseSlot):
         ------
         - SlotNotFoundError          : no upcoming slot found
         - StudentAlreadyPresentError : student already in slot
+
+        Returns
+        -------
+        SeminarSlot
+            if signup valid
         '''
         # ensure future slot
         slots = cls.objects.filter(
