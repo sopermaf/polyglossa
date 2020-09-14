@@ -6,58 +6,75 @@ import json
 from collections import defaultdict
 from datetime import datetime, timedelta, date
 
-from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 
 from payments.models import Order
 from payments.views import paypal_button
-from . import parse, const, util
-from . import models
+from . import parse, const, util, models
+from . import errors as err
 
+
+# CONSTANTS
 
 UPCOMING_TIME_DELTA = timedelta(days=3)
 
 
-def post_seminar_student(request):
+# VIEWS
+
+
+def seminar_signup(request):
     '''
-    Receive a Seminar Request and create an `Order` which
-    can then be completed upon payment.
+    Attempt to create an Order for a student
+    for the specified seminar.
+
+    POST requests only
 
     Returns
     -------
     JSONResponse
         - order details
         - paypal secure button code
+    HttpResponse
+        if error occurs, with error message
     '''
+    # parse request
     try:
         sem_req = parse.parse_seminar_request(request)
     except KeyError as excp:
         print(f"POST Seminar parsing failed\nMissing param: '{excp}'\nParams: {request.POST}")
-        return util.http_bad_request(msg="Missing booking data")
+        return util.http_bad_request(msg="Booking failed. Missing required data.")
 
-    # create student
     student, _ = models.Student.objects.get_or_create(
-        name=sem_req[const.KEY_NAME],
         email=sem_req[const.KEY_EMAIL],
+        defaults={'name': sem_req[const.KEY_NAME]},
     )
 
-    # Validate Slot Selection
+    # validate request
     try:
-        slot = models.SeminarSlot.validate_booking(sem_req[const.KEY_CHOICE], student)
+        # validate slot and student
+        slot = models.SeminarSlot.validate_signup(sem_req[const.KEY_CHOICE], student)
+
+        # ensure no upcoming order
         awaiting_orders = Order.objects.filter(
             customer__pk=student.pk, payment_status=Order.PaymentStatus.AWAITING
         )
         for order in awaiting_orders:
             order_details = json.loads(order.order_details)
             if order_details[str(const.KEY_CHOICE)] == str(slot.pk):
-                raise ValidationError(f'Student {student} already has an upcoming order {order}')
-    except ValidationError as excp:
-        print(f"POST Seminar validation failed: {excp}\nParams: {request.POST}")
-        return util.http_bad_request(
-            msg='Bad Request'
-        )
+                raise err.UnpaidOrderError(
+                    f'Booking failed. {student=} has existing {order=} for {slot=}'
+                )
+    except err.StudentAlreadyPresentError as excp:
+        print(f'Booking failure\n\t{request.POST=}\n\t{excp=}')
+        return util.http_bad_request('Student already signed up for this seminar')
+    except err.SlotNotFoundError as excp:
+        print(f'Booking failure\n\t{request.POST=}\n\t{excp=}')
+        return util.http_bad_request('No matching slot found')
+    except err.UnpaidOrderError as excp:
+        print(f'Booking failure\n\t{request.POST=}\n\t{excp=}')
+        return util.http_bad_request('Unpaid order found. Please contact support')
 
     order = Order(
         customer=student,
