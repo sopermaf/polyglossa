@@ -33,7 +33,7 @@ class TestViews(TestCase):
 
     # helper functions
 
-    def create_sem_params(self, *, slot, name, email):
+    def create_sem_params(self, slot, name, email):
         return {
             KEY_CHOICE: self.slots[slot].id,
             KEY_NAME: name,
@@ -63,7 +63,7 @@ class TestViews(TestCase):
 
     # Tests
 
-    def test_seminar_success(self):
+    def test_seminar_signup_success(self):
         test_students = [('joe', 'joe@test.com'), ('fred', 'fred@test.com')]
         data = [
             self.create_sem_params(slot='future', name=s[0], email=s[1])
@@ -90,8 +90,7 @@ class TestViews(TestCase):
         for student in test_students:
             Order.objects.get(customer__name=student[0])
 
-
-    def test_seminar_missing_data(self):
+    def test_seminar_signup_error_missing_data(self):
         required_params = self.create_sem_params(
             slot='future', name='joe', email='joe@test.com'
         )
@@ -107,22 +106,16 @@ class TestViews(TestCase):
         self.assertFalse(Order.objects.all(), 'No orders added')
 
 
-    def test_seminar_error_validation(self):
+    def test_seminar_signup_error_student_exists(self):
+        # attempt 2 sign ups by same student
         data = self.create_sem_params(
             slot='future', name='joe', email='joe@test.com'
         )
-        # send two identical requests
-        responses = [self.post_seminar(**data) for i in range(2)]
+        success, failure = (self.post_seminar(**data) for _ in range(2))
 
         # assert status
-        self.assertEqual(
-            responses[0].status_code,
-            const.RESOURCE_CREATED_CODE,
-            'Success'
-        )
-        self.assertEqual(responses[1].status_code, BAD_REQUEST_CODE, 'Failure')
-
-
+        self.assertEqual(success.status_code, RESOURCE_CREATED_CODE, 'Success')
+        self.assertEqual(failure.status_code, BAD_REQUEST_CODE, 'Failure')
         self.assertEqual(len(Order.objects.all()), 1, "Single Success Order added")
 
 

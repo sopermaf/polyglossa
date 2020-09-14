@@ -3,7 +3,7 @@
     <v-layout justify-center wrap text-center class="mx-auto">
       <v-flex md-5 lg6 s4 xs12>
         <h2>Seminar Signup Form</h2>
-        <v-form ref="form" v-model="valid" lazy-validation class="elevation-1 pa-5">
+        <v-form ref="form" v-model="valid" lazy-validation class="elevation-4 pa-5">
           <!-- Name -->
           <v-text-field
             v-model="bookingName"
@@ -61,8 +61,14 @@
           </v-btn>
         </v-form>
       </v-flex>
-      <v-flex ma-5 lg12 s12 xs12>
-        {{ response_data }}
+
+      <v-flex
+        ma-5
+        lg12 s12 xs12
+        class="red--text text-subtitle-1"
+        v-if="errorMessage"
+      >
+        {{ errorMessage }}
       </v-flex>
     </v-layout>
   </v-container>
@@ -91,6 +97,7 @@ export default {
     bookingChoice: null,
     requestResponse: null,
     crsfToken: null,
+    errorMessage: null,
     // validation rules
     nameRules: [
       v => !!v || 'Name is required',
@@ -119,6 +126,9 @@ export default {
   },
   methods: {
     postData() {
+      // ensure error message unset
+      this.errorMessage = null;
+
       axios.post('/book_class/signup/seminar', qs.stringify({
         student_name: this.bookingName,
         student_email: this.bookingEmail,
@@ -126,10 +136,14 @@ export default {
         csrfMiddleWare: this.crsfToken
       }))
       .then(response => {
-        this.$emit("orderGenerated", response.data['order']);
+        this.$emit("orderGenerated", response.data['order'])
         this.$emit("buttonGenerated", response.data['button']);
         this.$emit("pageSelection", "PAYMENT");
         this.$refs.form.reset();
+      })
+      .catch(error => {
+        // display error to user
+        this.errorMessage = error.response.data;
       })
     },
     validate () {

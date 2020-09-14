@@ -36,7 +36,7 @@ class SemSlotProcessor(OrderProcessor): # pylint: disable=too-few-public-methods
         ---
         None
         '''
-        student = cb_models.Student.get_existing_or_create(
+        student, _ = cb_models.Student.objects.get_or_create(
             name=self.order_details[cb_const.KEY_NAME],
             email=self.order_details[cb_const.KEY_EMAIL],
         )
