@@ -152,7 +152,7 @@ export default {
     ],
   }),
   mounted() {
-    axios.get('/book_class/get/activities/SEM').then(response => {
+    axios.get('/classes/get/activities/SEM').then(response => {
       this.seminars = response.data['activities'];
       this.crsf = response.data['token'];
     })

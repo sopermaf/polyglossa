@@ -24,7 +24,7 @@ urlpatterns = [     # pylint: disable=invalid-name
         TemplateView.as_view(template_name="index.html"),
         name="index",
     ),
-    path('book_class/', include('class_bookings.urls')),
+    path('classes/', include('class_bookings.urls')),
     path('paypal/', include('paypal.standard.ipn.urls')),
     path('payments/', include('payments.urls')),
     path('materials/', include('learning_materials.urls')),

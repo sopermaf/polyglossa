@@ -137,7 +137,7 @@ export default {
     upcomingSlots: [],
   }),
   mounted() {
-    axios.get('/book_class/get/seminars/upcoming/').then(reponse => {
+    axios.get('/classes/get/seminars/upcoming/').then(reponse => {
       this.upcomingSlots = reponse.data;
     })
   },
