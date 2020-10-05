@@ -14,7 +14,9 @@ VUE_DIST_DIR = os.path.join(BASE_DIR, 'frontend', 'dist')
 
 class AppTemplatesEnum(Enum):
     """Paths to app template dirs"""
-    CLASS_BOOKINGS = 'class_bookings'
+    CLASSES = 'class_bookings'
+    MATERIALS = 'learning_materials'
+    PAYMENTS = 'payments'
 
     def __init__(self, app_name) -> None:
         self.path = os.path.join(BASE_DIR, app_name, 'templates')
