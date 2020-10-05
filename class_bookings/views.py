@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, date
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
+from django.shortcuts import render, get_object_or_404
 
 from payments.models import Order
 from payments.views import paypal_button
@@ -22,6 +23,13 @@ UPCOMING_TIME_DELTA = timedelta(days=3)
 
 
 # VIEWS
+
+def seminar_video_page(request, slot_id: str):
+    """Render the video page for the given slot"""
+    slot = get_object_or_404(models.SeminarSlot, id=slot_id)
+
+    context = {'video_id': slot.video_id}
+    return render(request, 'class_bookings/video.html', context)
 
 
 def seminar_signup(request):

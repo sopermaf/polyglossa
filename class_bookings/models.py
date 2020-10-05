@@ -119,6 +119,7 @@ class SeminarSlot(BaseSlot):
         blank=False,
     )
     students = models.ManyToManyField(Student, blank=True)
+    video_id = models.CharField(max_length=20)
 
     @classmethod
     def validate_signup(cls, slot_id, student):
