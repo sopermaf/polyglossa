@@ -7,69 +7,90 @@
   >
 
     <v-container>
-      <!-- Smaller Display Toolbar -->
-      <v-layout
-        row
-        :class="`d-${switchPoint}-none d-flex justify--center`"
-      >
-        <v-app-bar-nav-icon
-          class="mt-2"
-          @click="openDrawer()"
+      <template v-if="isSPAToolbar">
+        <!-- Smaller Display Toolbar -->
+        <v-layout
+          row
+          :class="`d-${switchPoint}-none d-flex justify--center`"
+        >
+          <v-app-bar-nav-icon
+            class="mt-2"
+            @click="openDrawer()"
+            >
+          </v-app-bar-nav-icon>
+
+          <v-spacer></v-spacer>
+
+          <v-toolbar-title
+            @click="viewChoice('HOME')"
           >
-        </v-app-bar-nav-icon>
+            <PolyGlossaTitle />
+          </v-toolbar-title> 
 
-        <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
+        </v-layout>
 
-        <v-toolbar-title
-          @click="viewChoice('HOME')"
+        <!-- Larger Display Toolbar -->
+        <v-layout
+          row
+          justify-space-around
+          no-gutters
+          :class="`mb-1 d-none d-${switchPoint}-flex`"
         >
-          <PolyGlossaTitle />
-        </v-toolbar-title> 
-
-        <v-spacer></v-spacer>
-      </v-layout>
-
-      <!-- Larger Display Toolbar -->
-      <v-layout
-        row
-        justify-space-around
-        no-gutters
-        :class="`mb-1 d-none d-${switchPoint}-flex`"
-      >
-        <span
-          class="d-flex"
-          v-for="b in preLogoButtons" :key="b.export"
-        >
-          <v-btn
-            text
-            @click="viewChoice(b.export)"
-            class="white--text mt-4"
+          <span
+            class="d-flex"
+            v-for="b in preLogoButtons" :key="b.export"
           >
-            <span class="mr-2">{{b.text}}</span>
-          </v-btn>
-        </span>
+            <v-btn
+              text
+              @click="viewChoice(b.export)"
+              class="white--text mt-4"
+            >
+              <span class="mr-2">{{b.text}}</span>
+            </v-btn>
+          </span>
 
-        <v-toolbar-title
-          class="d-flex"
-          @click="viewChoice('HOME')"
-        >
-          <PolyGlossaTitle
-          />
-        </v-toolbar-title> 
-
-        <span
-          class="d-flex"
-          v-for="b in postLogoButtons" :key="b.export"
-        >
-          <v-btn
-            text
-            @click="viewChoice(b.export)"
-            class="white--text mt-4"
+          <v-toolbar-title
+            class="d-flex"
+            @click="viewChoice('HOME')"
+            to='/'
           >
-            <span class="mr-2">{{b.text}}</span>
-          </v-btn>
-        </span>
-      </v-layout>
+            <PolyGlossaTitle />
+          </v-toolbar-title> 
+
+          <span
+            class="d-flex"
+            v-for="b in postLogoButtons" :key="b.export"
+          >
+            <v-btn
+              text
+              @click="viewChoice(b.export)"
+              class="white--text mt-4"
+            >
+              <span class="mr-2">{{b.text}}</span>
+            </v-btn>
+          </span>
+        </v-layout>
+      </template>
+
+      <!-- Non-Main Page Toolbar -->
+      <template v-else>
+        <v-layout
+          row
+          justify-space-around
+          no-gutters
+          :class="`mb-1 d-flex`"
+        >
+
+          <a href="/">
+            <v-toolbar-title
+              class="d-flex"
+            >
+              <PolyGlossaTitle />
+            </v-toolbar-title>
+          </a>
+        </v-layout>
+      </template>
     </v-container>
   </v-app-bar>
 </template>
@@ -83,6 +104,10 @@ export default {
     switchPoint: {
       type: String,
       required: true,
+    },
+    isSPAToolbar: {
+      type: Boolean,
+      default: true
     }
   },
   components: {
@@ -110,3 +135,12 @@ export default {
   }
 }
 </script>
+
+
+<style>
+
+a {
+    text-decoration: none;
+}
+
+</style>

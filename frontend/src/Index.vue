@@ -5,6 +5,7 @@
       @pageSelection="updateView"
       @drawer="drawerVisible"
       :switchPoint="breakPoint"
+      :isSPAToolbar="true"
     />
 
     <!-- Page Content -->
