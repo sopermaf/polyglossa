@@ -260,7 +260,13 @@ def test_seminar_video_page_success(client):
     response = client.get(video_request(slot.id))
 
     assert response.status_code == 200
-    assert response.context['video_id'] == 'FOOBAR'
+    
+    # assert correct info included
+    assert 'data' in response.context
+
+    video_data = response.context['data']
+    assert video_data['video_id'] == 'FOOBAR'
+    assert video_data['title'] == seminar.title
 
 
 @pytest.mark.django_db

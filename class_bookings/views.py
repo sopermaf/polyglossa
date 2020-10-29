@@ -36,7 +36,12 @@ def seminar_video_page(request, slot_id: int):
         raise Http404('Seminar not currently available')
 
     # render video page
-    context = {'video_id': slot.video_id}
+    context = {
+        'data': {
+            'video_id': slot.video_id,
+            'title': slot.seminar.title,
+        }
+    }
     return render(request, 'video.html', context)
 
 
