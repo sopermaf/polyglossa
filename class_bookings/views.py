@@ -8,6 +8,7 @@ from datetime import datetime, timedelta, date
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
+from django.http.response import Http404
 from django.middleware.csrf import get_token
 from django.shortcuts import render, get_object_or_404
 
@@ -20,16 +21,23 @@ from . import errors as err
 # CONSTANTS
 
 UPCOMING_TIME_DELTA = timedelta(days=3)
-
+AVAIL_VIDEO_LIMIT = timedelta(days=1)
 
 # VIEWS
 
-def seminar_video_page(request, slot_id: str):
+def seminar_video_page(request, slot_id: int):
     """Render the video page for the given slot"""
     slot = get_object_or_404(models.SeminarSlot, id=slot_id)
 
+    # validate time period
+    now = datetime.now()
+    limit_time = slot.start_datetime + AVAIL_VIDEO_LIMIT
+    if now < slot.start_datetime or now >= limit_time:
+        raise Http404('Seminar not currently available')
+
+    # render video page
     context = {'video_id': slot.video_id}
-    return render(request, 'class_bookings/video.html', context)
+    return render(request, 'video.html', context)
 
 
 def seminar_signup(request):

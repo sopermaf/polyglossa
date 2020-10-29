@@ -52,7 +52,7 @@ def create_seminar_slot_pair(activity):
     return slots
 
 
-def create_seminar_slot(activity, *dts):
+def create_seminar_slot(activity, *dts, video_id='video_id',):
     '''
     Create a slot for each datetime in `dts`
 
@@ -71,7 +71,8 @@ def create_seminar_slot(activity, *dts):
     slots = [
         models.SeminarSlot.objects.create(
             start_datetime=slot_dt,
-            seminar=activity
+            seminar=activity,
+            video_id=video_id,
         )
         for slot_dt in dts
     ]

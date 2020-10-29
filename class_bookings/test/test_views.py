@@ -5,10 +5,9 @@ import pytest
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from payments.models import Order
-
 from class_bookings.const import *
 from class_bookings.models import *
+from payments.models import Order
 from . import util as t_util
 from .. import const
 
@@ -241,3 +240,49 @@ def test_get_upcoming_seminars_unique(client):
 
     assert len(ret) == 1    # single day
     assert ret[0]['seminars'] == ['foo']
+
+
+# VIDEO PAGES
+
+video_request = lambda slot_id: reverse('video-view', kwargs={'slot_id': slot_id})
+
+
+@pytest.mark.django_db
+def test_seminar_video_page_success(client):
+    # setup a slot and seminar
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
+    slot = t_util.create_seminar_slot(
+        seminar,
+        datetime.now() - timedelta(hours=1),
+        video_id='FOOBAR'
+    )
+
+    response = client.get(video_request(slot.id))
+
+    assert response.status_code == 200
+    assert response.context['video_id'] == 'FOOBAR'
+
+
+@pytest.mark.django_db
+def test_seminar_video_page_not_found(client):
+    response = client.get(video_request(1))
+
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_seminar_video_page_too_early(client):
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
+    slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(hours=1))
+
+    response = client.get(video_request(slot.id))
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_seminar_video_page_too_late(client):
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
+    slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(hours=24, minutes=1))
+
+    response = client.get(video_request(slot.id))
+    assert response.status_code == 404
