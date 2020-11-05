@@ -264,7 +264,7 @@ def test_seminar_video_page_success(client):
     # assert correct info included
     assert 'data' in response.context
 
-    video_data = response.context['data']
+    video_data = json.loads(response.context['data'])
     assert video_data['video_id'] == 'FOOBAR'
     assert video_data['title'] == seminar.title
 

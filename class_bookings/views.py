@@ -37,10 +37,10 @@ def seminar_video_page(request, slot_id: int):
 
     # render video page
     context = {
-        'data': {
-            'video_id': slot.video_id,
-            'title': slot.seminar.title,
-        }
+        'data': json.dumps({
+            "video_id": slot.video_id,
+            "title": slot.seminar.title,
+        })
     }
     return render(request, 'video.html', context)
 
