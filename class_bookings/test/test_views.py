@@ -260,7 +260,7 @@ def test_seminar_video_page_success(client):
     response = client.get(video_request(slot.id))
 
     assert response.status_code == 200
-    
+
     # assert correct info included
     assert 'data' in response.context
 
