@@ -2,11 +2,13 @@
 Request handlers for Polyglossa payments
 '''
 import re
+import json
+from django.http.response import Http404
 
 from django.urls import reverse
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 
 from paypal.standard.forms import PayPalEncryptedPaymentsForm
 
@@ -18,11 +20,21 @@ RE_ENCRYPTED_BUTTON = re.compile(r'(?<=name="encrypted" value=")([^"]+)', re.DOT
 RE_FORM_URL = re.compile(r'(?<=action=")([^"]+)',)
 
 
-def paypal_button(request, order, status, **kwargs):
+def order_page(request):
     '''
     Send the encrypted button info for
     a given order
     '''
+    # get the created order
+    if 'order_id' not in request.session:
+        print(f"No order found for {request}")
+        raise Http404('Order Not Found')
+    order = get_object_or_404(
+        Order,
+        payment_status=Order.PaymentStatus.AWAITING,
+        id=request.session['order_id'],
+    )
+
     # create paypal form
     host = request.get_host()
     paypal_dict = {
@@ -59,11 +71,11 @@ def paypal_button(request, order, status, **kwargs):
             _order_item('currency', paypal_dict['currency_code']),
         ]
     }
-    payment_overview['order'].extend([_order_item(k, v) for k, v in kwargs.items()])
+    # payment_overview['order'].extend([_order_item(k, v) for k, v in extra_details.items()])
 
-    request.session['order_id'] = order.id
-
-    return JsonResponse(payment_overview, status=status)
+    # render payments page
+    context = {'data': json.dumps(payment_overview)}
+    return render(request, 'payment.html', context)
 
 
 @csrf_exempt
