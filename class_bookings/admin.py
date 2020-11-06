@@ -6,6 +6,9 @@ models to sort them and give a better overview
 # pylint: disable=missing-class-docstring
 
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.safestring import mark_safe
+
 from . import models
 
 
@@ -33,7 +36,18 @@ class ActivityAdmin(admin.ModelAdmin):
 
 
 class SeminarSlotAdmin(admin.ModelAdmin):
-    list_display = ('start_datetime', 'duration_in_mins', 'seminar')
+    def video_page_url(self):
+        """Quick access to the video page"""
+        return mark_safe("<a href='{0}'>View</a>".format(
+            reverse('video-view', kwargs={'slot_id': self.id})
+        ))
+
+    list_display = (
+        'start_datetime',
+        'duration_in_mins',
+        'seminar',
+        video_page_url
+    )
     ordering = ['start_datetime']
 
 
