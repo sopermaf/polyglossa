@@ -1,5 +1,6 @@
 # pylint: disable=missing-module-docstring, missing-class-docstring, missing-function-docstring, no-self-use, unused-wildcard-import, wildcard-import
 import json
+from uuid import uuid4
 
 import pytest
 from django.test import TestCase, Client
@@ -257,7 +258,7 @@ def test_seminar_video_page_success(client):
         video_id='FOOBAR'
     )
 
-    response = client.get(video_request(slot.id))
+    response = client.get(video_request(slot.external_id))
 
     assert response.status_code == 200
 
@@ -271,7 +272,7 @@ def test_seminar_video_page_success(client):
 
 @pytest.mark.django_db
 def test_seminar_video_page_not_found(client):
-    response = client.get(video_request(1))
+    response = client.get(video_request(uuid4()))
 
     assert response.status_code == 404
 
@@ -281,7 +282,7 @@ def test_seminar_video_page_too_early(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
     slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(hours=1))
 
-    response = client.get(video_request(slot.id))
+    response = client.get(video_request(slot.external_id))
     assert response.status_code == 404
 
 
@@ -290,5 +291,5 @@ def test_seminar_video_page_too_late(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
     slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(hours=24, minutes=1))
 
-    response = client.get(video_request(slot.id))
+    response = client.get(video_request(slot.external_id))
     assert response.status_code == 404

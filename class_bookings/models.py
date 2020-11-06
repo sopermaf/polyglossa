@@ -9,7 +9,6 @@ from datetime import timedelta, datetime
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.fields import UUIDField
 
 from .parse import parse_dt_as_str
 from . import errors
@@ -166,6 +165,10 @@ class SeminarSlot(BaseSlot):
             )
         return slot
 
+    # def save(self, *args, **kwargs):
+    #     if not self.external_id:
+    #         self.external_id = uuid.uuid4()
+    #     super(self).save(*args, **kwargs)
 
 class IndividualSlot(BaseSlot):
     '''
