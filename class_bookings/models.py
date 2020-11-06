@@ -4,10 +4,12 @@ module
 '''
 # pylint: disable=unused-variable
 
+import uuid
 from datetime import timedelta, datetime
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.fields import UUIDField
 
 from .parse import parse_dt_as_str
 from . import errors
@@ -108,6 +110,11 @@ class SeminarSlot(BaseSlot):
 
     Activity chosen upon slot creation by admin.
     '''
+    external_id = models.UUIDField(
+        unique=True,
+        editable=False,
+        default=uuid.uuid4()
+    )
     seminar = models.ForeignKey(
         Activity,
         limit_choices_to={

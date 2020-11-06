@@ -25,9 +25,9 @@ AVAIL_VIDEO_LIMIT = timedelta(days=1)
 
 # VIEWS
 
-def seminar_video_page(request, slot_id: int):
+def seminar_video_page(request, slot_id):
     """Render the video page for the given slot"""
-    slot = get_object_or_404(models.SeminarSlot, id=slot_id)
+    slot = get_object_or_404(models.SeminarSlot, external_id=slot_id)
 
     # validate time period
     now = datetime.now()

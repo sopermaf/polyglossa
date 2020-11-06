@@ -39,7 +39,7 @@ class SeminarSlotAdmin(admin.ModelAdmin):
     def video_page_url(self):
         """Quick access to the video page"""
         return mark_safe("<a href='{0}'>View</a>".format(
-            reverse('video-view', kwargs={'slot_id': self.id})
+            reverse('video-view', kwargs={'slot_id': self.external_id})
         ))
 
     list_display = (
