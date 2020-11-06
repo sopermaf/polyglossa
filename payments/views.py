@@ -27,7 +27,7 @@ def paypal_button(request, order, status, **kwargs):
     host = request.get_host()
     paypal_dict = {
         'business': settings.PAYPAL_EMAIL,
-        'amount': order.amount,
+        'amount': '{:.2f}'.format(order.amount),
         'item_name': 'Order %s' % order.id,
         'invoice': str(order.id),   # NOTE: used to updated order
         'currency_code': 'USD',
