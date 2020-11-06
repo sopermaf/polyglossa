@@ -4,6 +4,7 @@ module
 '''
 # pylint: disable=unused-variable
 
+import uuid
 from datetime import timedelta, datetime
 
 from django.core.exceptions import ValidationError
@@ -108,6 +109,11 @@ class SeminarSlot(BaseSlot):
 
     Activity chosen upon slot creation by admin.
     '''
+    external_id = models.UUIDField(
+        unique=True,
+        editable=False,
+        default=uuid.uuid4()
+    )
     seminar = models.ForeignKey(
         Activity,
         limit_choices_to={
@@ -119,6 +125,7 @@ class SeminarSlot(BaseSlot):
         blank=False,
     )
     students = models.ManyToManyField(Student, blank=True)
+    video_id = models.CharField(max_length=20)
 
     @classmethod
     def validate_signup(cls, slot_id, student):
@@ -158,6 +165,10 @@ class SeminarSlot(BaseSlot):
             )
         return slot
 
+    # def save(self, *args, **kwargs):
+    #     if not self.external_id:
+    #         self.external_id = uuid.uuid4()
+    #     super(self).save(*args, **kwargs)
 
 class IndividualSlot(BaseSlot):
     '''

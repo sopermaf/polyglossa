@@ -28,5 +28,6 @@ module.exports = {
 
     pages: {
         index: './src/index.js',
+        video: './src/video.js',
     }
 };

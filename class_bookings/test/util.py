@@ -37,22 +37,23 @@ def create_seminar_slot_pair(activity):
     -------
     dict : 'future' and 'past' seminar slots
     """
-    slots = {
-        'future': models.SeminarSlot(
-            start_datetime=datetime.now() + timedelta(days=1),
-            seminar=activity,
-        ),
-        'past': models.SeminarSlot(
-            seminar=activity,
-            start_datetime=datetime.now() - timedelta(days=1),
-        )
+    future = models.SeminarSlot.objects.create(
+        start_datetime=datetime.now() + timedelta(days=1),
+        seminar=activity,
+        external_id=uuid4()
+    )
+    past = models.SeminarSlot.objects.create(
+        start_datetime=datetime.now() - timedelta(days=1),
+        seminar=activity,
+        external_id=uuid4()
+    )
+    return {
+        'future': future,
+        'past': past,
     }
-    for slot in slots.values():
-        slot.save()
-    return slots
 
 
-def create_seminar_slot(activity, *dts):
+def create_seminar_slot(activity, *dts, video_id='video_id',):
     '''
     Create a slot for each datetime in `dts`
 
@@ -71,7 +72,9 @@ def create_seminar_slot(activity, *dts):
     slots = [
         models.SeminarSlot.objects.create(
             start_datetime=slot_dt,
-            seminar=activity
+            seminar=activity,
+            video_id=video_id,
+            external_id=uuid4(),
         )
         for slot_dt in dts
     ]

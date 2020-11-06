@@ -129,7 +129,7 @@ export default {
       // ensure error message unset
       this.errorMessage = null;
 
-      axios.post('/book_class/signup/seminar', qs.stringify({
+      axios.post('/classes/signup/seminar', qs.stringify({
         student_name: this.bookingName,
         student_email: this.bookingEmail,
         slot_id: this.bookingChoice.id,
@@ -157,7 +157,7 @@ export default {
       this.$refs.form.reset();
     },
     getSlots(id) {
-      axios.get('/book_class/get/seminar_slots/' + id).then(response => {
+      axios.get('/classes/get/seminar_slots/' + id).then(response => {
         this.slots = response.data["slots"] || [];
       })
     },

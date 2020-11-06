@@ -50,7 +50,7 @@ jobs:
         cd ..
     - name: Django Integration Tests
       run: |
-        pipenv run pytest
+        pipenv run pytest class_bookings/ payments/ learning_materials/
     - name: Python Lint
       run: |
         pipenv run pylint -d fixme class_bookings payments polyglossa learning_materials
