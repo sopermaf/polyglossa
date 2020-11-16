@@ -85,6 +85,7 @@ def seminar_signup(request):
             order_details = json.loads(order.order_details)
             if order_details[str(const.KEY_CHOICE)] == str(slot.pk):
                 order.payment_status = Order.PaymentStatus.CANCELLED
+                order.save()
     except err.StudentAlreadyPresentError as excp:
         print(f'Booking failure\n\t{request.POST}\n\t{excp}')
         return util.http_bad_request('Student already signed up for this seminar')
