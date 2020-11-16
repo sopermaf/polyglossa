@@ -8,7 +8,7 @@ from django.http.response import Http404
 from django.urls import reverse
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 
 from paypal.standard.forms import PayPalEncryptedPaymentsForm
 
@@ -96,7 +96,7 @@ def cancel_awaiting_order(request):
     '''
     if 'order_id' not in request.session:
         print(f"No order found for {request}")
-        return HttpResponse('Not Found', status=404)
+        raise Http404('No existing order found to cancel')
     order_id = request.session['order_id']
 
     # only cancels awaiting orders
@@ -110,7 +110,7 @@ def cancel_awaiting_order(request):
     order.save()
     print(f"Order {order} cancelled")
 
-    return redirect('index')
+    return HttpResponse('Order succesfully cancelled')
 
 
 def _order_item(title, value):
