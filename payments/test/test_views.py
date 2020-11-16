@@ -36,7 +36,29 @@ def test_cancel_order_error_not_found(client):
 
 
 @pytest.mark.django_db
-def test_payment_page_success(client):
+def test_payment_page_success_payment_not_required(client):
+    seminar = t_util.create_activity(price=0)
+    slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(days=2))
+    order = _setup_seminar_order(seminar=seminar, slot=slot)
+    _setup_session_order(client.session, order=order)
+
+    response = client.get(ORDER_PAGE)
+
+    assert response.status_code == 200
+    assert 'data' in response.context
+    page_data = json.loads(response.context['data'])
+    assert 'order' in page_data
+    assert page_data['button'] is None
+
+    # order completion done immediately
+    slot.refresh_from_db()
+    order.refresh_from_db()
+    assert order.payment_status == Order.PaymentStatus.COMPLETED
+    assert slot.students.count() == 1
+
+
+@pytest.mark.django_db
+def test_payment_page_success_payment_required(client):
     _setup_session_order(client.session)
 
     response = client.get(ORDER_PAGE)
@@ -48,6 +70,9 @@ def test_payment_page_success(client):
     assert 'order' in page_data
     assert 'button' in page_data
     assert all(key in page_data['button'] for key in ('url', 'encrypted_inputs'))
+
+    order = Order.objects.get(id=1)
+    assert order.payment_status == Order.PaymentStatus.AWAITING
 
 
 def test_payment_page_error_no_order(client):

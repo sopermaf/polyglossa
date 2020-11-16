@@ -52,18 +52,7 @@ def order_page(request):
     }
     form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
 
-    # extract key parts for Vue form
-    form_str = form.render()
-    encrypted_inputs = RE_ENCRYPTED_BUTTON.search(form_str).group()
-    form_url = RE_FORM_URL.search(form_str).group()
-
     payment_overview = {
-        'button': {
-            'encrypted_inputs': encrypted_inputs,
-            'url': form_url,
-        },
-
-        # order overview details
         'order': [
             _order_item('name', order.customer.name),
             _order_item('email', order.customer.email),
@@ -71,7 +60,21 @@ def order_page(request):
             _order_item('currency', paypal_dict['currency_code']),
         ]
     }
-    # payment_overview['order'].extend([_order_item(k, v) for k, v in extra_details.items()])
+
+    # extract key parts for Vue form
+    if order.amount > 0:
+        form_str = form.render()
+        encrypted_inputs = RE_ENCRYPTED_BUTTON.search(form_str).group()
+        form_url = RE_FORM_URL.search(form_str).group()
+
+        payment_overview['button'] = {
+            'encrypted_inputs': encrypted_inputs,
+            'url': form_url,
+        }
+    else:
+        # no payment required
+        payment_overview['button'] = None
+        order.success()
 
     # render payments page
     context = {'data': json.dumps(payment_overview)}
