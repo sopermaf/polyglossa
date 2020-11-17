@@ -83,8 +83,6 @@ export default {
     PolyFooter,
   },
   data: () => ({
-    video_id: "",
-    title: "",
     order: null,
     button: null
   }),
