@@ -8,12 +8,11 @@ from datetime import datetime, timedelta, date
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
-from django.http.response import Http404
+from django.http.response import Http404, HttpResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import render, get_object_or_404
 
 from payments.models import Order
-from payments.views import paypal_button
 from . import parse, const, util, models
 from . import errors as err
 
@@ -77,25 +76,22 @@ def seminar_signup(request):
         # validate slot and student
         slot = models.SeminarSlot.validate_signup(sem_req[const.KEY_CHOICE], student)
 
-        # ensure no upcoming order
+        # cancel upcoming order if not paid and trying to reorder
         awaiting_orders = Order.objects.filter(
-            customer__pk=student.pk, payment_status=Order.PaymentStatus.AWAITING
+            customer__pk=student.pk,
+            payment_status=Order.PaymentStatus.AWAITING
         )
         for order in awaiting_orders:
             order_details = json.loads(order.order_details)
             if order_details[str(const.KEY_CHOICE)] == str(slot.pk):
-                raise err.UnpaidOrderError(
-                    f'Booking failed. {student} has existing {order} for {slot}'
-                )
+                order.payment_status = Order.PaymentStatus.CANCELLED
+                order.save()
     except err.StudentAlreadyPresentError as excp:
         print(f'Booking failure\n\t{request.POST}\n\t{excp}')
         return util.http_bad_request('Student already signed up for this seminar')
     except err.SlotNotFoundError as excp:
         print(f'Booking failure\n\t{request.POST}\n\t{excp}')
         return util.http_bad_request('No matching slot found')
-    except err.UnpaidOrderError as excp:
-        print(f'Booking failure\n\t{request.POST}\n\t{excp}')
-        return util.http_bad_request('Unpaid order found. Please contact support')
 
     order = Order(
         customer=student,
@@ -105,7 +101,10 @@ def seminar_signup(request):
     )
     order.save()
 
-    return paypal_button(request, order, status=const.RESOURCE_CREATED_CODE)
+    request.session['order_id'] = order.id
+
+    return HttpResponse('Order successfully created', status=201)
+    # return paypal_button(request, order, status=const.RESOURCE_CREATED_CODE)
 
 
 def get_activities(request, activity_type):

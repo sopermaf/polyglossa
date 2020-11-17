@@ -29,5 +29,6 @@ module.exports = {
     pages: {
         index: './src/index.js',
         video: './src/video.js',
+        payment: './src/payment.js',
     }
 };

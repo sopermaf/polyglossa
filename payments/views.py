@@ -2,11 +2,13 @@
 Request handlers for Polyglossa payments
 '''
 import re
+import json
+from django.http.response import Http404
 
 from django.urls import reverse
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, render
 
 from paypal.standard.forms import PayPalEncryptedPaymentsForm
 
@@ -18,16 +20,26 @@ RE_ENCRYPTED_BUTTON = re.compile(r'(?<=name="encrypted" value=")([^"]+)', re.DOT
 RE_FORM_URL = re.compile(r'(?<=action=")([^"]+)',)
 
 
-def paypal_button(request, order, status, **kwargs):
+def order_page(request):
     '''
     Send the encrypted button info for
     a given order
     '''
+    # get the created order
+    if 'order_id' not in request.session:
+        print(f"No order found for {request}")
+        raise Http404('Order Not Found')
+    order = get_object_or_404(
+        Order,
+        payment_status=Order.PaymentStatus.AWAITING,
+        id=request.session['order_id'],
+    )
+
     # create paypal form
     host = request.get_host()
     paypal_dict = {
         'business': settings.PAYPAL_EMAIL,
-        'amount': order.amount,
+        'amount': '{:.2f}'.format(order.amount),
         'item_name': 'Order %s' % order.id,
         'invoice': str(order.id),   # NOTE: used to updated order
         'currency_code': 'USD',
@@ -40,18 +52,7 @@ def paypal_button(request, order, status, **kwargs):
     }
     form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
 
-    # extract key parts for Vue form
-    form_str = form.render()
-    encrypted_inputs = RE_ENCRYPTED_BUTTON.search(form_str).group()
-    form_url = RE_FORM_URL.search(form_str).group()
-
     payment_overview = {
-        'button': {
-            'encrypted_inputs': encrypted_inputs,
-            'url': form_url,
-        },
-
-        # order overview details
         'order': [
             _order_item('name', order.customer.name),
             _order_item('email', order.customer.email),
@@ -59,11 +60,25 @@ def paypal_button(request, order, status, **kwargs):
             _order_item('currency', paypal_dict['currency_code']),
         ]
     }
-    payment_overview['order'].extend([_order_item(k, v) for k, v in kwargs.items()])
 
-    request.session['order_id'] = order.id
+    # extract key parts for Vue form
+    if order.amount > 0:
+        form_str = form.render()
+        encrypted_inputs = RE_ENCRYPTED_BUTTON.search(form_str).group()
+        form_url = RE_FORM_URL.search(form_str).group()
 
-    return JsonResponse(payment_overview, status=status)
+        payment_overview['button'] = {
+            'encrypted_inputs': encrypted_inputs,
+            'url': form_url,
+        }
+    else:
+        # no payment required
+        payment_overview['button'] = None
+        order.success()
+
+    # render payments page
+    context = {'data': json.dumps(payment_overview)}
+    return render(request, 'payment.html', context)
 
 
 @csrf_exempt
@@ -84,7 +99,7 @@ def cancel_awaiting_order(request):
     '''
     if 'order_id' not in request.session:
         print(f"No order found for {request}")
-        return HttpResponse('Not Found', status=404)
+        raise Http404('No existing order found to cancel')
     order_id = request.session['order_id']
 
     # only cancels awaiting orders
@@ -98,7 +113,7 @@ def cancel_awaiting_order(request):
     order.save()
     print(f"Order {order} cancelled")
 
-    return redirect('index')
+    return HttpResponse('Order succesfully cancelled')
 
 
 def _order_item(title, value):

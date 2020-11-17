@@ -4,19 +4,19 @@ Set of util functions for testing
 from uuid import uuid4
 from datetime import datetime, timedelta
 
-from class_bookings import models
+from class_bookings.models import Activity, SeminarSlot
 
 
-def create_activity(activity_type, bookable=True, order=1, title=None):
+def create_activity(activity_type=Activity.SEMINAR, bookable=True, order=1, title=None, price=20):
     '''Create a seminar activity'''
-    if activity_type not in {models.Activity.INDIVIDUAL, models.Activity.SEMINAR}:
+    if activity_type not in {Activity.INDIVIDUAL, Activity.SEMINAR}:
         raise ValueError(f"Invalid activity_type: {activity_type}")
 
-    activity = models.Activity(
+    activity = Activity(
         activity_type=activity_type,
         title=title or uuid4(),
         description='description',
-        price=20,
+        price=price,
         is_bookable=bookable,
         order_shown=order,
     )
@@ -37,12 +37,12 @@ def create_seminar_slot_pair(activity):
     -------
     dict : 'future' and 'past' seminar slots
     """
-    future = models.SeminarSlot.objects.create(
+    future = SeminarSlot.objects.create(
         start_datetime=datetime.now() + timedelta(days=1),
         seminar=activity,
         external_id=uuid4()
     )
-    past = models.SeminarSlot.objects.create(
+    past = SeminarSlot.objects.create(
         start_datetime=datetime.now() - timedelta(days=1),
         seminar=activity,
         external_id=uuid4()
@@ -70,7 +70,7 @@ def create_seminar_slot(activity, *dts, video_id='video_id',):
         if multiple datetimes provided
     '''
     slots = [
-        models.SeminarSlot.objects.create(
+        SeminarSlot.objects.create(
             start_datetime=slot_dt,
             seminar=activity,
             video_id=video_id,

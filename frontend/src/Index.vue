@@ -76,9 +76,6 @@
           @buttonGenerated="updateButton"
         />
       </template>
-      <template v-else-if="pageSelection == 'PAYMENT'">
-        <Payment @pageSelection="updateView" :order="order" :button="button"/>
-      </template>
       <template v-else-if="pageSelection == 'LEARNING'">
         <Learning />
       </template>
@@ -98,7 +95,6 @@ import Courses from "./components/Courses";
 import BookClassForm from "./components/BookClassForm";
 import PolyToolbar from "./components/PolyToolbar.vue";
 import PolyFooter from "./components/PolyFooter.vue";
-import Payment from "./components/Payment.vue";
 import ContactUs from "./components/ContactUs.vue";
 import Learning from "./components/Learning.vue";
 import {mdiHome, mdiBookOpenPageVariant, mdiClipboardEditOutline, mdiInformationVariant, mdiBookshelf, mdiCommentTextMultiple } from '@mdi/js'
@@ -112,7 +108,6 @@ export default {
     BookClassForm,
     PolyToolbar,
     PolyFooter,
-    Payment,
     ContactUs,
     Learning,
   },
@@ -120,8 +115,6 @@ export default {
     pageSelection: "HOME",
     breakPoint: 'lg',
     courseChoice: null,
-    order: null,
-    button: null,
     drawer: false,
     isNavBarVisible: false,
     seminars: [],

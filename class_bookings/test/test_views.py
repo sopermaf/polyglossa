@@ -3,121 +3,115 @@ import json
 from uuid import uuid4
 
 import pytest
-from django.test import TestCase, Client
 from django.urls import reverse
 
 from class_bookings.const import *
 from class_bookings.models import *
 from payments.models import Order
 from . import util as t_util
-from .. import const
 
 
-class TestViews(TestCase):
-    POST_SEMINAR = reverse(SEMINAR_POST_NAME)
+# Seminar Signup
 
-    def setUp(self):
-        self.client = Client()
-        self.activities = {
-            'SEM': {
-                'bookable': t_util.create_activity(activity_type="SEM", bookable=True),
-                'not_bookable': t_util.create_activity(activity_type="SEM", bookable=False),
-            },
-            'IND': {
-                'bookable': t_util.create_activity(activity_type="IND", bookable=True),
-                'not_bookable': t_util.create_activity(activity_type="IND", bookable=False),
-            }
-        }
+POST_SEMINAR_URL = reverse('signup-seminar')
 
-        self.slots = t_util.create_seminar_slot_pair(self.activities['SEM']['bookable'])
-
-    # helper functions
-
-    def create_sem_params(self, slot, name, email):
-        return {
-            KEY_CHOICE: self.slots[slot].id,
-            KEY_NAME: name,
-            KEY_EMAIL: email,
-        }
-
-    def post_seminar(self, **kwargs):
-        response = self.client.post(
-            self.POST_SEMINAR,
-            data=kwargs
-        )
-        return response
-
-    def verify_students(self, slot, *, student_data):
-        students = slot.students.values()
-        self.assertEqual(len(students), len(student_data), "Expected number of students")
-
-        for student, test in zip(students, student_data):
-            self.assertEqual(student['name'], test[0], "Student name correct")
-            self.assertEqual(student['email'], test[1], "Student email correct")
-
-    def assert_num_db_students(self, *, exp_num_students):
-        students = Student.objects.all()
-        self.assertEqual(
-            len(students), exp_num_students, f"Expected {exp_num_students} students"
-        )
-
-    # Tests
-
-    def test_seminar_signup_success(self):
-        test_students = [('joe', 'joe@test.com'), ('fred', 'fred@test.com')]
-        data = [
-            self.create_sem_params(slot='future', name=s[0], email=s[1])
-            for s in test_students
-        ]
-        responses = [self.post_seminar(**d) for d in data]
-
-        # assert status code
-        for resp in responses:
-            self.assertEqual(
-                resp.status_code,
-                const.RESOURCE_CREATED_CODE,
-                "Successful Code"
-            )
-
-        # validate in student database
-        self.assert_num_db_students(exp_num_students=len(test_students))
-
-        # assert no students added to slots
-        for time, slot in self.slots.items():
-            self.assertEqual(len(slot.students.values()), 0, f'No Students Added: Sem {time}')
-
-        # assert orders added
-        for student in test_students:
-            Order.objects.get(customer__name=student[0])
-
-    def test_seminar_signup_error_missing_data(self):
-        required_params = self.create_sem_params(
-            slot='future', name='joe', email='joe@test.com'
-        )
-
-        # assert requests fail
-        for param in required_params:
-            send_data = required_params.copy()
-            send_data.pop(param)
-            response = self.post_seminar(**send_data)
-            self.assertEqual(response.status_code, BAD_REQUEST_CODE, 'Failed on missing data')
-
-        # assert no orders added
-        self.assertFalse(Order.objects.all(), 'No orders added')
+@pytest.mark.django_db
+def test_seminar_signup_success(client):
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, order=1)
+    slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(days=2))
 
 
-    def test_seminar_signup_error_student_exists(self):
-        # attempt 2 sign ups by same student
-        data = self.create_sem_params(
-            slot='future', name='joe', email='joe@test.com'
-        )
-        success, failure = (self.post_seminar(**data) for _ in range(2))
+    params = create_seminar_params(slot.pk, 'foo', 'foo@example.com')
+    response = client.post(POST_SEMINAR_URL, data=params)
 
-        # assert status
-        self.assertEqual(success.status_code, RESOURCE_CREATED_CODE, 'Success')
-        self.assertEqual(failure.status_code, BAD_REQUEST_CODE, 'Failure')
-        self.assertEqual(len(Order.objects.all()), 1, "Single Success Order added")
 
+    assert response.status_code == RESOURCE_CREATED_CODE    # resource created code
+    assert slot.students.count() == 0                       # student not in slot
+
+    assert len(Student.objects.all()) == 1
+    student = Student.objects.get(id=1)
+    assert student.name == 'foo'
+    assert student.email == 'foo@example.com'
+
+    assert len(Order.objects.all()) == 1
+    order = Order.objects.get(id=1)
+    assert order.customer == student
+    assert order.payment_status == Order.PaymentStatus.AWAITING
+
+
+@pytest.mark.django_db
+def test_seminar_signup_success_with_cancel_order(client):
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, order=1)
+    slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(days=2))
+
+    params = create_seminar_params(slot.pk, 'foo', 'foo@example.com')
+    for _ in range(2):
+        response = client.post(POST_SEMINAR_URL, data=params)
+        assert response.status_code == RESOURCE_CREATED_CODE
+
+    # original order cancelled on ordering the same thing
+    orders = Order.objects.all()
+    assert len(orders) == 2
+    assert orders[0].payment_status == Order.PaymentStatus.CANCELLED
+    assert orders[1].payment_status == Order.PaymentStatus.AWAITING
+
+
+@pytest.mark.django_db
+def test_seminar_signup_error_past_slot(client):
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR)
+    slot = t_util.create_seminar_slot(seminar, datetime.now() - timedelta(days=2))
+
+    response = client.post(POST_SEMINAR_URL, data=create_seminar_params(slot.pk))
+
+    assert response.status_code == 400          # resource created code
+    assert slot.students.count() == 0           # student not in slot
+    assert len(Order.objects.all()) == 0        # Order not created
+    assert len(Student.objects.all()) == 1      # Student created
+
+
+@pytest.mark.django_db
+def test_seminar_signup_error_missing_data(client):
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR)
+    slot = t_util.create_seminar_slot(seminar, datetime.now() - timedelta(days=2))
+
+    for arg_to_pop in ('student_name', 'student_email', 'slot_id'):
+        params = create_seminar_params(slot.pk)
+        params.pop(arg_to_pop)
+
+        response = client.post(POST_SEMINAR_URL, data=create_seminar_params(slot.pk))
+
+        assert response.status_code == 400          # resource created code
+        assert slot.students.count() == 0           # student not in slot
+        assert len(Order.objects.all()) == 0        # Order not created
+        assert len(Student.objects.all()) == 1      # Student created
+
+
+@pytest.mark.django_db
+def test_seminar_signup_error_slot_not_found(client):
+    response = client.post(POST_SEMINAR_URL, data=create_seminar_params(1))
+
+    assert response.status_code == 400          # resource created code
+    assert len(Order.objects.all()) == 0        # Order not created
+    assert len(Student.objects.all()) == 1      # Student created
+
+
+@pytest.mark.django_db
+def test_seminar_signup_error_student_already_present(client):
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, order=1)
+    slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(days=2))
+    student = Student.objects.create(name='foo', email='foo@email.com')
+
+    slot.students.add(student)
+    slot.save()
+
+    params = create_seminar_params(slot.pk, student.name, student.email)
+    response = client.post(POST_SEMINAR_URL, data=params)
+
+    assert response.status_code == 400
+    assert len(Order.objects.all()) == 0
+
+
+# Seminars Data Access Tests
 
 @pytest.mark.django_db
 def test_get_future_seminar_slots_future_only(client):
@@ -293,3 +287,14 @@ def test_seminar_video_page_too_late(client):
 
     response = client.get(video_request(slot.external_id))
     assert response.status_code == 404
+
+
+# HELPER FUNCTIONS
+
+def create_seminar_params(slot, name='name', email='email@email.com'):
+    """Creates params for POST request"""
+    return {
+        KEY_CHOICE: slot,
+        KEY_NAME: name,
+        KEY_EMAIL: email,
+    }

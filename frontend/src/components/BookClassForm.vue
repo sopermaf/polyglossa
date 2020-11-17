@@ -135,11 +135,8 @@ export default {
         slot_id: this.bookingChoice.id,
         csrfMiddleWare: this.crsfToken
       }))
-      .then(response => {
-        this.$emit("orderGenerated", response.data['order'])
-        this.$emit("buttonGenerated", response.data['button']);
-        this.$emit("pageSelection", "PAYMENT");
-        this.$refs.form.reset();
+      .then(response => { // eslint-disable-line no-unused-vars
+        window.location = '/payments/order/';
       })
       .catch(error => {
         // display error to user

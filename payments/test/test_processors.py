@@ -5,8 +5,8 @@ Tests for Payments/processors
 import json
 
 from .base_test import TestPayments
-
 from .. import processors
+
 
 class TestProcessors(TestPayments):
     '''Tests for SeminarProcessor'''
