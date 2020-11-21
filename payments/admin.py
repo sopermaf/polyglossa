@@ -4,7 +4,7 @@ Admin interface for payments in Polyglossa
 from django.contrib import admin
 from . import models
 
-# Register your models here.
+@admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
     '''Admin Interface for Order model'''
     list_display = (
@@ -16,6 +16,7 @@ class OrderAdmin(admin.ModelAdmin):
         'created',
         'order_details',
     )
+    date_hierarchy = 'created'
     ordering = ['payment_status', 'created', 'modified']
-
-admin.site.register(models.Order, OrderAdmin)
+    list_filter = ('payment_status', 'created', 'modified', 'customer', 'amount')
+    search_fields = ('order_details', )
