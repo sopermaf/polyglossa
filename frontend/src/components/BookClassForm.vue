@@ -65,6 +65,18 @@
       <v-flex
         ma-5
         lg12 s12 xs12
+        class="grey--text text-subtitle-1"
+      >
+        <p> All times displayed in UTC+0. </p>
+        
+        <p> <b> UTC time: </b> {{ utctime }} </p>
+
+        <p> <b> Local time: </b> {{ localtimezone }}</p>
+      </v-flex>
+
+      <v-flex
+        ma-5
+        lg12 s12 xs12
         class="red--text text-subtitle-1"
         v-if="errorMessage"
       >
@@ -98,6 +110,8 @@ export default {
     requestResponse: null,
     crsfToken: null,
     errorMessage: null,
+    localtimezone: null,
+
     // validation rules
     nameRules: [
       v => !!v || 'Name is required',
@@ -116,6 +130,11 @@ export default {
     axios.defaults.withCredentials = true
 
     this.seminarChoice = this.prefilledChoice;
+
+    var moment = require('moment');
+    this.localtimezone = moment().format('LT, ll');
+    this.utctime = moment().utc().format('LT, ll');
+
   },
   watch: {
     'seminarChoice': {
