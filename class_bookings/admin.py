@@ -12,10 +12,14 @@ from django.utils.safestring import mark_safe
 from . import models
 
 
+@admin.register(models.Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('name', 'email')
+    list_filter = ('name', 'email')
+    search_fields = ('name', 'email')
 
 
+@admin.register(models.Activity)
 class ActivityAdmin(admin.ModelAdmin):
     list_display = (
         'activity_type',
@@ -33,8 +37,11 @@ class ActivityAdmin(admin.ModelAdmin):
         ('order_shown', 'is_highlighted'),
     )
     ordering = ['order_shown', 'activity_type', 'title']
+    search_fields = ('title', 'description')
+    list_filter = ('is_bookable', 'is_highlighted')
 
 
+@admin.register(models.SeminarSlot)
 class SeminarSlotAdmin(admin.ModelAdmin):
     def video_page_url(self):
         """Quick access to the video page"""
@@ -46,17 +53,14 @@ class SeminarSlotAdmin(admin.ModelAdmin):
         'start_datetime',
         'duration_in_mins',
         'seminar',
-        video_page_url
+        video_page_url,
     )
-    ordering = ['start_datetime']
+    list_filter = ('seminar', 'start_datetime')
+    date_hierarchy = 'start_datetime'
+    autocomplete_fields = ('seminar', 'students')
+    ordering = ['start_datetime', 'seminar']
 
 
-class IndividualSlotAdmin(admin.ModelAdmin):
-    list_display = ('start_datetime', 'duration_in_mins', 'lesson', 'student')
-    ordering = ['start_datetime']
-
-
-admin.site.register(models.Activity, ActivityAdmin)
-admin.site.register(models.Student, StudentAdmin)
-admin.site.register(models.SeminarSlot, SeminarSlotAdmin)
-admin.site.register(models.IndividualSlot, IndividualSlotAdmin)
+# class IndividualSlotAdmin(admin.ModelAdmin):
+#     list_display = ('start_datetime', 'duration_in_mins', 'lesson', 'student')
+#     ordering = ['start_datetime']
