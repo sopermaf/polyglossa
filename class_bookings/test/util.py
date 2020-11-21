@@ -2,7 +2,9 @@
 Set of util functions for testing
 '''
 from uuid import uuid4
-from datetime import datetime, timedelta
+import datetime
+
+from django.utils import timezone
 
 from class_bookings.models import Activity, SeminarSlot
 
@@ -38,12 +40,12 @@ def create_seminar_slot_pair(activity):
     dict : 'future' and 'past' seminar slots
     """
     future = SeminarSlot.objects.create(
-        start_datetime=datetime.now() + timedelta(days=1),
+        start_datetime=timezone.now() + datetime.timedelta(days=1),
         seminar=activity,
         external_id=uuid4()
     )
     past = SeminarSlot.objects.create(
-        start_datetime=datetime.now() - timedelta(days=1),
+        start_datetime=timezone.now() - datetime.timedelta(days=1),
         seminar=activity,
         external_id=uuid4()
     )

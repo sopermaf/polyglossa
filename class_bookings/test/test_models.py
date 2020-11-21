@@ -1,10 +1,11 @@
 # pylint: disable=missing-module-docstring, missing-class-docstring, missing-function-docstring, no-self-use, wildcard-import
 
-from datetime import datetime, timedelta
+import datetime
 
 import pytest
 from django.test import TestCase
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from .. import errors as err
 from .. import models as mods
@@ -13,7 +14,7 @@ from .  import util
 
 class TestBaseSlot(TestCase):
     def setUp(self):
-        slot_dt = datetime.now() + timedelta(hours=2)
+        slot_dt = timezone.now() + datetime.timedelta(hours=2)
         self.slot = mods.BaseSlot(start_datetime=slot_dt, duration_in_mins=60)
         self.slot.clean()
         self.slot.save()
@@ -25,7 +26,7 @@ class TestBaseSlot(TestCase):
         new_slot.safe_save()
 
     def test_new_slot_inside_existing(self):
-        start_dt = self.slot.start_datetime + timedelta(minutes=1)
+        start_dt = self.slot.start_datetime + datetime.timedelta(minutes=1)
         new_slot = mods.BaseSlot(start_datetime=start_dt, duration_in_mins=5)
 
         # ensure test setup correctly
@@ -40,7 +41,7 @@ class TestBaseSlot(TestCase):
             new_slot.safe_save()
 
     def test_new_slot_contains_existing(self):
-        start_dt = self.slot.start_datetime - timedelta(minutes=10)
+        start_dt = self.slot.start_datetime - datetime.timedelta(minutes=10)
         new_slot = mods.BaseSlot(start_datetime=start_dt, duration_in_mins=120)
 
         # ensure test setup correctly
@@ -55,7 +56,7 @@ class TestBaseSlot(TestCase):
             new_slot.safe_save()
 
     def test_new_slot_start_overlaps(self):
-        start_dt = self.slot.start_datetime + timedelta(minutes=10)
+        start_dt = self.slot.start_datetime + datetime.timedelta(minutes=10)
         new_slot = mods.BaseSlot(start_datetime=start_dt, duration_in_mins=70)
 
         self.assertGreater(
@@ -72,7 +73,7 @@ class TestBaseSlot(TestCase):
             new_slot.safe_save()
 
     def test_new_slot_end_overlaps(self):
-        start_dt = self.slot.start_datetime - timedelta(minutes=10)
+        start_dt = self.slot.start_datetime - datetime.timedelta(minutes=10)
         new_slot = mods.BaseSlot(start_datetime=start_dt, duration_in_mins=60)
 
         self.assertGreater(
@@ -89,14 +90,14 @@ class TestBaseSlot(TestCase):
             new_slot.clean()
 
     def test_new_slot_in_past(self):
-        start_dt = datetime.now() - timedelta(days=1)
+        start_dt = timezone.now() - datetime.timedelta(days=1)
         new_slot = mods.BaseSlot(start_datetime=start_dt)
 
         with self.assertRaises(ValidationError):
             new_slot.clean()
 
     def test_individual_and_seminar_slots(self):
-        common_dt = datetime.now() + timedelta(days=10)
+        common_dt = timezone.now() + datetime.timedelta(days=10)
 
         sem = mods.IndividualSlot(start_datetime=common_dt)
         sem.safe_save()
@@ -123,7 +124,7 @@ def test_validate_signup_error_slot_not_found():
     # no future seminars exist
     slot = util.create_seminar_slot(
         util.create_activity(mods.Activity.SEMINAR),
-        datetime.now() - timedelta(days=1)
+        timezone.now() - datetime.timedelta(days=1)
     )
     with pytest.raises(err.SlotNotFoundError):
         mods.SeminarSlot.validate_signup(slot.id, student)
@@ -136,7 +137,7 @@ def test_validate_signup_error_student_present():
 
     slot = util.create_seminar_slot(
         util.create_activity(mods.Activity.SEMINAR),
-        datetime.now() + timedelta(days=1)
+        timezone.now() + datetime.timedelta(days=1)
     )
     slot.students.add(student)
     slot.save()
@@ -150,7 +151,7 @@ def test_validate_signup_success():
     student = mods.Student.objects.create(name='foo', email='bar@foo.com')
     slot = util.create_seminar_slot(
         util.create_activity(mods.Activity.SEMINAR),
-        datetime.now() + timedelta(days=1)
+        timezone.now() + datetime.timedelta(days=1)
     )
 
 

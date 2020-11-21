@@ -1,9 +1,11 @@
 # pylint: disable=missing-module-docstring, missing-class-docstring, missing-function-docstring, no-self-use, unused-wildcard-import, wildcard-import
 import json
 from uuid import uuid4
+from datetime import timedelta
 
 import pytest
 from django.urls import reverse
+from django.utils import timezone
 
 from class_bookings.const import *
 from class_bookings.models import *
@@ -18,7 +20,7 @@ POST_SEMINAR_URL = reverse('signup-seminar')
 @pytest.mark.django_db
 def test_seminar_signup_success(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, order=1)
-    slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(days=2))
+    slot = t_util.create_seminar_slot(seminar, timezone.now() + timedelta(days=2))
 
 
     params = create_seminar_params(slot.pk, 'foo', 'foo@example.com')
@@ -42,7 +44,7 @@ def test_seminar_signup_success(client):
 @pytest.mark.django_db
 def test_seminar_signup_success_with_cancel_order(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, order=1)
-    slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(days=2))
+    slot = t_util.create_seminar_slot(seminar, timezone.now() + timedelta(days=2))
 
     params = create_seminar_params(slot.pk, 'foo', 'foo@example.com')
     for _ in range(2):
@@ -59,7 +61,7 @@ def test_seminar_signup_success_with_cancel_order(client):
 @pytest.mark.django_db
 def test_seminar_signup_error_past_slot(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR)
-    slot = t_util.create_seminar_slot(seminar, datetime.now() - timedelta(days=2))
+    slot = t_util.create_seminar_slot(seminar, timezone.now() - timedelta(days=2))
 
     response = client.post(POST_SEMINAR_URL, data=create_seminar_params(slot.pk))
 
@@ -72,7 +74,7 @@ def test_seminar_signup_error_past_slot(client):
 @pytest.mark.django_db
 def test_seminar_signup_error_missing_data(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR)
-    slot = t_util.create_seminar_slot(seminar, datetime.now() - timedelta(days=2))
+    slot = t_util.create_seminar_slot(seminar, timezone.now() - timedelta(days=2))
 
     for arg_to_pop in ('student_name', 'student_email', 'slot_id'):
         params = create_seminar_params(slot.pk)
@@ -98,7 +100,7 @@ def test_seminar_signup_error_slot_not_found(client):
 @pytest.mark.django_db
 def test_seminar_signup_error_student_already_present(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, order=1)
-    slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(days=2))
+    slot = t_util.create_seminar_slot(seminar, timezone.now() + timedelta(days=2))
     student = Student.objects.create(name='foo', email='foo@email.com')
 
     slot.students.add(student)
@@ -139,7 +141,7 @@ def test_get_future_seminar_slots_sorted(client):
 
     t_util.create_seminar_slot(
         seminar,
-        *(datetime.now() + timedelta(days=i) for i in range(5, 1))
+        *(timezone.now() + timedelta(days=i) for i in range(5, 1))
     )
 
     response = client.get(reverse('sem-slots', kwargs={'seminar_id': seminar.id}))
@@ -184,7 +186,7 @@ def test_get_upcoming_seminars_success(client):
     sem_foo = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
     sem_bar = t_util.create_activity(activity_type=Activity.SEMINAR, title='bar')
 
-    tmw = datetime.now() + timedelta(days=1, minutes=10)
+    tmw = timezone.now() + timedelta(days=1, minutes=10)
     t_util.create_seminar_slot(sem_foo, tmw)
     t_util.create_seminar_slot(sem_bar, tmw)
 
@@ -209,7 +211,7 @@ def test_get_upcoming_seminars_success(client):
 def test_get_upcoming_seminars_date_range(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
 
-    dts = (datetime.now() + timedelta(days=i, minutes=1) for i in range(4, -2, -1))
+    dts = (timezone.now() + timedelta(days=i, minutes=1) for i in range(4, -2, -1))
     t_util.create_seminar_slot(seminar, *dts)
 
     response = client.get(reverse('get-upcoming-seminars'))
@@ -219,7 +221,7 @@ def test_get_upcoming_seminars_date_range(client):
     # controlled by views.UPCOMING_TIME_DELTA
     assert len(ret) == 3
     for i, day in enumerate(ret):
-        assert day['date'] == (datetime.now() + timedelta(days=i)).strftime('%b %d')
+        assert day['date'] == (timezone.now() + timedelta(days=i)).strftime('%b %d')
 
 
 @pytest.mark.django_db
@@ -227,8 +229,8 @@ def test_get_upcoming_seminars_unique(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
 
     # add 2 slots on same day
-    t_util.create_seminar_slot(seminar, (datetime.now() + timedelta(days=1)))
-    t_util.create_seminar_slot(seminar, (datetime.now() + timedelta(days=1)))
+    t_util.create_seminar_slot(seminar, (timezone.now() + timedelta(days=1)))
+    t_util.create_seminar_slot(seminar, (timezone.now() + timedelta(days=1)))
 
     response = client.get(reverse('get-upcoming-seminars'))
     ret = json.loads(response.content)
@@ -248,7 +250,7 @@ def test_seminar_video_page_success(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
     slot = t_util.create_seminar_slot(
         seminar,
-        datetime.now() - timedelta(hours=1),
+        timezone.now() - timedelta(hours=1),
         video_id='FOOBAR'
     )
 
@@ -274,7 +276,7 @@ def test_seminar_video_page_not_found(client):
 @pytest.mark.django_db
 def test_seminar_video_page_too_early(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
-    slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(hours=1))
+    slot = t_util.create_seminar_slot(seminar, timezone.now() + timedelta(hours=1))
 
     response = client.get(video_request(slot.external_id))
     assert response.status_code == 404
@@ -283,7 +285,7 @@ def test_seminar_video_page_too_early(client):
 @pytest.mark.django_db
 def test_seminar_video_page_too_late(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
-    slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(hours=24, minutes=1))
+    slot = t_util.create_seminar_slot(seminar, timezone.now() + timedelta(hours=24, minutes=1))
 
     response = client.get(video_request(slot.external_id))
     assert response.status_code == 404

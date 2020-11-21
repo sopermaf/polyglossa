@@ -4,13 +4,14 @@ section of the polyglossa website.
 # pylint: disable=unused-argument
 import json
 from collections import defaultdict
-from datetime import datetime, timedelta, date
+import datetime
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.http.response import Http404, HttpResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
 
 from payments.models import Order
 from . import parse, const, util, models
@@ -19,8 +20,8 @@ from . import errors as err
 
 # CONSTANTS
 
-UPCOMING_TIME_DELTA = timedelta(days=3)
-AVAIL_VIDEO_LIMIT = timedelta(days=1)
+UPCOMING_TIME_DELTA = datetime.timedelta(days=3)
+AVAIL_VIDEO_LIMIT = datetime.timedelta(days=1)
 
 # VIEWS
 
@@ -29,7 +30,7 @@ def seminar_video_page(request, slot_id):
     slot = get_object_or_404(models.SeminarSlot, external_id=slot_id)
 
     # validate time period
-    now = datetime.now()
+    now = timezone.now()
     limit_time = slot.start_datetime + AVAIL_VIDEO_LIMIT
     if now < slot.start_datetime or now >= limit_time:
         raise Http404('Seminar not currently available')
@@ -128,7 +129,7 @@ def get_future_seminar_slots(request, seminar_id):
     '''Return all upcoming SeminarSlots for a given `seminar_id`'''
     slots = list(
         models.SeminarSlot.objects.filter(
-            start_datetime__gt=datetime.now(),
+            start_datetime__gt=timezone.now(),
             seminar__id=seminar_id,
         ).order_by('start_datetime').values()
     )
@@ -146,7 +147,7 @@ def get_upcoming_seminars(request):
     JSONResponse
         list of dicts with seminars grouped by date
     """
-    now = datetime.now()
+    now = timezone.now()
 
     upcoming = models.SeminarSlot.objects.filter(
         start_datetime__gt=now,
@@ -177,6 +178,6 @@ class _HomePageDateSerializer(DjangoJSONEncoder):
     Serialisation of dates and datetime added
     """
     def default(self, obj): # pylint: disable=arguments-differ
-        if isinstance(obj, (datetime, date)):
+        if isinstance(obj, (datetime.datetime, datetime.date)):
             return obj.strftime('%b %d')
         return super().default(obj)
