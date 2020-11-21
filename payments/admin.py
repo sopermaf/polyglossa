@@ -17,6 +17,6 @@ class OrderAdmin(admin.ModelAdmin):
         'order_details',
     )
     date_hierarchy = 'created'
-    ordering = ['payment_status', 'created', 'modified']
+    ordering = ['modified', 'created']
     list_filter = ('payment_status', 'created', 'modified', 'customer', 'amount')
     search_fields = ('order_details', )
