@@ -5,9 +5,10 @@ module
 # pylint: disable=unused-variable
 
 import uuid
-from datetime import timedelta, datetime
+import datetime
 
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from django.db import models
 
 from .parse import parse_dt_as_str
@@ -76,7 +77,7 @@ class BaseSlot(models.Model):
     @property
     def end_datetime(self):
         ''' Returns the end datetime of a lesson '''
-        return self.start_datetime + timedelta(minutes=self.duration_in_mins)
+        return self.start_datetime + datetime.timedelta(minutes=self.duration_in_mins)
 
     def __str__(self):
         return f"{parse_dt_as_str(self.start_datetime)} ({self.duration_in_mins} mins)"
@@ -84,11 +85,11 @@ class BaseSlot(models.Model):
     def clean(self, *args, **kwargs): # pylint: disable=arguments-differ
         super().clean(*args, **kwargs)
 
-        if self.start_datetime < datetime.now():
+        if self.start_datetime < timezone.now():
             raise ValidationError('Slot start must be in the future')
 
         upcoming_slots = BaseSlot.objects \
-                                .filter(start_datetime__gt=datetime.now()) \
+                                .filter(start_datetime__gt=timezone.now()) \
                                 .exclude(id=self.id)
         for slot in upcoming_slots:
             if (max(slot.start_datetime, self.start_datetime)
@@ -150,7 +151,7 @@ class SeminarSlot(BaseSlot):
         '''
         # ensure future slot
         slots = cls.objects.filter(
-            start_datetime__gt=datetime.now(), id=slot_id
+            start_datetime__gt=timezone.now(), id=slot_id
         )
         if not slots:
             raise errors.SlotNotFoundError(

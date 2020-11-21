@@ -3,10 +3,11 @@ Tests for payments.views
 '''
 # pylint: disable=missing-function-docstring
 import json
-from datetime import datetime, timedelta
+import datetime
 
 import pytest
 from django.urls import reverse
+from django.utils import timezone
 
 from class_bookings.test import util as t_util
 from class_bookings.models import Activity, Student
@@ -38,7 +39,7 @@ def test_cancel_order_error_not_found(client):
 @pytest.mark.django_db
 def test_payment_page_success_payment_not_required(client):
     seminar = t_util.create_activity(price=0)
-    slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(days=2))
+    slot = t_util.create_seminar_slot(seminar, timezone.now() + datetime.timedelta(days=2))
     order = _setup_seminar_order(seminar=seminar, slot=slot)
     _setup_session_order(client.session, order=order)
 
@@ -102,7 +103,7 @@ def _setup_seminar_order(customer=None, seminar=None, slot=None):
             bookable=True,
         )
     if not slot:
-        slot = t_util.create_seminar_slot(seminar, datetime.now() + timedelta(days=1))
+        slot = t_util.create_seminar_slot(seminar, timezone.now() + datetime.timedelta(days=1))
 
 
     order_details = {
