@@ -12,6 +12,7 @@ from django.utils import timezone
 from class_bookings.test import util as t_util
 from class_bookings.models import Activity, Student
 from class_bookings import const as cb_const
+from tasks.models import EmailTask
 from ..models import Order
 
 
@@ -56,6 +57,7 @@ def test_payment_page_success_payment_not_required(client):
     order.refresh_from_db()
     assert order.payment_status == Order.PaymentStatus.COMPLETED
     assert slot.students.count() == 1
+    assert EmailTask.objects.all().count() == 1
 
 
 @pytest.mark.django_db

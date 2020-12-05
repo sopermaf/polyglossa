@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 from class_bookings import models as cb_models
+from tasks.models import EmailTask
 from . import processors
 
 
@@ -38,6 +39,7 @@ class Order(models.Model):
     order_details = models.TextField(editable=False)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(editable=False)
+
 
     def __str__(self):
         fields = [
@@ -79,8 +81,25 @@ class Order(models.Model):
         order_processor = ProcessorClass(self.order_details)
         order_processor.complete()
         self.payment_status = self.PaymentStatus.COMPLETED
-
         self.save()
+
+        # create an EmailTask for sending
+        msg = '''
+        Dear {},
+
+        Order {} confirmed.
+
+        Total paid ${}.
+
+        www.polglossa.com
+        '''.format(self.customer.name, self.id, self.amount)
+
+        EmailTask.objects.create(
+            to_email=self.customer.email,
+            subject='Order Confirmation: %s' % self.id,
+            msg=msg,
+        )
+
 
     def failure(self):
         '''

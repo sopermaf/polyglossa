@@ -2,6 +2,7 @@
 Tests for Payments/models
 '''
 # pylint: disable=missing-function-docstring
+from tasks.models import EmailTask
 from .base_test import TestPayments
 from ..models import Order
 
@@ -14,6 +15,7 @@ class TestOrders(TestPayments):
         self.assertEqual(
             self.order.payment_status, Order.PaymentStatus.COMPLETED
         )
+        self.assertEqual(EmailTask.objects.count(), 1, 'Email created')
 
     def test_success_complete_action(self):
         self.assertFalse(self.student_in_seminar(), 'Student absent')
