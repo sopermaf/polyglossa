@@ -7,6 +7,9 @@ Created due to lack of Celery support on pythonanywhere.com
 from django.db import models
 from django.core.mail import send_mail
 
+class UnsentEmailManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(sent=False)
 
 class EmailTask(models.Model):
     to_email = models.EmailField()
@@ -15,6 +18,9 @@ class EmailTask(models.Model):
     sent = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    objects = models.Manager()
+    unsent = UnsentEmailManager()
 
     class Meta:
         ordering = ['-modified', '-created']
