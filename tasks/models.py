@@ -7,9 +7,11 @@ Created due to lack of Celery support on pythonanywhere.com
 from django.db import models
 from django.core.mail import send_mail
 
+
 class UnsentEmailManager(models.Manager):
-    def get_queryset(self):
+    def get_queryset(self): # pylint: disable=missing-function-docstring
         return super().get_queryset().filter(sent=False)
+
 
 class EmailTask(models.Model):
     to_email = models.EmailField()

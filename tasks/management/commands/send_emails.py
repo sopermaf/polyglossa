@@ -1,5 +1,5 @@
 # pylint: disable=missing-class-docstring,import-error
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from tasks.models import EmailTask
 
 
