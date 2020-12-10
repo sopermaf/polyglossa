@@ -5,7 +5,7 @@ Created due to lack of Celery support on pythonanywhere.com
 """
 # pylint: disable=missing-class-docstring,too-few-public-methods
 from django.db import models
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 
 
 class UnsentEmailManager(models.Manager):
@@ -28,16 +28,16 @@ class EmailTask(models.Model):
         ordering = ['-modified', '-created']
 
 
-    def send(self):
-        """Send email and mark task as complete"""
-        send_mail(
+    def send(self, connection):
+        """Send the email task and mark as sent"""
+        email = EmailMessage(
             subject=self.subject,
-            message=self.msg,
+            body=self.msg,
             from_email=None,    # uses DEFAULT_FROM_EMAIl
-            recipient_list=[self.to_email],
+            to=[self.to_email],
+            connection=connection
         )
+        email.send(fail_silently=False)
 
         self.sent = True
         self.save()
-
-        print("Email sent to %r with subject %r" % (self.to_email, self.subject))
