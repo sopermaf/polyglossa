@@ -2,12 +2,15 @@
 in the database to manage the class_bookings
 module
 '''
-# pylint: disable=unused-variable
+# pylint: disable=unused-variable,too-few-public-methods,missing-class-docstring
 
+from datetime import timedelta
+from typing import Any
 import uuid
 import datetime
 
 from django.core.exceptions import ValidationError
+from django.core.mail import EmailMessage
 from django.utils import timezone
 from django.db import models
 
@@ -66,13 +69,43 @@ class Activity(models.Model):
         return f"<{self.activity_type}: {self.title},{self.price},{self.is_bookable}>"
 
 
+class DayBeforeReminderManager(models.Manager):
+    # pylint: disable=missing-function-docstring
+    def get_queryset(self):
+        limit = timezone.now() + timedelta(days=1)
+        return super().get_queryset().filter(
+            day_before_reminder_sent=False,
+            start_datetime__lt=limit
+        )
+
+
+class HourBeforeReminderManager(models.Manager):
+    # pylint: disable=missing-function-docstring
+    def get_queryset(self):
+        limit = timezone.now() + timedelta(days=1)
+        return super().get_queryset().filter(
+            hour_before_reminder_sent=False,
+            start_datetime__lt=limit
+        )
+
+
 class BaseSlot(models.Model):
     '''
     Defines a bookable slot for students to
     join
     '''
+    class ReminderTypes(models.TextChoices):
+        HOUR = 'hour'
+        DAY = 'day'
+
     start_datetime = models.DateTimeField('The lesson date and time', )
     duration_in_mins = models.PositiveSmallIntegerField(default=60)
+    day_before_reminder_sent = models.BooleanField(default=False)
+    hour_before_reminder_sent = models.BooleanField(default=False)
+
+    objects = models.Manager()
+    hour_reminder_unsent = HourBeforeReminderManager()
+    day_reminder_unsent = DayBeforeReminderManager()
 
     @property
     def end_datetime(self):
@@ -103,13 +136,25 @@ class BaseSlot(models.Model):
         self.clean()
         self.save()
 
+    def send_reminder(self, connection: Any, reminder_type: str) -> None:   # pylint:disable=unused-argument
+        """Base method for sending reminders about slot"""
+        reminder_type = self.ReminderTypes(reminder_type.lower())
+        if reminder_type == self.ReminderTypes.HOUR:
+            self.hour_before_reminder_sent = True
+        elif reminder_type == self.ReminderTypes.DAY:
+            self.day_before_reminder_sent = True
+        else:
+            raise NotImplementedError('No Boolean value for ReminderType %s' % reminder_type)
+
+        self.save()
+
 
 class SeminarSlot(BaseSlot):
-    '''
+    """
     A seminar datetime slot bookable by a student
 
     Activity chosen upon slot creation by admin.
-    '''
+    """
     external_id = models.UUIDField(
         unique=True,
         editable=False,
@@ -171,6 +216,22 @@ class SeminarSlot(BaseSlot):
     #         self.external_id = uuid.uuid4()
     #     super(self).save(*args, **kwargs)
 
+    def send_reminder(self, connection: Any, reminder_type: str) -> None:
+        """Send a reminder email to the student"""
+        student_emails = [student.email for student in self.students.all()]
+        email = EmailMessage(
+            subject="Reminder: Seminar %r" % self.seminar.title,
+            body="This is a reminder about your upcoming Polyglossa Seminar!",
+            from_email=None,    # uses DEFAULT_FROM_EMAIl
+            to=student_emails,
+            connection=connection
+        )
+        email.send(fail_silently=False)
+
+        # ensure marked as saved
+        super().send_reminder(connection, reminder_type)
+
+
 class IndividualSlot(BaseSlot):
     '''
     An individual slot bookable by a student
@@ -190,3 +251,18 @@ class IndividualSlot(BaseSlot):
     student = models.ForeignKey(
         Student, on_delete=models.PROTECT, null=True, blank=True
     )
+
+
+    def send_reminder(self, connection: Any, reminder_type: str) -> None:
+        """Send a reminder email to the student"""
+        email = EmailMessage(
+            subject="Reminder: Seminar %r" % self.seminar.title,
+            body="This is a reminder about your upcoming Polyglossa class!",
+            from_email=None,    # uses DEFAULT_FROM_EMAIl
+            to=[self.student.email],
+            connection=connection
+        )
+        email.send(fail_silently=False)
+
+        # ensure marked as saved
+        super().send_reminder(connection, reminder_type)
