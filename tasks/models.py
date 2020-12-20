@@ -5,7 +5,8 @@ Created due to lack of Celery support on pythonanywhere.com
 """
 # pylint: disable=missing-class-docstring,too-few-public-methods
 from django.db import models
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
+from django.utils.html import strip_tags
 
 
 class UnsentEmailManager(models.Manager):
@@ -30,13 +31,15 @@ class EmailTask(models.Model):
 
     def send(self, connection):
         """Send the email task and mark as sent"""
-        email = EmailMessage(
+        email = EmailMultiAlternatives(
             subject=self.subject,
-            body=self.msg,
+            body=strip_tags(self.msg),
             from_email=None,    # uses DEFAULT_FROM_EMAIl
             to=[self.to_email],
             connection=connection
         )
+        email.attach_alternative(self.msg, 'text/html')
+
         email.send(fail_silently=False)
 
         self.sent = True

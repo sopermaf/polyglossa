@@ -4,6 +4,7 @@ Polyglossa payments models
 from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.template.loader import render_to_string
 
 from class_bookings import models as cb_models
 from tasks.models import EmailTask
@@ -84,20 +85,12 @@ class Order(models.Model):
         self.save()
 
         # create an EmailTask for sending
-        msg = '''
-        Dear {},
-
-        Order {} confirmed.
-
-        Total paid ${}.
-
-        www.polglossa.com
-        '''.format(self.customer.name, self.id, self.amount)
+        html_msg = render_to_string('tasks/order.html', {'order': self})
 
         EmailTask.objects.create(
             to_email=self.customer.email,
             subject='Order Confirmation: %s' % self.id,
-            msg=msg,
+            msg=html_msg,
         )
 
 
