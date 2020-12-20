@@ -10,9 +10,12 @@ import uuid
 import datetime
 
 from django.core.exceptions import ValidationError
-from django.core.mail import EmailMessage
-from django.utils import timezone
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.db import models
+from django.urls.base import reverse
+from django.utils import timezone
+from django.utils.html import strip_tags
+from django.template.loader import render_to_string
 
 from .parse import parse_dt_as_str
 from . import errors
@@ -173,6 +176,13 @@ class SeminarSlot(BaseSlot):
     students = models.ManyToManyField(Student, blank=True)
     video_id = models.CharField(max_length=20)
 
+    def get_absolute_url(self):
+        """Video page for seminar"""
+        return reverse(
+            'video-view',
+            kwargs={'slot_id': self.external_id},
+        )
+
     @classmethod
     def validate_signup(cls, slot_id, student):
         '''
@@ -218,14 +228,20 @@ class SeminarSlot(BaseSlot):
 
     def send_reminder(self, connection: Any, reminder_type: str) -> None:
         """Send a reminder email to the student"""
+        html_msg = render_to_string(
+            'class_bookings/email/reminder.html',
+            {'slot': self},
+        )
+
         student_emails = [student.email for student in self.students.all()]
-        email = EmailMessage(
+        email = EmailMultiAlternatives(
             subject="Reminder: Seminar %r" % self.seminar.title,
-            body="This is a reminder about your upcoming Polyglossa Seminar!",
+            body=strip_tags(html_msg),
             from_email=None,    # uses DEFAULT_FROM_EMAIl
             to=student_emails,
             connection=connection
         )
+        email.attach_alternative(html_msg, 'text/html')
         email.send(fail_silently=False)
 
         # ensure marked as saved
