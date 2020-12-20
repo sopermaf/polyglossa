@@ -53,7 +53,7 @@ jobs:
         pipenv run pytest class_bookings/ payments/ learning_materials/ tasks/
     - name: Python Lint
       run: |
-        pipenv run pylint -d fixme class_bookings payments polyglossa learning_materials tasks
+        pipenv run pylint -d fixme payments polyglossa class_bookings learning_materials tasks */management/commands/*.py
     - name: Frontend Lint
       run: |
         cd frontend/
