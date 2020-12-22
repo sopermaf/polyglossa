@@ -47,3 +47,5 @@ class SemSlotProcessor(OrderProcessor): # pylint: disable=too-few-public-methods
 
         slot.students.add(student)
         slot.save()
+
+        # send email

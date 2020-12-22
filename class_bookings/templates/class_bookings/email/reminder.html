@@ -1,0 +1,20 @@
+{% extends "base_email.html" %}
+
+{% block title %} Lesson Reminder {% endblock %}
+
+{% block content %}
+    <p> 
+        Don't forget your upcoming Polyglossa seminar!
+    </p>
+
+    <p>
+        Your seminar will be live for 24 hours @ {{ slot.start_datetime }} UTC
+    </p>
+
+    <p> 
+        The seminar can be accessed with the following
+        <a href="https://www.polyglossa.com{{ slot.get_absolute_url }}">link</a>
+    </p>
+
+    <p> See you soon! </p>
+{% endblock %}
