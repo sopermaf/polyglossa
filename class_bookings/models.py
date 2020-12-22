@@ -85,7 +85,7 @@ class DayBeforeReminderManager(models.Manager):
 class HourBeforeReminderManager(models.Manager):
     # pylint: disable=missing-function-docstring
     def get_queryset(self):
-        limit = timezone.now() + timedelta(days=1)
+        limit = timezone.now() + timedelta(hours=1)
         return super().get_queryset().filter(
             hour_before_reminder_sent=False,
             start_datetime__lt=limit
