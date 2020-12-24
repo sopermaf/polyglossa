@@ -31,12 +31,12 @@ class Order(models.Model):
         SEMINAR = 'SemSlotProcessor'
         INDIVIDUAL = 'IndSlotProcessor'
 
-    customer = models.ForeignKey(cb_models.Student, on_delete=models.PROTECT)
+    customer = models.ForeignKey(cb_models.Student, on_delete=models.PROTECT, editable=False)
     payment_status = models.CharField(
         choices=PaymentStatus.choices, max_length=20, default=PaymentStatus.AWAITING,
     )
-    amount = models.DecimalField(max_digits=5, decimal_places=2)
-    processor = models.CharField(choices=ProcessorEnums.choices, max_length=30)
+    amount = models.DecimalField(max_digits=5, decimal_places=2, editable=False)
+    processor = models.CharField(choices=ProcessorEnums.choices, max_length=30, editable=False)
     order_details = models.TextField(editable=False)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(editable=False)
@@ -89,7 +89,7 @@ class Order(models.Model):
 
         EmailTask.objects.create(
             to_email=self.customer.email,
-            subject='Order Confirmation: %s' % self.id,
+            subject='Order Confirmed',
             msg=html_msg,
         )
 
