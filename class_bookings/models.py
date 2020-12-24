@@ -161,7 +161,7 @@ class SeminarSlot(BaseSlot):
     external_id = models.UUIDField(
         unique=True,
         editable=False,
-        default=uuid.uuid4()
+        default=uuid.uuid4
     )
     seminar = models.ForeignKey(
         Activity,
@@ -220,11 +220,6 @@ class SeminarSlot(BaseSlot):
                 f'Student {student} already in seminar {slot}'
             )
         return slot
-
-    # def save(self, *args, **kwargs):
-    #     if not self.external_id:
-    #         self.external_id = uuid.uuid4()
-    #     super(self).save(*args, **kwargs)
 
     def send_reminder(self, connection: Any, reminder_type: str) -> None:
         """Send a reminder email to the student"""

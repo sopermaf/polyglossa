@@ -42,12 +42,10 @@ def create_seminar_slot_pair(activity):
     future = SeminarSlot.objects.create(
         start_datetime=timezone.now() + datetime.timedelta(days=1),
         seminar=activity,
-        external_id=uuid4()
     )
     past = SeminarSlot.objects.create(
         start_datetime=timezone.now() - datetime.timedelta(days=1),
         seminar=activity,
-        external_id=uuid4()
     )
     return {
         'future': future,
@@ -76,7 +74,6 @@ def create_seminar_slot(activity, *dts, video_id='video_id',):
             start_datetime=slot_dt,
             seminar=activity,
             video_id=video_id,
-            external_id=uuid4(),
         )
         for slot_dt in dts
     ]
