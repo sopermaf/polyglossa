@@ -61,7 +61,7 @@ class SeminarSlotAdmin(admin.ModelAdmin):
 
     fields = (
         'seminar', 'video_id', 'start_datetime', 'duration_in_mins', 'students',
-        'youtube_link', 'day_before_reminder_sent', 'hour_before_reminder_sent',
+        'day_before_reminder_sent', 'hour_before_reminder_sent',
     )
     list_display = (
         'seminar',
@@ -74,4 +74,4 @@ class SeminarSlotAdmin(admin.ModelAdmin):
     date_hierarchy = 'start_datetime'
     autocomplete_fields = ('seminar', 'students')
     ordering = ['start_datetime', 'seminar']
-    readonly_fields = ('youtube_link', 'day_before_reminder_sent', 'hour_before_reminder_sent')
+    readonly_fields = ('day_before_reminder_sent', 'hour_before_reminder_sent')
