@@ -103,8 +103,8 @@ class BaseSlot(models.Model):
 
     start_datetime = models.DateTimeField('The lesson date and time', )
     duration_in_mins = models.PositiveSmallIntegerField(default=60)
-    day_before_reminder_sent = models.BooleanField(default=False)
-    hour_before_reminder_sent = models.BooleanField(default=False)
+    day_before_reminder_sent = models.BooleanField(default=False, editable=False)
+    hour_before_reminder_sent = models.BooleanField(default=False, editable=False)
 
     objects = models.Manager()
     hour_reminder_unsent = HourBeforeReminderManager()
