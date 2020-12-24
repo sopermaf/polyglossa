@@ -12,7 +12,7 @@ import datetime
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.db import models
-from django.urls.base import reverse
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from django.template.loader import render_to_string
@@ -27,7 +27,6 @@ class Student(models.Model):
     '''
     Represents a student taking lessons on the site.
     '''
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
 
@@ -51,8 +50,8 @@ class Activity(models.Model):
 
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=1000, blank=True, default="")
-    price = models.FloatField()
+    description = models.TextField()
+    price = models.DecimalField(max_digits=5, decimal_places=2)
     is_bookable = models.BooleanField(default=False)
     activity_type = models.CharField(
         max_length=3,
@@ -61,7 +60,7 @@ class Activity(models.Model):
     )
 
     # related to showing on homepage
-    order_shown = models.PositiveSmallIntegerField(default=100)
+    order_shown = models.PositiveSmallIntegerField(default=1)
     is_highlighted = models.BooleanField(default=False)
 
     def __str__(self):
@@ -103,8 +102,8 @@ class BaseSlot(models.Model):
 
     start_datetime = models.DateTimeField('The lesson date and time', )
     duration_in_mins = models.PositiveSmallIntegerField(default=60)
-    day_before_reminder_sent = models.BooleanField(default=False)
-    hour_before_reminder_sent = models.BooleanField(default=False)
+    day_before_reminder_sent = models.BooleanField(default=False, editable=False)
+    hour_before_reminder_sent = models.BooleanField(default=False, editable=False)
 
     objects = models.Manager()
     hour_reminder_unsent = HourBeforeReminderManager()
@@ -158,20 +157,11 @@ class SeminarSlot(BaseSlot):
 
     Activity chosen upon slot creation by admin.
     """
-    external_id = models.UUIDField(
-        unique=True,
-        editable=False,
-        default=uuid.uuid4
-    )
+    external_id = models.UUIDField(unique=True, editable=False, default=uuid.uuid4)
     seminar = models.ForeignKey(
         Activity,
-        limit_choices_to={
-            "activity_type": Activity.SEMINAR,
-            "is_bookable": True,
-        },
-        on_delete=models.PROTECT,
-        null=False,
-        blank=False,
+        on_delete=models.CASCADE,
+        limit_choices_to={"activity_type": Activity.SEMINAR, "is_bookable": True},
     )
     students = models.ManyToManyField(Student, blank=True)
     video_id = models.CharField(max_length=20)

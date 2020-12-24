@@ -22,7 +22,6 @@ class StudentAdmin(admin.ModelAdmin):
 @admin.register(models.Activity)
 class ActivityAdmin(admin.ModelAdmin):
     list_display = (
-        'activity_type',
         'title',
         'price',
         'is_bookable',
@@ -31,10 +30,11 @@ class ActivityAdmin(admin.ModelAdmin):
     )
     fields = (
         'activity_type',
+        'price',
+        ('is_bookable', 'is_highlighted'),
         'title',
         'description',
-        ('price', 'is_bookable'),
-        ('order_shown', 'is_highlighted'),
+        'order_shown',
     )
     ordering = ['order_shown', 'activity_type', 'title']
     search_fields = ('title', 'description')
@@ -43,24 +43,35 @@ class ActivityAdmin(admin.ModelAdmin):
 
 @admin.register(models.SeminarSlot)
 class SeminarSlotAdmin(admin.ModelAdmin):
-    def video_page_url(self):
+    def video_link(self):
         """Quick access to the video page"""
-        return mark_safe("<a href='{0}'>View</a>".format(
+        return mark_safe("<a href='{0}'>{0}</a>".format(
             reverse('video-view', kwargs={'slot_id': self.external_id})
         ))
 
+    def youtube_link(self):
+        """Quick access to the video page"""
+        link = "https://youtube.com/watch?v={}".format(self.video_id)
+        return mark_safe("<a href='{0}'>{0}</a>".format(link))
+
+    def reminder_sent(self):
+        """Confirm some reminder with link has been sent"""
+        return self.day_before_reminder_sent or self.hour_before_reminder_sent
+    reminder_sent.boolean = True
+
+    fields = (
+        'seminar', 'video_id', 'start_datetime', 'duration_in_mins', 'students',
+        'day_before_reminder_sent', 'hour_before_reminder_sent',
+    )
     list_display = (
-        'start_datetime',
-        'duration_in_mins',
         'seminar',
-        video_page_url,
+        'start_datetime',
+        video_link,
+        youtube_link,
+        reminder_sent,
     )
     list_filter = ('seminar', 'start_datetime')
     date_hierarchy = 'start_datetime'
     autocomplete_fields = ('seminar', 'students')
     ordering = ['start_datetime', 'seminar']
-
-
-# class IndividualSlotAdmin(admin.ModelAdmin):
-#     list_display = ('start_datetime', 'duration_in_mins', 'lesson', 'student')
-#     ordering = ['start_datetime']
+    readonly_fields = ('day_before_reminder_sent', 'hour_before_reminder_sent')

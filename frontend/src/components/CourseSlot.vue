@@ -14,10 +14,12 @@
             ${{sem.price}}
           </v-card-title>
           
+          <!-- pre-wrap used to ensure line-breaks from TextField -->
           <v-card-text
             class="justify-left"
+            style="white-space: pre-wrap;"
           >
-            {{sem.description}}
+            {{ sem.description }}
           </v-card-text>
           
           <v-card-actions
