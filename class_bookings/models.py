@@ -51,8 +51,8 @@ class Activity(models.Model):
 
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=1000, blank=True, default="")
-    price = models.FloatField()
+    description = models.TextField()
+    price = models.DecimalField(max_digits=5, decimal_places=2)
     is_bookable = models.BooleanField(default=False)
     activity_type = models.CharField(
         max_length=3,

@@ -35,7 +35,7 @@ class Order(models.Model):
     payment_status = models.CharField(
         choices=PaymentStatus.choices, max_length=20, default=PaymentStatus.AWAITING,
     )
-    amount = models.FloatField()
+    amount = models.DecimalField(max_digits=5, decimal_places=2)
     processor = models.CharField(choices=ProcessorEnums.choices, max_length=30)
     order_details = models.TextField(editable=False)
     created = models.DateTimeField(editable=False)
