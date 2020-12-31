@@ -26,7 +26,7 @@ def test_cancel_order_success(client):
     _setup_session_order(client.session)
 
     response = client.post(CANCEL_ORDER)
-    order = Order.objects.get(id=1)
+    order = Order.objects.first()
 
     assert response.status_code == cb_const.SUCCESS_CODE
     assert order.payment_status == Order.PaymentStatus.CANCELLED
@@ -74,7 +74,7 @@ def test_payment_page_success_payment_required(client):
     assert 'button' in page_data
     assert all(key in page_data['button'] for key in ('url', 'encrypted_inputs'))
 
-    order = Order.objects.get(id=1)
+    order = Order.objects.first()
     assert order.payment_status == Order.PaymentStatus.AWAITING
 
 

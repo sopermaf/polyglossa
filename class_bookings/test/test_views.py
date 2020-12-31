@@ -31,12 +31,12 @@ def test_seminar_signup_success(client):
     assert slot.students.count() == 0                       # student not in slot
 
     assert len(Student.objects.all()) == 1
-    student = Student.objects.get(id=1)
+    student = Student.objects.first()
     assert student.name == 'foo'
     assert student.email == 'foo@example.com'
 
     assert len(Order.objects.all()) == 1
-    order = Order.objects.get(id=1)
+    order = Order.objects.first()
     assert order.customer == student
     assert order.payment_status == Order.PaymentStatus.AWAITING
 
