@@ -17,7 +17,7 @@ jobs:
       shell: bash
       env:
         CERTS_PATH: polyglossa/certs
-        PAYPAL_PRIVATE: ${{secrets.PAYPAL_PRIVATE}}
+        PAYPAL_PRIVATE: ${{ secrets.PAYPAL_PRIVATE }}
       run: |
         mkdir -p $HOME/CERTS_PATH
         echo "$PAYPAL_PRIVATE" > $CERTS_PATH/paypal_private_sandbox.pem
@@ -33,14 +33,13 @@ jobs:
         echo "POLYGLOSSA_EMAIL_PASSWORD='not_real_email_password'" >> $GITHUB_ENV
         echo "POLYGLOSSA_SECRET_KEY=long_secret_key_for_production" >> $GITHUB_ENV
         echo "POLYGLOSSA_DEBUG=True" >> $GITHUB_ENV
+        echo "DJANGO_SETTINGS_MODULE=polyglossa.github_ci_settings" >> $GITHUB_ENV
+        echo "PAYPAL_EMAIL=paypal_example_email" >> $GITHUB_ENV
+        echo "PAYPAL_CERT_ID=not_real_cert_id" >> $GITHUB_ENV
     - name: Setup Django Database
       run: |
         pipenv run python manage.py makemigrations
         pipenv run python manage.py migrate
-      env:
-        PAYPAL_PRIVATE: ${{secrets.PAYPAL_PRIVATE}}
-        PAYPAL_EMAIL: ${{secrets.PAYPAL_SANDBOX_EMAIL}}
-        PAYPAL_CERT_ID: ${{secrets.PAYPAL_SANDBOX_CERT_ID}}
     - name: Install Vue
       run: |
         cd frontend/
@@ -54,10 +53,6 @@ jobs:
     - name: Django Integration Tests
       run: |
         pipenv run pytest class_bookings/ payments/ learning_materials/ tasks/
-      env:
-        PAYPAL_PRIVATE: ${{secrets.PAYPAL_PRIVATE}}
-        PAYPAL_EMAIL: ${{secrets.PAYPAL_SANDBOX_EMAIL}}
-        PAYPAL_CERT_ID: ${{secrets.PAYPAL_SANDBOX_CERT_ID}}
     - name: Python Lint
       run: |
         pipenv run pylint -d fixme payments polyglossa class_bookings learning_materials tasks */management/commands/*.py
