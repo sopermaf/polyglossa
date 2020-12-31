@@ -16,28 +16,31 @@ jobs:
     - name: Setup Project Files
       shell: bash
       env:
-        CERTS_PATH: resources/certs
-        PAYPAL_CERT: ${{secrets.PAYPAL_CERT}} 
-        PAYPAL_PUBLIC: ${{secrets.PAYPAL_PUBLIC}}
+        CERTS_PATH: polyglossa/certs
         PAYPAL_PRIVATE: ${{secrets.PAYPAL_PRIVATE}}
-        LOCAL_SETTINGS: ${{secrets.LOCAL_SETTINGS}}
-        SETTINGS_PATH: polyglossa/local_settings.py
       run: |
-        mkdir -p $HOME/polyglossa && echo "$LOCAL_SETTINGS" > $SETTINGS_PATH
         mkdir -p $HOME/CERTS_PATH
-        echo "$PAYPAL_CERT" > $CERTS_PATH/paypal_cert.pem
-        echo "$PAYPAL_PUBLIC" > $CERTS_PATH/paypal_public.pem
-        echo "$PAYPAL_PRIVATE" > $CERTS_PATH/paypal_private.pem
+        echo "$PAYPAL_PRIVATE" > $CERTS_PATH/paypal_private_sandbox.pem
     - name: Install dependencies
       run: |
         sudo apt-get install -y swig
         python -m pip install --upgrade pip
         pip install pipenv
         pipenv install --dev
+    - name: Setup Environment Variables
+      run: |
+        echo "POLYGLOSSA_EMAIL='email@example.com'" >> $GITHUB_ENV
+        echo "POLYGLOSSA_EMAIL_PASSWORD='not_real_email_password'" >> $GITHUB_ENV
+        echo "POLYGLOSSA_SECRET_KEY=long_secret_key_for_production" >> $GITHUB_ENV
+        echo "POLYGLOSSA_DEBUG=True" >> $GITHUB_ENV
     - name: Setup Django Database
       run: |
         pipenv run python manage.py makemigrations
         pipenv run python manage.py migrate
+      env:
+        PAYPAL_PRIVATE: ${{secrets.PAYPAL_PRIVATE}}
+        PAYPAL_EMAIL: ${{secrets.PAYPAL_SANDBOX_EMAIL}}
+        PAYPAL_CERT_ID: ${{secrets.PAYPAL_SANDBOX_CERT_ID}}
     - name: Install Vue
       run: |
         cd frontend/
@@ -51,6 +54,10 @@ jobs:
     - name: Django Integration Tests
       run: |
         pipenv run pytest class_bookings/ payments/ learning_materials/ tasks/
+      env:
+        PAYPAL_PRIVATE: ${{secrets.PAYPAL_PRIVATE}}
+        PAYPAL_EMAIL: ${{secrets.PAYPAL_SANDBOX_EMAIL}}
+        PAYPAL_CERT_ID: ${{secrets.PAYPAL_SANDBOX_CERT_ID}}
     - name: Python Lint
       run: |
         pipenv run pylint -d fixme payments polyglossa class_bookings learning_materials tasks */management/commands/*.py
