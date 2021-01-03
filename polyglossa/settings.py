@@ -86,6 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'OPTIONS': {
             'read_default_file': os.path.join(BASE_DIR, 'polyglossa', 'mysql.cnf'),
+            'sql_mode': 'STRICT_ALL_TABLES',
         },
     }
 }
