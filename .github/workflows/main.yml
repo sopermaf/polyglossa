@@ -3,7 +3,7 @@ name: Polyglossa CI
 on: [push]
 
 jobs:
-  build:
+  testing:
 
     runs-on: ubuntu-latest
 
@@ -13,7 +13,7 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
-    - name: Setup Project Files
+    - name: Configure Files and Env Vars
       shell: bash
       env:
         CERTS_PATH: polyglossa/certs
@@ -21,14 +21,6 @@ jobs:
       run: |
         mkdir -p $HOME/CERTS_PATH
         echo "$PAYPAL_PRIVATE" > $CERTS_PATH/paypal_private_sandbox.pem
-    - name: Install dependencies
-      run: |
-        sudo apt-get install -y swig
-        python -m pip install --upgrade pip
-        pip install pipenv
-        pipenv install --dev
-    - name: Setup Environment Variables
-      run: |
         echo "POLYGLOSSA_EMAIL='email@example.com'" >> $GITHUB_ENV
         echo "POLYGLOSSA_EMAIL_PASSWORD='not_real_email_password'" >> $GITHUB_ENV
         echo "POLYGLOSSA_SECRET_KEY=long_secret_key_for_production" >> $GITHUB_ENV
@@ -36,27 +28,27 @@ jobs:
         echo "DJANGO_SETTINGS_MODULE=polyglossa.github_ci_settings" >> $GITHUB_ENV
         echo "PAYPAL_EMAIL=paypal_example_email" >> $GITHUB_ENV
         echo "PAYPAL_CERT_ID=not_real_cert_id" >> $GITHUB_ENV
+    - name: Install dependencies
+      run: |
+        sudo apt-get install -y swig
+        python -m pip install --upgrade pip
+        pip install pipenv
+        pipenv install --dev
     - name: Setup Django Database
       run: |
         pipenv run python manage.py makemigrations
         pipenv run python manage.py migrate
-    - name: Install Vue
+    - name: Setup Vuetify Frontend
       run: |
         cd frontend/
         npm install
-        cd ..
-    - name: Build FrontEnd Files
-      run: |
-        cd frontend/
         npm run build
         cd ..
-    - name: Django Integration Tests
+    - name: Testing
       run: |
         pipenv run pytest class_bookings/ payments/ learning_materials/ tasks/
-    - name: Python Lint
+    - name: Linting
       run: |
         pipenv run pylint -d fixme payments polyglossa class_bookings learning_materials tasks */management/commands/*.py
-    - name: Frontend Lint
-      run: |
         cd frontend/
         npm run lint
