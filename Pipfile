@@ -16,6 +16,7 @@ django-webpack-loader = "*"
 django-paypal = "~=1.0"
 m2crypto = "*"
 mysqlclient = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.8"

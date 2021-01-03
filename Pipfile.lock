@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "57e33fb945fbf7fdd48181fcfa7680e8ae2d7350696bec237bdfadc71d3d0514"
+            "sha256": "30ff24af4dc7d6a3296465233d3347931cb3f270565ca83fcbc99af58480b0ff"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -77,14 +77,14 @@
         },
         "mysqlclient": {
             "hashes": [
-                "sha256:3739824f4b8f29a6a4e5fc965f933fdce7c9edc2454990c3e5c6e038779e5580",
-                "sha256:4861e33b9fad83dadf38feae77a14106365fc8c354ec4300fab5d8ccfbee4b4e",
-                "sha256:4d91dde55230a512937aafc5981c6c11c0efad2c6b3d33e83287208c8bdab367",
-                "sha256:8944d9008c29abfa43e3c97551416ea23b2ccb017af85682b79f34fc26dc43ae",
-                "sha256:8df057b08fc27d8f7106bfa997d0a21e2acef017f905f06d6fb0aa6a20d4d2b2"
+                "sha256:0ac0dd759c4ca02c35a9fedc24bc982cf75171651e8187c2495ec957a87dfff7",
+                "sha256:3381ca1a4f37ff1155fcfde20836b46416d66531add8843f6aa6d968982731c3",
+                "sha256:71c4b330cf2313bbda0307fc858cc9055e64493ba9bf28454d25cf8b3ee8d7f5",
+                "sha256:f6ebea7c008f155baeefe16c56cd3ee6239f7a5a9ae42396c2f1860f08a7c432",
+                "sha256:fc575093cf81b6605bed84653e48b277318b880dc9becf42dd47fa11ffd3e2b6"
             ],
             "index": "pypi",
-            "version": "==2.0.2"
+            "version": "==2.0.3"
         },
         "parameterized": {
             "hashes": [
@@ -92,6 +92,14 @@
                 "sha256:59ab908e31c01505a987a2be78854e19cb1630c047bbab7848169c371d614d56"
             ],
             "version": "==0.7.4"
+        },
+        "python-dotenv": {
+            "hashes": [
+                "sha256:0c8d1b80d1a1e91717ea7d526178e3882732420b03f08afea0406db6402e220e",
+                "sha256:587825ed60b1711daea4832cf37524dfd404325b7db5e25ebe88c495c9f807a0"
+            ],
+            "index": "pypi",
+            "version": "==0.15.0"
         },
         "pytz": {
             "hashes": [
@@ -183,10 +191,10 @@
         },
         "isort": {
             "hashes": [
-                "sha256:dcab1d98b469a12a1a624ead220584391648790275560e1a43e54c5dceae65e7",
-                "sha256:dcaeec1b5f0eca77faea2a35ab790b4f3680ff75590bfcb7145986905aab2f58"
+                "sha256:c729845434366216d320e936b8ad6f9d681aab72dc7cbc2d51bedc3582f3ad1e",
+                "sha256:fff4f0c04e1825522ce6949973e83110a6e907750cd92d128b0d14aaaadbffdc"
             ],
-            "version": "==5.6.4"
+            "version": "==5.7.0"
         },
         "jedi": {
             "hashes": [
