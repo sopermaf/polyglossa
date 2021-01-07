@@ -1,5 +1,6 @@
 #!/bin/bash          
-PYTHON="/home/sopermaf/.virtualenvs/polyglossa-env/bin/python"
+
+source /home/sopermaf/.virtualenvs/polyglossa-env/bin/activate
 MANAGE_PY="/home/sopermaf/polyglossa/manage.py"
 
 echo "Starting sending emails\n\n"
