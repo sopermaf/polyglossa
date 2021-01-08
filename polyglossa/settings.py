@@ -31,6 +31,11 @@ ALLOWED_HOSTS = ['*'] if DEBUG else ['www.polyglossa.com', 'polyglossa.com']
 
 # Application definition
 
+ADMINS = (
+    ('Ferdia', 'sopermaf@tcd.ie'),
+    ('Conner', 'conner_pe@yahoo.com'),
+)
+
 PREREQUSITE_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
