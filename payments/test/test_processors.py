@@ -11,7 +11,7 @@ from .. import processors
 class TestProcessors(TestPayments):
     '''Tests for SeminarProcessor'''
     def setUp(self):
-        super(TestProcessors, self).setUp()
+        super().setUp()
         self.serial_order = json.dumps(self.order_details)
 
     # Tests

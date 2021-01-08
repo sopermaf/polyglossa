@@ -22,7 +22,7 @@ yarn-error.log*
 ngrok
 
 # Local Test Databases
-db*
+db.sqlite3
 
 # Generated Files
 __pycache__/
@@ -31,6 +31,6 @@ migrations/
 frontend/webpack-stats.json
 
 # Sensitive Information
-env.py
-local_settings.py
-*.pem
+.env
+paypal_private*.pem
+mysql.cnf

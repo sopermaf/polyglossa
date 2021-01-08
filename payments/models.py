@@ -63,7 +63,7 @@ class Order(models.Model):
         if not self.id:
             self.created = timezone.now()
         self.modified = timezone.now()
-        return super(Order, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     def success(self):
         '''
