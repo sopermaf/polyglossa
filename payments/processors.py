@@ -3,8 +3,12 @@ and perform any needed actions
 '''
 import json
 
+from django.template.loader import render_to_string
+
 from class_bookings import models as cb_models
 from class_bookings import const as cb_const
+from tasks.models import EmailTask
+
 
 class OrderProcessor:   # pylint: disable=too-few-public-methods
     '''
@@ -48,4 +52,14 @@ class SemSlotProcessor(OrderProcessor): # pylint: disable=too-few-public-methods
         slot.students.add(student)
         slot.save()
 
-        # send email
+        # setup seminar link email
+        html_msg = render_to_string(
+            'class_bookings/email/seminar_details.html',
+            {'student': student, 'slot': slot}
+        )
+
+        EmailTask.objects.create(
+            to_email=student.email,
+            subject='Seminar Details',
+            msg=html_msg,
+        )
