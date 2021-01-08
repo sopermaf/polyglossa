@@ -22,7 +22,7 @@ yarn-error.log*
 ngrok
 
 # Local Test Databases
-db*
+db.sqlite3
 
 # Generated Files
 __pycache__/
