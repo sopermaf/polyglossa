@@ -15,7 +15,8 @@ class TestOrders(TestPayments):
         self.assertEqual(
             self.order.payment_status, Order.PaymentStatus.COMPLETED
         )
-        self.assertEqual(EmailTask.objects.count(), 1, 'Email created')
+        # order confirmed email and seminar details email
+        self.assertEqual(EmailTask.objects.count(), 2, 'Email created')
 
     def test_success_complete_action(self):
         self.assertFalse(self.student_in_seminar(), 'Student absent')

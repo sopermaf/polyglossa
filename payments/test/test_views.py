@@ -57,7 +57,7 @@ def test_payment_page_success_payment_not_required(client):
     order.refresh_from_db()
     assert order.payment_status == Order.PaymentStatus.COMPLETED
     assert slot.students.count() == 1
-    assert EmailTask.objects.all().count() == 1
+    assert EmailTask.objects.count() == 2   # (i) order (ii) video link
 
 
 @pytest.mark.django_db

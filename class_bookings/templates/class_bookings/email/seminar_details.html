@@ -1,0 +1,20 @@
+{% extends "base_email.html" %}
+
+{% block title %} Seminar Details {% endblock %}
+
+{% block content %}
+    <p> Dear {{ student.name }}, </p>
+
+    <p>
+        Your seminar will be live for 24 hours @ {{ slot.start_datetime }} UTC.
+        After 24 hours, the seminar will not be available, so make sure you
+        watch it before then!
+    </p>
+
+    <p>
+        The seminar can be accessed with the following
+        <a href="https://www.polyglossa.com{{ slot.get_absolute_url }}">link</a>
+    </p>
+
+    <p> See you soon! </p>
+{% endblock %}
