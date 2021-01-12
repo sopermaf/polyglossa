@@ -157,15 +157,14 @@ WEBPACK_LOADER = {
 
 # PAYPAL SETTINGS
 
-CERT_PATH = [BASE_DIR, 'polyglossa', 'certs']
-CERT_APPENDIX = 'sandbox' if DEBUG else 'prod'
-
 PAYPAL_TEST = DEBUG
 PAYPAL_EMAIL = os.environ['PAYPAL_EMAIL']
+CERT_PATH = [BASE_DIR, 'polyglossa', 'certs']
+CERT_APPENDIX = 'sandbox' if PAYPAL_TEST else 'prod'
 
 PAYPAL_PRIVATE_CERT = os.path.join(*CERT_PATH, 'paypal_private_{}.pem'.format(CERT_APPENDIX))
 PAYPAL_PUBLIC_CERT = os.path.join(*CERT_PATH, 'paypal_public_{}.pem'.format(CERT_APPENDIX))
-PAYPAL_CERT = os.path.join(*CERT_PATH, 'paypal_cert.pem')
+PAYPAL_CERT = os.path.join(*CERT_PATH, 'paypal_cert_{}.pem'.format(CERT_APPENDIX))
 PAYPAL_CERT_ID = os.environ['PAYPAL_CERT_ID']
 
 
