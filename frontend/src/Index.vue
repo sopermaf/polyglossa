@@ -82,6 +82,9 @@
       <template v-else-if="pageSelection == 'CONTACT_US'">
         <ContactUs :socialMedia="socialMediaItems"/>
       </template>
+      <template v-else-if="pageSelection == 'ABOUT_US'">
+        <AboutUs />
+      </template>
     </v-content>
 
     <!-- Footer -->
@@ -96,6 +99,7 @@ import BookClassForm from "./components/BookClassForm";
 import PolyToolbar from "./components/PolyToolbar.vue";
 import PolyFooter from "./components/PolyFooter.vue";
 import ContactUs from "./components/ContactUs.vue";
+import AboutUs from "./components/AboutUs.vue";
 import Learning from "./components/Learning.vue";
 import {mdiHome, mdiBookOpenPageVariant, mdiClipboardEditOutline, mdiInformationVariant, mdiBookshelf, mdiCommentTextMultiple } from '@mdi/js'
 import axios from "axios";
@@ -109,6 +113,7 @@ export default {
     PolyToolbar,
     PolyFooter,
     ContactUs,
+    AboutUs,
     Learning,
   },
   data: () => ({
@@ -125,7 +130,7 @@ export default {
       {title: 'Seminars Types', icon: mdiBookOpenPageVariant, pageSelection: "COURSES"},
       {title: 'Join a Seminar', icon: mdiClipboardEditOutline, pageSelection: "BOOKING"},
       {title: 'Learning Materials', icon: mdiBookshelf, pageSelection: "LEARNING"},
-      {title: 'About Us', icon: mdiInformationVariant, pageSelection: "CONTACT_US"},
+      {title: 'About Us', icon: mdiInformationVariant, pageSelection: "ABOUT_US"},
       {title: 'Contact Us', icon: mdiCommentTextMultiple, pageSelection: "CONTACT_US"},
     ],
     socialMediaItems: [

@@ -50,10 +50,5 @@ export default {
           required: true,
       }
   },
-  data: () => ({
-    contactDetails: [
-      {name: 'Email', data: 'example@polyglossa.com'},
-    ],
-  }),
 };
 </script>

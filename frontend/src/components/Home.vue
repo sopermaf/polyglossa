@@ -64,6 +64,20 @@
 
       <div class="break" />
 
+      <v-flex ma-5 xs12 lg7>
+          <iframe
+            class="framed"
+            src="https://www.youtube.com/embed/Z4oozQpgmsw"
+            frameborder="0"
+            style="width: 100%"
+            height="300"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+      </v-flex>
+
+      <div class="break" />
+
       <!-- Seminars -->
       <v-col
         lg="3"
@@ -153,3 +167,11 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+
+.framed {
+  border: 3px solid black;
+}
+
+</style>
