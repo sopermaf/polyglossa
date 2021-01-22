@@ -37,18 +37,16 @@ def order_page(request):
 
     # create paypal form
     host = request.get_host()
+    scheme = "https" if request.is_secure() else "http"
     paypal_dict = {
         'business': settings.PAYPAL_EMAIL,
         'amount': '{:.2f}'.format(order.amount),
         'item_name': 'Order %s' % order.id,
         'invoice': str(order.id),   # NOTE: used to updated order
         'currency_code': 'USD',
-        'notify_url': 'http://{}{}'.format(host,
-                                           reverse('paypal-ipn')),
-        'return_url': 'http://{}{}'.format(host,
-                                           reverse('index')),
-        'cancel_return': 'http://{}{}'.format(host,
-                                              reverse('cancel-awaiting')),
+        'notify_url': '{}://{}{}'.format(scheme, host, reverse('paypal-ipn')),
+        'return_url': '{}://{}{}'.format(scheme, host, reverse('index')),
+        'cancel_return': '{}://{}{}'.format(scheme, host, reverse('cancel-awaiting')),
     }
     form = PayPalEncryptedPaymentsForm(initial=paypal_dict)
 
