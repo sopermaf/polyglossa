@@ -1,10 +1,11 @@
-'''
+"""
 Handler for payment signals
-'''
+"""
+from pprint import pprint
+
 from django.shortcuts import get_object_or_404
 from django.dispatch import receiver
-
-from paypal.standard.ipn.signals import valid_ipn_received
+from paypal.standard.ipn.signals import valid_ipn_received, invalid_ipn_received
 
 from .models import Order
 
@@ -22,11 +23,12 @@ def payment_notification(sender, **kwargs): # pylint: disable=unused-argument
     '''
     ipn = sender
     print(
-        "Order=%r, ipn.payment_status=%r" % (
+        "IPN Received. Order=%r, ipn.payment_status=%r" % (
             ipn.invoice,
             ipn.payment_status.upper(),
         )
     )
+    pprint(vars(ipn), indent=4)
 
     order = get_object_or_404(Order, id=ipn.invoice)
     if ipn.payment_status.upper() == 'COMPLETED' and order.amount == ipn.mc_gross:
@@ -38,3 +40,11 @@ def payment_notification(sender, **kwargs): # pylint: disable=unused-argument
             ))
 
         order.failure()
+
+
+@receiver(invalid_ipn_received)
+def invalid_paypal_notification(sender, **kwargs):  # pylint: disable=unused-argument
+    """Log failed signals received by Paypal"""
+    ipn = sender
+    print("Invalid paypal IPN received shown below")
+    pprint(vars(ipn), indent=4)
