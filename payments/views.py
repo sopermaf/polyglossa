@@ -1,20 +1,17 @@
-'''
-Request handlers for Polyglossa payments
-'''
+"""Request handlers for Polyglossa payments"""
 import re
 import json
-from django.http.response import Http404
 
+from django.http.response import Http404
 from django.urls import reverse
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404, render
-
 from paypal.standard.forms import PayPalEncryptedPaymentsForm
 
 from payments.models import Order
-
 from polyglossa import settings
+
 
 RE_ENCRYPTED_BUTTON = re.compile(r'(?<=name="encrypted" value=")([^"]+)', re.DOTALL)
 RE_FORM_URL = re.compile(r'(?<=action=")([^"]+)',)
