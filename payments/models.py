@@ -40,7 +40,8 @@ class Order(models.Model):
     amount = models.DecimalField(max_digits=5, decimal_places=2, editable=False)
     reference = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     processor = models.CharField(choices=ProcessorEnums.choices, max_length=30, editable=False)
-    order_details = models.TextField(editable=False)
+    processor_data = models.TextField(editable=False)
+    purchased_detail = models.TextField(editable=False)
     created = models.DateTimeField(auto_now_add=True, editable=False)
     modified = models.DateTimeField(auto_now=True, editable=False)
     payment_received = models.DateTimeField(editable=False, null=True)
@@ -67,9 +68,9 @@ class Order(models.Model):
         the order.
         """
         ProcessorClass = getattr(processors, self.processor) #pylint: disable=invalid-name
+        processor = ProcessorClass(self.processor_data)
+        processor.complete()
 
-        order_processor = ProcessorClass(self.order_details)
-        order_processor.complete()
         self.payment_status = self.PaymentStatus.COMPLETED
         self.payment_received = timezone.now()
         self.save()

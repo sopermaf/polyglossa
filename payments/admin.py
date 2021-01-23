@@ -17,13 +17,14 @@ class OrderAdmin(admin.ModelAdmin):
     date_hierarchy = 'modified'
     ordering = ['-modified', '-created', '-payment_received']
     list_filter = ('payment_status', 'modified', 'payment_received', 'created')
-    search_fields = ('order_details', 'reference')
+    search_fields = ('reference', 'customer__name', 'customer__email')
     readonly_fields = (
         'reference',
         'customer',
+        'purchased_detail',
         'created',
         'modified',
         'payment_received',
         'processor',
-        'order_details',
+        'processor_data',
     )
