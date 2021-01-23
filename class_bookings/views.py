@@ -98,9 +98,9 @@ def seminar_signup(request):
         customer=student,
         processor=Order.ProcessorEnums.SEMINAR,
         processor_data=json.dumps(sem_req),
-        purchased_detail='{}, available for 24 hours from {} UTC'.format(
+        purchased_detail='Polyglossa Seminar\n("{}" @ {} UTC)'.format(
             slot.seminar.title,
-            slot.start_datetime.strftime('%d-%b-%Y, %H:%M'),
+            slot.start_datetime.strftime('%d-%b-%Y %H:%M'),
         ),
         amount=slot.seminar.price,
     )
