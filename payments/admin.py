@@ -10,12 +10,20 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = (
         'payment_status',
         'customer',
-        'amount',
+        'reference',
         'modified',
         'created',
     )
-    date_hierarchy = 'created'
-    ordering = ['-modified', '-created']
-    list_filter = ('payment_status', 'created', 'modified', 'customer', 'amount')
-    search_fields = ('order_details', )
-    readonly_fields = ('customer', 'created', 'modified', 'processor', 'order_details')
+    date_hierarchy = 'modified'
+    ordering = ['-modified', '-created', '-payment_received']
+    list_filter = ('payment_status', 'modified', 'payment_received', 'created')
+    search_fields = ('order_details', 'reference')
+    readonly_fields = (
+        'reference',
+        'customer',
+        'created',
+        'modified',
+        'payment_received',
+        'processor',
+        'order_details',
+    )

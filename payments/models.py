@@ -41,8 +41,8 @@ class Order(models.Model):
     reference = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     processor = models.CharField(choices=ProcessorEnums.choices, max_length=30, editable=False)
     order_details = models.TextField(editable=False)
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    modified = models.DateTimeField(auto_now=True, editable=False)
     payment_received = models.DateTimeField(editable=False, null=True)
 
 
