@@ -22,7 +22,6 @@ def test_seminar_signup_success(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, order=1)
     slot = t_util.create_seminar_slot(seminar, timezone.now() + timedelta(days=2))
 
-
     params = create_seminar_params(slot.pk, 'foo', 'foo@example.com')
     response = client.post(POST_SEMINAR_URL, data=params)
 
@@ -37,8 +36,12 @@ def test_seminar_signup_success(client):
 
     assert len(Order.objects.all()) == 1
     order = Order.objects.first()
+    exp_purchased_detail = 'Polyglossa Seminar\n("{}" @ {} UTC)'.format(
+        seminar.title, slot.start_datetime.strftime('%d-%b-%Y %H:%M')
+    )
     assert order.customer == student
     assert order.payment_status == Order.PaymentStatus.AWAITING
+    assert order.purchased_detail == exp_purchased_detail
 
 
 @pytest.mark.django_db
