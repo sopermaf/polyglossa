@@ -10,11 +10,14 @@ from ..models import Order
 class TestOrders(TestPayments):
     '''Tests for models.Orders'''
     def test_success_status(self):
+        self.assertFalse(self.order.payment_received)
         self.order.success()
 
         self.assertEqual(
             self.order.payment_status, Order.PaymentStatus.COMPLETED
         )
+        self.assertTrue(self.order.payment_received)
+
         # order confirmed email and seminar details email
         self.assertEqual(EmailTask.objects.count(), 2, 'Email created')
 
