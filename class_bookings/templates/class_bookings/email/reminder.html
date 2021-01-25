@@ -13,9 +13,11 @@
         watch it before then!
     </p>
 
-    <p> 
-        The seminar can be accessed with the following
-        <a href="https://www.polyglossa.com{{ slot.get_absolute_url }}">link</a>
+    <p>
+        The seminar can be accessed with the following link. <br>
+        {% with "https://www.polyglossa.com"|add:slot.get_absolute_url as slot_url %}
+            <a href="{{ slot_url }}"> {{ slot_url }} </a>
+        {% endwith %}
     </p>
 
     <p> See you soon! </p>

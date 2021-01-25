@@ -10,7 +10,7 @@
         <v-flex  py-3 text-xs-center md12>
           <span class="font-weight-light">
             &copy; {{ new Date().getFullYear() }} — 
-            <strong>PolyGlossa</strong>
+            <strong>Polyglossa</strong>
           </span>
         </v-flex>
       </v-layout>

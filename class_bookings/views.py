@@ -83,8 +83,8 @@ def seminar_signup(request):
             payment_status=Order.PaymentStatus.AWAITING
         )
         for order in awaiting_orders:
-            order_details = json.loads(order.order_details)
-            if order_details[str(const.KEY_CHOICE)] == str(slot.pk):
+            processor_data = json.loads(order.processor_data)
+            if processor_data[str(const.KEY_CHOICE)] == str(slot.pk):
                 order.payment_status = Order.PaymentStatus.CANCELLED
                 order.save()
     except err.StudentAlreadyPresentError as excp:
@@ -94,18 +94,19 @@ def seminar_signup(request):
         print(f'Booking failure\n\t{request.POST}\n\t{excp}')
         return util.http_bad_request('No matching slot found')
 
-    order = Order(
+    order = Order.objects.create(
         customer=student,
         processor=Order.ProcessorEnums.SEMINAR,
-        order_details=json.dumps(sem_req),
+        processor_data=json.dumps(sem_req),
+        purchased_detail='Polyglossa Seminar\n("{}" @ {} UTC)'.format(
+            slot.seminar.title,
+            slot.start_datetime.strftime('%d-%b-%Y %H:%M'),
+        ),
         amount=slot.seminar.price,
     )
-    order.save()
-
     request.session['order_id'] = order.id
 
     return HttpResponse('Order successfully created', status=201)
-    # return paypal_button(request, order, status=const.RESOURCE_CREATED_CODE)
 
 
 def get_activities(request, activity_type):

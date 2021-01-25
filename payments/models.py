@@ -1,6 +1,8 @@
 '''
 Polyglossa payments models
 '''
+import uuid
+
 from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -36,56 +38,42 @@ class Order(models.Model):
         choices=PaymentStatus.choices, max_length=20, default=PaymentStatus.AWAITING,
     )
     amount = models.DecimalField(max_digits=5, decimal_places=2, editable=False)
+    reference = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     processor = models.CharField(choices=ProcessorEnums.choices, max_length=30, editable=False)
-    order_details = models.TextField(editable=False)
-    created = models.DateTimeField(editable=False)
-    modified = models.DateTimeField(editable=False)
+    processor_data = models.TextField(editable=False)
+    purchased_detail = models.TextField(editable=False)
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    modified = models.DateTimeField(auto_now=True, editable=False)
+    payment_received = models.DateTimeField(editable=False, null=True)
 
 
     def __str__(self):
-        fields = [
-            f'{field}:{val}'
-            for field, val in self.__dict__.items()
-            if not field.startswith('_')
-        ]
-        return ", ".join(fields)
+        return "Order(id={})".format(self.id)
 
     def clean(self, *args, **kwargs):
         super().clean(*args, **kwargs)
 
-        if self.amount <= 0:
+        if self.amount < 0:
             raise ValidationError(
-                f'<order.amount> must be a positive value. Found <{self.amount}>'
+                f'Order.amount must be a positive value. Given <{self.amount}>'
             )
 
-    def save(self, *args, **kwargs):    # pylint: disable=signature-differs
-        ''' On save, update timestamps '''
-        if not self.id:
-            self.created = timezone.now()
-        self.modified = timezone.now()
-        return super().save(*args, **kwargs)
-
-    def success(self):
-        '''
-        Perform payment success operations
+    def success(self) -> None:
+        """Perform payment success operations
 
         Unserialise order data and process based
         on the `processor` specified to complete
         the order.
-
-        Returns
-        ---
-        None
-        '''
+        """
         ProcessorClass = getattr(processors, self.processor) #pylint: disable=invalid-name
+        processor = ProcessorClass(self.processor_data)
+        processor.complete()
 
-        order_processor = ProcessorClass(self.order_details)
-        order_processor.complete()
         self.payment_status = self.PaymentStatus.COMPLETED
+        self.payment_received = timezone.now()
         self.save()
 
-        # create an EmailTask for sending
-        html_msg = render_to_string('tasks/order.html', {'order': self})
+        html_msg = render_to_string('payments/order.html', {'order': self})
 
         EmailTask.objects.create(
             to_email=self.customer.email,
@@ -94,13 +82,7 @@ class Order(models.Model):
         )
 
 
-    def failure(self):
-        '''
-        Perform payment failure operations
-
-        Returns
-        ---
-        None
-        '''
+    def failure(self) -> None:
+        """Perform payment failure operations"""
         self.payment_status = self.PaymentStatus.FAILED
         self.save()

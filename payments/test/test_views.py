@@ -118,6 +118,6 @@ def _setup_seminar_order(customer=None, seminar=None, slot=None):
         customer=customer,
         payment_status=Order.PaymentStatus.AWAITING,
         processor=Order.ProcessorEnums.SEMINAR,
-        order_details=json.dumps(order_details),
+        processor_data=json.dumps(order_details),
         amount=slot.seminar.price,
     )

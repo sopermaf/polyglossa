@@ -1,0 +1,88 @@
+{% extends "base_email.html" %}
+
+{% block title %} Order Confirmation {% endblock %}
+
+{% block style %}
+{% comment %}
+table {
+    background-color: #f0f0f0;
+    border: 1px solid #dddddd;
+}
+
+th {
+    text-align: left;
+    font-size: 1.3em;
+}
+
+td {
+    border-left: 3px solid #dddddd;
+    border-bottom: 3px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+{% endcomment %}
+{% endblock %}
+
+{% block content %}
+
+    <p> Dear {{ order.customer.name }}, </p>
+
+    <p>
+        Payment for your order has been received and your receipt
+        is shown below. Please keep this email for reference.
+    </p>
+    
+    <p>
+        You will receive another email with access details
+        for the seminar separately.
+    </p>
+
+    <table style="background-color: #f0f0f0; border: 1px solid #dddddd;">
+        <tr >
+            <th
+                style="text-align: center; font-size: 1.3em;"
+                colspan="2">
+                    Order Receipt
+            </th>
+        </tr>
+        <tr> 
+            <td style="border-right: 3px solid #dddddd; border-bottom: 3px solid #dddddd; padding: 8px;">
+				<b> Business </b></td> 
+            <td style="border-bottom: 3px solid #dddddd;" > Conner Pe, Polyglossa </td>
+        </tr>
+        <tr>
+            <td style="border-right: 3px solid #dddddd; border-bottom: 3px solid #dddddd; padding: 8px;">
+				<b> Reference </b></td>
+            <td style="border-bottom: 3px solid #dddddd;" > {{ order.reference }} </td>
+        </tr>
+        <tr>
+            <td style="border-right: 3px solid #dddddd; border-bottom: 3px solid #dddddd; padding: 8px;">
+				<b> Customer </b></td>
+            <td style="border-bottom: 3px solid #dddddd;" > {{ order.customer.name }} </td>
+        </tr>
+        {% if order.purchased_detail %}
+            <tr>
+                <td style="border-right: 3px solid #dddddd; border-bottom: 3px solid #dddddd; padding: 8px;">
+                    <b> Purchased </b></td>
+                <td style="border-bottom: 3px solid #dddddd; white-space: pre;">{{ order.purchased_detail }}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td style="border-right: 3px solid #dddddd; border-bottom: 3px solid #dddddd; padding: 8px;">
+				<b> Amount Paid </b></td>
+            <td style="border-bottom: 3px solid #dddddd;" > ${{ order.amount|floatformat:"-2" }} </td>
+        </tr>
+        <tr>
+            <td style="border-right: 3px solid #dddddd; border-bottom: 3px solid #dddddd; padding: 8px;">
+				<b> Payment Date </b></td>
+            <td style="border-bottom: 3px solid #dddddd;" >  {{ order.payment_received }} </td>
+        </tr>
+        <tr>
+            <td style="border-right: 3px solid #dddddd; border-bottom: 3px solid #dddddd; padding: 8px;">
+				<b>  Payment Method  </b></td>
+            <td style="border-bottom: 3px solid #dddddd;" > Paypal Checkout </td>
+        </tr>
+    </table>
+
+    <p> Thanks and see you soon! </p>
+{% endblock %}
