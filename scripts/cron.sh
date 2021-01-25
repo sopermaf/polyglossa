@@ -9,5 +9,5 @@ python $MANAGE_PY send_email_tasks
 echo "Starting seminar reminder emails\n\n"
 python $MANAGE_PY send_seminar_reminders
 
-echo "Sleeping for 5 mins"
-sleep 5m
+echo "Sleeping for 1 min(s)"
+sleep $POLYGLOSSA_CRON_SLEEP
