@@ -48,9 +48,7 @@ class Order(models.Model):
 
 
     def __str__(self):
-        return "Order(id={}, ref={}, processor={})".format(
-            self.id, self.reference, self.processor
-        )
+        return "Order(id={})".format(self.id)
 
     def clean(self, *args, **kwargs):
         super().clean(*args, **kwargs)
