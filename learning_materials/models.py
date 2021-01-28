@@ -18,7 +18,6 @@ class LearningMaterial(models.Model):
         A2 = 'A2'
         B1 = 'B1'
         B2 = 'B2'
-        C1 = 'C1'
 
     class MaterialType(models.TextChoices):
         """Learning Material Content Type"""
