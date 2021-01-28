@@ -41,7 +41,9 @@
         >
           <v-list-item
             :key="item.title"
-            :href="item.pageLink"
+            :href="item.link"
+            link
+            target="_blank"
           >
             <v-list-item-avatar>
               <v-img :src="item.image"></v-img>
@@ -124,7 +126,7 @@ export default {
     isNavBarVisible: false,
     seminars: [],
     crsf: null,
-    
+
     navItems: [
       {title: 'Home', icon: mdiHome, pageSelection: "HOME"},
       {title: 'Seminars Types', icon: mdiBookOpenPageVariant, pageSelection: "COURSES"},
@@ -136,15 +138,15 @@ export default {
     socialMediaItems: [
       {
         title: 'Youtube',
-        detail: 'Conner Ingles',
-        link: 'https://www.youtube.com/conneringles',
+        detail: 'Polyglossa',
+        link: 'http://youtube.com/polyglossa/',
         icon: 'https://w7.pngwing.com/pngs/963/811/png-transparent-youtube-logo-youtube-red-logo-computer-icons-youtube-television-angle-rectangle.png',
         image: 'https://image.flaticon.com/icons/svg/174/174883.svg',
       },
       {
         title: 'Instagram',
         detail: '@polyglossalanguages',
-        link: 'https://www.instagram.com/polyglossalanguages/',
+        link: 'https://instagram.com/polyglossalanguages/',
         icon: 'https://p7.hiclipart.com/preview/477/609/118/logo-computer-icons-clip-art-instagram-logo.jpg',
         image: 'https://image.flaticon.com/icons/svg/1409/1409946.svg',
       },

@@ -15,9 +15,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         connection = get_connection(fail_silently=False)
 
-        for email_task in EmailTask.unsent.all():
+        unsent_email_tasks = EmailTask.unsent.all()
+        if not unsent_email_tasks:
+            self.stdout.write(self.style.SUCCESS('No EmailTasks to send'))
+            return
+
+        for email_task in unsent_email_tasks:
             email_task.send(connection)
-            self.stdout.write(
-                self.style.SUCCESS('EmailTask(id=%r) sent' % email_task.id)
-            )
-        self.stdout.write(self.style.SUCCESS('All emails sent'))
+            self.stdout.write('EmailTask(id=%r) sent' % email_task.id)
+        self.stdout.write(self.style.SUCCESS('All EmailTasks sent'))

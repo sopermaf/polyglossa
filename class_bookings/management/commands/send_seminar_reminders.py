@@ -22,14 +22,20 @@ class Command(BaseCommand):
         self.send(day_seminars, conn, 'day')
 
 
-    def send(self, seminars, conn, reminder_type):
+    def send(self, seminars, conn, reminder_type) -> None:
         """Send the seminar reminder"""
+        if not seminars:
+            self.stdout.write(
+                self.style.SUCCESS('No current Seminar %s reminders to send' % reminder_type)
+            )
+            return
+
         for seminar in seminars:
             seminar.send_reminder(conn, reminder_type)
             self.stdout.write(
-                self.style.SUCCESS('Seminar({}) {} reminder sent'.format(
+                'Seminar(id={}) {} reminder sent'.format(
                     seminar.id,
                     reminder_type,
-                ))
+                )
             )
         self.stdout.write(self.style.SUCCESS('Sent all %s reminders for Seminars' % reminder_type))
