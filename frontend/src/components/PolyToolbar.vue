@@ -145,7 +145,7 @@ a {
 }
 
 #navBarIcon {
-  background-color: #6267a1;
+  background-color: #FFF176;
   border-radius: 30%;
 }
 
