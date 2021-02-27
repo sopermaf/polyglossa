@@ -15,6 +15,7 @@
         >
           <v-app-bar-nav-icon
             class="mt-2"
+            id="navBarIcon"
             @click="openDrawer()"
             >
           </v-app-bar-nav-icon>
@@ -141,6 +142,11 @@ export default {
 
 a {
     text-decoration: none;
+}
+
+#navBarIcon {
+  background-color: #6267a1;
+  border-radius: 30%;
 }
 
 </style>
