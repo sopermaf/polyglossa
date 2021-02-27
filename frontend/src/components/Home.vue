@@ -64,20 +64,6 @@
 
       <div class="break" />
 
-      <v-flex ma-5 xs12 lg7>
-          <iframe
-            class="framed"
-            src="https://www.youtube.com/embed/Z4oozQpgmsw"
-            frameborder="0"
-            style="width: 100%"
-            height="300"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-          </iframe>
-      </v-flex>
-
-      <div class="break" />
-
       <!-- Seminars -->
       <v-col
         lg="3"
@@ -132,6 +118,20 @@
         </v-card>
       </v-col>
 
+      <div class="break" />
+
+      <!-- Overview Video -->
+      <v-flex ma-5 xs12 lg7>
+          <iframe
+            class="framed"
+            src="https://www.youtube.com/embed/Z4oozQpgmsw"
+            frameborder="0"
+            style="width: 100%"
+            height="300"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+      </v-flex>
 
     </v-layout>
   </v-container>
