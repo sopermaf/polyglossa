@@ -138,7 +138,7 @@ def get_future_seminar_slots(request, seminar_id):
     return JsonResponse({'slots': slots})
 
 
-def get_upcoming_seminars(request):
+def get_upcoming_seminars(request, max_days=3):
     """
     Returns seminars with upcoming slots between now and future
     point that is `UPCOMING_TIME_DELTA` into the future
@@ -148,12 +148,7 @@ def get_upcoming_seminars(request):
     JSONResponse
         list of dicts with seminars grouped by date
     """
-    now = timezone.now()
-
-    upcoming = models.SeminarSlot.objects.filter(
-        start_datetime__gt=now,
-        start_datetime__lte=(now + UPCOMING_TIME_DELTA),
-    )
+    upcoming = models.SeminarSlot.upcoming.all()
 
     # creates a set of each day
     seminars_per_days = defaultdict(set)
@@ -168,17 +163,21 @@ def get_upcoming_seminars(request):
         }
         for date, seminars in seminars_per_days.items()
     ]
-
     formatted_days_and_seminars.sort(key=lambda day: day['date'])
 
-    return JsonResponse(formatted_days_and_seminars, safe=False, encoder=_HomePageDateSerializer)
+    return JsonResponse(
+        formatted_days_and_seminars[:max_days],
+        safe=False,
+        encoder=_HomePageDateSerializer
+    )
 
 
 class _HomePageDateSerializer(DjangoJSONEncoder):
     """
     Serialisation of dates and datetime added
     """
+    DT_FORMAT = '%b %d'
     def default(self, obj): # pylint: disable=arguments-differ
         if isinstance(obj, (datetime.datetime, datetime.date)):
-            return obj.strftime('%b %d')
+            return obj.strftime(self.DT_FORMAT)
         return super().default(obj)
