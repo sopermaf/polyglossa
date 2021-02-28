@@ -1,7 +1,7 @@
 # pylint: disable=missing-module-docstring, missing-class-docstring, missing-function-docstring, no-self-use, unused-wildcard-import, wildcard-import
 import json
 from uuid import uuid4
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 import pytest
 from django.urls import reverse
@@ -9,6 +9,7 @@ from django.utils import timezone
 
 from class_bookings.const import *
 from class_bookings.models import *
+from class_bookings.views import _HomePageDateSerializer
 from payments.models import Order
 from . import util as t_util
 
@@ -16,6 +17,7 @@ from . import util as t_util
 # Seminar Signup
 
 POST_SEMINAR_URL = reverse('signup-seminar')
+UPCOMING_DT_FORMAT = _HomePageDateSerializer.DT_FORMAT
 
 @pytest.mark.django_db
 def test_seminar_signup_success(client):
@@ -199,7 +201,7 @@ def test_get_upcoming_seminars_success(client):
     ret = json.loads(response.content)
     exp = [
         {
-            'date': tmw.strftime('%b %d'),
+            'date': tmw.strftime(UPCOMING_DT_FORMAT),
             'seminars': [   # sorted
                 'bar',
                 'foo',
@@ -211,20 +213,35 @@ def test_get_upcoming_seminars_success(client):
 
 
 @pytest.mark.django_db
-def test_get_upcoming_seminars_date_range(client):
+def test_get_upcoming_seminars_count(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
-
-    dts = (timezone.now() + timedelta(days=i, minutes=1) for i in range(4, -2, -1))
+    dts = [timezone.now() + timedelta(days=i, minutes=1) for i in range(1, 365, 100)]
     t_util.create_seminar_slot(seminar, *dts)
 
-    response = client.get(reverse('get-upcoming-seminars'))
-    ret = json.loads(response.content)
 
-    # only today, tmw, and next day shown
-    # controlled by views.UPCOMING_TIME_DELTA
-    assert len(ret) == 3
-    for i, day in enumerate(ret):
-        assert day['date'] == (timezone.now() + timedelta(days=i)).strftime('%b %d')
+    response = client.get(reverse('get-upcoming-seminars'))
+    upcoming = json.loads(response.content)
+
+    assert len(upcoming) == 3   # only the next 3 days
+    for i, day in enumerate(upcoming):
+        assert day['date'] == dts[i].strftime(UPCOMING_DT_FORMAT)
+
+
+@pytest.mark.django_db
+def test_get_upcoming_seminars_future_only(client):
+    now = timezone.now()
+    seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
+    dts = (now + timedelta(days=i) for i in range(5, -2, -1))
+    t_util.create_seminar_slot(seminar, *dts)
+
+
+    response = client.get(reverse('get-upcoming-seminars'))
+    upcoming_seminars = json.loads(response.content)
+
+    for day in upcoming_seminars:
+        upcoming_dt = datetime.datetime.strptime(day['date'], UPCOMING_DT_FORMAT)
+        upcoming_dt = now.replace(month=upcoming_dt.month, day=upcoming_dt.day)
+        assert  upcoming_dt > now
 
 
 @pytest.mark.django_db
@@ -232,8 +249,9 @@ def test_get_upcoming_seminars_unique(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
 
     # add 2 slots on same day
-    t_util.create_seminar_slot(seminar, (timezone.now() + timedelta(days=1)))
-    t_util.create_seminar_slot(seminar, (timezone.now() + timedelta(days=1)))
+    now = timezone.now()
+    t_util.create_seminar_slot(seminar, (now + timedelta(days=1)))
+    t_util.create_seminar_slot(seminar, (now + timedelta(days=1)))
 
     response = client.get(reverse('get-upcoming-seminars'))
     ret = json.loads(response.content)
