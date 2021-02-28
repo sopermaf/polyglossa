@@ -91,6 +91,15 @@ class HourBeforeReminderManager(models.Manager):
         )
 
 
+class SlotUpcomingManager(models.Manager):
+    """Return future slots"""
+    def get_queryset(self):
+        # pylint: disable=missing-function-docstring
+        return super().get_queryset().filter(
+            start_datetime__gt=timezone.now()
+        )
+
+
 class BaseSlot(models.Model):
     '''
     Defines a bookable slot for students to
@@ -108,6 +117,7 @@ class BaseSlot(models.Model):
     objects = models.Manager()
     hour_reminder_unsent = HourBeforeReminderManager()
     day_reminder_unsent = DayBeforeReminderManager()
+    upcoming = SlotUpcomingManager()
 
     @property
     def end_datetime(self):
