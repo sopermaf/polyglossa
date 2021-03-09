@@ -124,7 +124,7 @@
       <v-flex ma-5 xs12 lg7>
           <iframe
             class="framed"
-            src="https://www.youtube.com/embed/Z4oozQpgmsw"
+            src="https://www.youtube.com/embed/dhwZ0zfmTm8"
             frameborder="0"
             style="width: 100%"
             height="300"

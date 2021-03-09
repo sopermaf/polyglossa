@@ -8,7 +8,7 @@
         <v-flex ma-5 lg7 s12 xs12>
             <p>
                 For any inquiries, questions, or problems,
-                please send an email to help@polyglossa.com.
+                please send an email to <a :href="'mailto:' + email_addr">{{email_addr}}</a>
             </p>
             <p>
                 Check out our social media channels for more English tips, lessons, and practice.
@@ -50,5 +50,8 @@ export default {
           required: true,
       }
   },
+  data: () => ({
+      email_addr: "polyglossalanguages@gmail.com"
+  })
 };
 </script>
