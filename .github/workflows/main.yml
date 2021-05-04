@@ -36,7 +36,6 @@ jobs:
         pipenv install --dev
     - name: Setup Django Database
       run: |
-        pipenv run python manage.py makemigrations
         pipenv run python manage.py migrate
     - name: Setup Vuetify Frontend
       run: |
