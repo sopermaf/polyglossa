@@ -20,7 +20,6 @@ from . import errors as err
 
 # CONSTANTS
 
-UPCOMING_TIME_DELTA = datetime.timedelta(days=3)
 AVAIL_VIDEO_LIMIT = datetime.timedelta(days=1)
 
 # VIEWS
