@@ -40,6 +40,10 @@
             </template>
           </v-select>
 
+          <p class="grey--text text-subtitle-1">
+            Seminars are available for 24 hours from the time listed
+          </p>
+
           <!-- Validate Form -->
           <v-btn
             :disabled="!valid"
@@ -67,11 +71,11 @@
         lg12 s12 xs12
         class="grey--text text-subtitle-1"
       >
-        <p> All times displayed in UTC+0. </p>
+        <p> All times displayed in UTC. </p>
         
-        <p> <b> UTC time: </b> {{ utctime }} </p>
+        <p> <b> UTC: </b> {{ utctime }} </p>
 
-        <p> <b> Local time: </b> {{ localtimezone }}</p>
+        <p> <b> Your local time: </b> {{ localtimezone }}</p>
       </v-flex>
 
       <v-flex
