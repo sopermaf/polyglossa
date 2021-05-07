@@ -14,7 +14,9 @@
           </v-flex>
 
           <v-flex ma-5 xs12>
+
             <iframe
+              v-if="error.length === 0"
               :src="video_id"
               frameborder="0"
               style="width: 100%"
@@ -22,6 +24,12 @@
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
               allowfullscreen>
             </iframe>
+
+            <div v-else>
+              <h3> This seminar video is not available </h3>
+              <p class="red--text text-subtitle-1"> {{ error }} </p>
+            </div>
+
           </v-flex>
         </v-layout>
       </v-container>
@@ -51,6 +59,7 @@ export default {
 
     this.video_id = 'https://www.youtube.com/embed/' + videoInfo.video_id;
     this.title = videoInfo.title;
+    this.error = videoInfo.error;
   },
 };
 </script>
