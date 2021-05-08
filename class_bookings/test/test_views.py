@@ -304,6 +304,7 @@ def test_seminar_video_page_too_early(client):
     assert response.status_code == 200
 
     video_data = json.loads(response.context['data'])
+    assert video_data['video_id'] is None
     assert 'will be available' in video_data['error']
 
 
@@ -316,6 +317,7 @@ def test_seminar_video_page_too_late(client):
     assert response.status_code == 200
 
     video_data = json.loads(response.context['data'])
+    assert video_data['video_id'] is None
     assert 'ended' in video_data['error']
 
 
