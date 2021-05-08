@@ -26,7 +26,10 @@
             </iframe>
 
             <div v-else>
-              <h3> This seminar video is not available </h3>
+              <h3> 
+                  This seminar video is not available
+                  <span v-if="error.includes('will be')"> yet </span> 
+              </h3>
               <p class="red--text text-subtitle-1"> {{ error }} </p>
             </div>
 
