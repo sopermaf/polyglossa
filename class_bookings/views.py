@@ -8,7 +8,7 @@ import datetime
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
-from django.http.response import Http404, HttpResponse
+from django.http.response import HttpResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
@@ -20,8 +20,7 @@ from . import errors as err
 
 # CONSTANTS
 
-UPCOMING_TIME_DELTA = datetime.timedelta(days=3)
-AVAIL_VIDEO_LIMIT = datetime.timedelta(days=1)
+DATE_HOURS_MINS = slice(0, 16)
 
 # VIEWS
 
@@ -31,15 +30,26 @@ def seminar_video_page(request, slot_id):
 
     # validate time period
     now = timezone.now()
-    limit_time = slot.start_datetime + AVAIL_VIDEO_LIMIT
-    if now < slot.start_datetime or now >= limit_time:
-        raise Http404('Seminar not currently available')
+    error_msg = ""
+    if now < slot.start_datetime:
+        error_msg = (
+            'Seminar will be available for 24 hours'
+            ' from {} UTC'.format(
+                str(slot.start_datetime)[DATE_HOURS_MINS]
+            )
+        )
+    elif now >= slot.video_limit_time:
+        error_msg = '24 hour availabilty has now ended'
+
+    if error_msg:
+        print('Video accessed outside 24 hour slot: {}'.format(error_msg))
 
     # render video page
     context = {
         'data': json.dumps({
-            "video_id": slot.video_id,
+            "video_id": slot.video_id if not error_msg else None,
             "title": slot.seminar.title,
+            "error": error_msg,
         })
     }
     return render(request, 'video.html', context)

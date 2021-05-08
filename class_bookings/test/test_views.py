@@ -285,6 +285,7 @@ def test_seminar_video_page_success(client):
     video_data = json.loads(response.context['data'])
     assert video_data['video_id'] == 'FOOBAR'
     assert video_data['title'] == seminar.title
+    assert not video_data['error']
 
 
 @pytest.mark.django_db
@@ -300,16 +301,24 @@ def test_seminar_video_page_too_early(client):
     slot = t_util.create_seminar_slot(seminar, timezone.now() + timedelta(hours=1))
 
     response = client.get(video_request(slot.external_id))
-    assert response.status_code == 404
+    assert response.status_code == 200
+
+    video_data = json.loads(response.context['data'])
+    assert video_data['video_id'] is None
+    assert 'will be available' in video_data['error']
 
 
 @pytest.mark.django_db
 def test_seminar_video_page_too_late(client):
     seminar = t_util.create_activity(activity_type=Activity.SEMINAR, title='foo')
-    slot = t_util.create_seminar_slot(seminar, timezone.now() + timedelta(hours=24, minutes=1))
+    slot = t_util.create_seminar_slot(seminar, timezone.now() - timedelta(hours=24, minutes=1))
 
     response = client.get(video_request(slot.external_id))
-    assert response.status_code == 404
+    assert response.status_code == 200
+
+    video_data = json.loads(response.context['data'])
+    assert video_data['video_id'] is None
+    assert 'ended' in video_data['error']
 
 
 # HELPER FUNCTIONS
