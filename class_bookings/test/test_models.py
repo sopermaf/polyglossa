@@ -7,9 +7,9 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from .. import errors as err
-from .. import models as mods
-from .  import util
+from class_bookings import errors as err
+from class_bookings import models as mods
+from . import util as t_util
 
 
 class TestBaseSlot(TestCase):
@@ -122,8 +122,8 @@ def test_validate_signup_error_slot_not_found():
         mods.SeminarSlot.validate_signup(1, student)
 
     # no future seminars exist
-    slot = util.create_seminar_slot(
-        util.create_activity(mods.Activity.SEMINAR),
+    slot = t_util.create_seminar_slot(
+        t_util.create_activity(mods.Activity.SEMINAR),
         timezone.now() - datetime.timedelta(days=1)
     )
     with pytest.raises(err.SlotNotFoundError):
@@ -135,8 +135,8 @@ def test_validate_signup_error_student_present():
     # setup slot with student
     student = mods.Student.objects.create(name='foo', email='bar@foo.com')
 
-    slot = util.create_seminar_slot(
-        util.create_activity(mods.Activity.SEMINAR),
+    slot = t_util.create_seminar_slot(
+        t_util.create_activity(mods.Activity.SEMINAR),
         timezone.now() + datetime.timedelta(days=1)
     )
     slot.students.add(student)
@@ -149,8 +149,8 @@ def test_validate_signup_error_student_present():
 def test_validate_signup_success():
     # setup slot with student
     student = mods.Student.objects.create(name='foo', email='bar@foo.com')
-    slot = util.create_seminar_slot(
-        util.create_activity(mods.Activity.SEMINAR),
+    slot = t_util.create_seminar_slot(
+        t_util.create_activity(mods.Activity.SEMINAR),
         timezone.now() + datetime.timedelta(days=1)
     )
 
