@@ -20,7 +20,6 @@ from . import errors as err
 
 # CONSTANTS
 
-AVAIL_VIDEO_LIMIT = datetime.timedelta(days=1)
 DATE_HOURS_MINS = slice(0, 16)
 
 # VIEWS
@@ -31,7 +30,6 @@ def seminar_video_page(request, slot_id):
 
     # validate time period
     now = timezone.now()
-    limit_time = slot.start_datetime + AVAIL_VIDEO_LIMIT
     error_msg = ""
     if now < slot.start_datetime:
         error_msg = (
@@ -40,7 +38,7 @@ def seminar_video_page(request, slot_id):
                 str(slot.start_datetime)[DATE_HOURS_MINS]
             )
         )
-    elif now >= limit_time:
+    elif now >= slot.video_limit_time:
         error_msg = '24 hour availabilty has now ended'
 
     if error_msg:

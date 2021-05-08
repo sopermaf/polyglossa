@@ -167,6 +167,8 @@ class SeminarSlot(BaseSlot):
 
     Activity chosen upon slot creation by admin.
     """
+    AVAIL_VIDEO_LIMIT = datetime.timedelta(days=1)
+
     external_id = models.UUIDField(unique=True, editable=False, default=uuid.uuid4)
     seminar = models.ForeignKey(
         Activity,
@@ -242,6 +244,12 @@ class SeminarSlot(BaseSlot):
         # ensure marked as saved
         super().send_reminder(connection, reminder_type)
 
+    @property
+    def video_limit_time(self):
+        """datetime after which a seminar video
+        is no longer available
+        """
+        return self.start_datetime + self.AVAIL_VIDEO_LIMIT
 
 class IndividualSlot(BaseSlot):
     '''
