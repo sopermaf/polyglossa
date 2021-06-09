@@ -10,7 +10,7 @@ pytest = "*"
 pytest-django = "*"
 
 [packages]
-django = "~=3.0"
+django = "~=3.1"
 pytz = "*"
 django-webpack-loader = "*"
 django-paypal = "~=1.0"
