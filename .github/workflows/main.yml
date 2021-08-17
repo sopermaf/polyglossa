@@ -9,10 +9,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Set up Python 3.7
+    - name: Set up Python 3.6
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7
+        python-version: 3.6
     - name: Configure Files and Env Vars
       shell: bash
       env:
@@ -36,7 +36,6 @@ jobs:
         pipenv install --dev
     - name: Setup Django Database
       run: |
-        pipenv run python manage.py makemigrations
         pipenv run python manage.py migrate
     - name: Setup Vuetify Frontend
       run: |

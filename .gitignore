@@ -27,9 +27,9 @@ db.sqlite3
 
 # Generated Files
 __pycache__/
-migrations/
 .venv/
 frontend/webpack-stats.json
+.python-version
 
 # Sensitive Information
 .env

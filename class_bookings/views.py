@@ -187,7 +187,7 @@ class _HomePageDateSerializer(DjangoJSONEncoder):
     Serialisation of dates and datetime added
     """
     DT_FORMAT = '%b %d'
-    def default(self, obj): # pylint: disable=arguments-differ
-        if isinstance(obj, (datetime.datetime, datetime.date)):
-            return obj.strftime(self.DT_FORMAT)
-        return super().default(obj)
+    def default(self, o): # pylint: disable=arguments-differ
+        if isinstance(o, (datetime.datetime, datetime.date)):
+            return o.strftime(self.DT_FORMAT)
+        return super().default(o)
