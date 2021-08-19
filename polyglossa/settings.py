@@ -52,6 +52,7 @@ PROJECT_APPS = [
     'payments',
     'learning_materials',
     'tasks',
+    'feedback',
 ]
 
 INSTALLED_APPS = PREREQUSITE_APPS + PROJECT_APPS
