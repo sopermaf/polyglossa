@@ -13,7 +13,7 @@
     "moment": "^2.29.1",
     "qs": "^6.9.4",
     "vue": "^2.6.12",
-    "vuetify": "^2.4.2"
+    "vuetify": "^2.6.10"
   },
   "devDependencies": {
     "@mdi/js": "^5.8.55",
